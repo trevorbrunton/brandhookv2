@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <>
       {/* Hero section */}
-      <section className="relative py-24 sm:py-32">
+      <section className="relative sm:py-24 py-6">
         <MaxWidthWrapper className="text-center">
           <div className="relative mx-auto text-center flex flex-col items-center gap-10">
             <img src="/happy.jpeg" alt="Hero image" className="w-80 sm:w-96 rounded"/>
