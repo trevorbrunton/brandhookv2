@@ -9,6 +9,8 @@ import { PlusIcon } from "lucide-react";
 import { createCheckoutSession } from "@/lib/stripe";
 import { PaymentSuccessModal } from "@/components/payment-success-modal";
 
+
+
 type PageProps = {
   searchParams: Promise<{
     [key: string]: string | string[] | undefined;
@@ -62,6 +64,7 @@ const Page = async ({ searchParams }: PageProps) => {
         }
         title="Dashboard"
       >
+
         <DashboardPageContent />
       </DashboardPage>
     </>

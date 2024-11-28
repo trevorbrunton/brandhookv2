@@ -13,10 +13,10 @@ const Page = () => {
   const router = useRouter()
 
   const INCLUDED_FEATURES = [
-    "10.000 real-time events per month",
-    "10 event categories",
-    "Advanced analytics and insights",
-    "Priority support",
+    "20 gigabytes of storage",
+    "Automatic backup for 150 years",
+    "Share your memories with your friends and loved ones",
+    "Tell your story with a beautiful timeline",
   ]
 
   const { mutate: createCheckoutSession } = useMutation({
@@ -43,8 +43,7 @@ const Page = () => {
         <div className="mx-auto max-w-2xl sm:text-center">
           <Heading className="text-center">Simple no-tricks pricing</Heading>
           <p className="mt-6 text-base/7 text-gray-600 max-w-prose text-center text-pretty">
-            We hate subscriptions. And chances are, you do too. That$apos;s why we
-            offer lifetime access to PingPanda for a one-time payment.
+            Subscription blurb goes here. Lorem ipsum dolor sit amet, consectetur
           </p>
         </div>
 
@@ -55,9 +54,7 @@ const Page = () => {
             </h3>
 
             <p className="mt-6 text-base/7 text-gray-600">
-              Invest once in PingPanda and transform how you monitor your SaaS
-              forever. Get instant alerts, track critical metrics and never miss
-              a beat in your business growth.
+              yada yada yada yada yada yada yada yada yada yada yada yada yada yada
             </p>
             <div className="mt-10 flex items-center gap-x-4">
               <h4 className="flex-none text-sm font-semibold leading-6 text-brand-600">
@@ -80,11 +77,11 @@ const Page = () => {
             <div className="rounded-2xl bg-gray-50 py-10 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-16">
               <div className="mx-auto max-w-xs py-8">
                 <p className="text-base font-semibold text-gray-600">
-                  Pay once, own forever
+                  Start your premium Subscription today
                 </p>
                 <p className="mt-6 flex items-baseline justify-center gap-x-2">
                   <span className="text-5xl font-bold tracking-tight text-gray-900">
-                    $49
+                    $7
                   </span>
                   <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">
                     USD
@@ -92,10 +89,10 @@ const Page = () => {
                 </p>
 
                 <Button onClick={handleGetAccess} className="mt-6 px-20">
-                  Get PingPanda
+                  Upgrade now
                 </Button>
                 <p className="mt-6 text-xs leading-5 text-gray-600">
-                  Secure payment. Start monitoring in minutes.
+                  Secure payment. Start your cronicle in minutes.
                 </p>
               </div>
             </div>
