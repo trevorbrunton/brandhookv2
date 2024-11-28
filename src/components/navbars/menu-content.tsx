@@ -29,11 +29,11 @@ interface SidebarCategory {
 const menuItems: SidebarCategory[] = [
   {
     category: "Overview",
-    items: [{ href: "/dashboard", icon: Home, text: "Home" }],
+    items: [{ href: "/", icon: Home, text: "Home" }],
   },
   {
     category: "Account",
-    items: [{ href: "/", icon: Gem, text: "Upgrade" }],
+    items: [{ href: "/upgrade", icon: Gem, text: "Upgrade" }],
   },
   {
     category: "Settings",
