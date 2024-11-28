@@ -133,27 +133,6 @@ export const DashboardPageContent = () => {
                 </div>
               </div>
 
-              {/* <div className="space-y-3 mb-6">
-                <div className="flex items-center text-sm/5 text-gray-600">
-                  <Clock className="size-4 mr-2 text-brand-500" />
-                  <span className="font-medium">Last ping:</span>
-                  <span className="ml-1">
-                    {category.lastPing
-                      ? formatDistanceToNow(category.lastPing) + " ago"
-                      : "Never"}
-                  </span>
-                </div>
-                <div className="flex items-center text-sm/5 text-gray-600">
-                  <Database className="size-4 mr-2 text-brand-500" />
-                  <span className="font-medium">Unique fields:</span>
-                  <span className="ml-1">{category.uniqueFieldCount || 0}</span>
-                </div>
-                <div className="flex items-center text-sm/5 text-gray-600">
-                  <BarChart2 className="size-4 mr-2 text-brand-500" />
-                  <span className="font-medium">Events this month:</span>
-                  <span className="ml-1">{category.eventsCount || 0}</span>
-                </div>
-              </div> */}
 
               <div className="flex items-center justify-between mt-4">
                 <Link

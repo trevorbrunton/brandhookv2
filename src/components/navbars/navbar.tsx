@@ -1,17 +1,21 @@
+"use client";
 import Link from "next/link";
 import { MaxWidthWrapper } from "../max-width-wrapper";
 import { SignOutButton } from "@clerk/nextjs";
 import { Button, buttonVariants } from "../ui/button";
 import { ArrowRight } from "lucide-react";
-import { currentUser } from "@clerk/nextjs/server";
+// import { currentUser } from "@clerk/nextjs/server";
+import { useAuth } from "@clerk/nextjs";
 
 
-export const Navbar = async () => {
-  const user = await currentUser();
+
+export const Navbar = () => {
+  const {userId} = useAuth();
 
   return (
-    <nav className="sticky z-[100] h-16 inset-x-0 top-0 w-full border-b border-gray-200 bg-white/80 backdrop-blur-lg transition-all px-4">
       <MaxWidthWrapper>
+      <nav className="sticky z-[100] h-16 inset-x-0 top-0 w-full border-b border-gray-200 bg-white/80 backdrop-blur-lg transition-all px-4
+    mb-2 mx-2">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex z-40 font-semibold">
             <span className="text-brand-700 tracking-widest font-bold text-2xl">
@@ -20,13 +24,14 @@ export const Navbar = async () => {
           </Link>
 
           <div className="h-full flex items-center space-x-4">
-            {user ? (
+            {userId ? (
               <>
                 <SignOutButton>
                   <Button size="sm" variant="ghost">
                     Sign out
                   </Button>
                 </SignOutButton>
+
 
                 <Link
                   href="/dashboard"
@@ -75,7 +80,7 @@ export const Navbar = async () => {
           </div>
         </div>
 
-      </MaxWidthWrapper>
     </nav>
+      </MaxWidthWrapper>
   );
 };
