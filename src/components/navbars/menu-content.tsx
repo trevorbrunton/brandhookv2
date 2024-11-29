@@ -68,7 +68,7 @@ const itemVariants = {
 
 
 
-export function MenuContent() {
+export function MenuContent({onLinkClick}: {onLinkClick: () => void}) {
   return (
     <motion.nav
       className="flex flex-col items-start gap-4 px-2 py-5 w-full"
@@ -86,11 +86,7 @@ export function MenuContent() {
       />
 
       {menuItems.map(({ category, items }) => (
-        <motion.li
-          key={category}
-          variants={itemVariants}
-          className="mb-4"
-        >
+        <motion.li key={category} variants={itemVariants} className="mb-4">
           <p className="text-xs font-medium leading-6 text-zinc-500">
             {category}
           </p>
@@ -103,6 +99,7 @@ export function MenuContent() {
                   buttonVariants({ variant: "ghost" }),
                   "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-700 hover:bg-gray-50 transition"
                 )}
+                onClick={onLinkClick}
               >
                 <item.icon className="size-4 text-zinc-500 group-hover:text-zinc-700" />
                 {item.text}

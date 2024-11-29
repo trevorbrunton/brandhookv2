@@ -1,5 +1,5 @@
 "use client";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { MenuContent } from "@/components/navbars/menu-content";
@@ -9,11 +9,17 @@ import { MaxWidthWrapper } from "@/components/max-width-wrapper";
 import { MainContentRow } from "@/components/main-content-row";
 
 const Layout = ({ children }: PropsWithChildren) => {
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const handleLinkClick = () => {
+    setIsSheetOpen(false);
+  };
+
   return (
     <div className="flex flex-col h-screen">
       <div className="hidden sm:block ">
         <Navbar />
       </div>
+      
 
           <MaxWidthWrapper>
               {/* mobile header */}
@@ -21,7 +27,7 @@ const Layout = ({ children }: PropsWithChildren) => {
               <p className="text-lg/7 font-semibold text-brand-900">
                 <span className="text-brand-700">cronicle</span>
               </p>
-              <Sheet>
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetTrigger asChild>
                   <Button size="icon" variant="outline" className="sm:hidden">
                     <Menu className="h-5 w-5" />
@@ -30,7 +36,7 @@ const Layout = ({ children }: PropsWithChildren) => {
                 </SheetTrigger>
                 <SheetContent side="left" className="sm:max-w-xs pt-20">
                   <div>
-                    <MenuContent />
+                    <MenuContent onLinkClick={handleLinkClick} />
                   </div>
                 </SheetContent>
               </Sheet>
