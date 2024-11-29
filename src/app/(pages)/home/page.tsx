@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/page-header";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
+import { db } from "@/db";
 
 
 type PageProps = {
@@ -26,8 +27,8 @@ type PageProps = {
 //   },
 // ];
 
-export default async function Dashboard() {
-const Page = async ({ searchParams }: PageProps) => {
+export default async function Dashboard({ searchParams }: PageProps) {
+
   const auth = await currentUser();
   const { theParams } = await searchParams;
   console.log("searchParams", theParams);
@@ -36,12 +37,15 @@ const Page = async ({ searchParams }: PageProps) => {
     redirect("/sign-in");
   }
   //check if user has user profile  
-  // const userProfile = await createUserProfile();
-  // if (userProfile.success == "newUser") {
-  //   redirect("/settings");  //DEVNOTE - use query params to pass return page
-}
+  const user = await db.user.findUnique({
+    where: { externalId: auth.id },
+  });
+console.log("USER IN DB:", user);
+
+  if (!user) {
+    return redirect("/welcome");
+  }
   
-  console.log("Page", Page);
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
