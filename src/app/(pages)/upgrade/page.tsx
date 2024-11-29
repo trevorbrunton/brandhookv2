@@ -2,9 +2,10 @@ import { db } from "@/db";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { UpgradePageContent } from "./upgrade-page-content";
-
+import { MainContentRow } from "@/components/main-content-row";
 import { createCheckoutSession } from "@/lib/stripe";
 import { PaymentSuccessModal } from "@/components/payment-success-modal";
+import { PageHeader } from "@/components/page-header";
 
 type PageProps = {
   searchParams: Promise<{
@@ -43,10 +44,21 @@ const Page = async ({ searchParams }: PageProps) => {
   }
 
   return (
-    <div className="w-full">
-      {success && <PaymentSuccessModal />}
-      <UpgradePageContent plan={user.plan} />
+    <div className="flex min-h-screen w-full flex-col bg-muted/40">
+          {success && <PaymentSuccessModal />}
+
+      <div className="flex flex-row flex-auto">
+        <div className="flex flex-col flex-auto">
+          <PageHeader title="Upgrade your plan" />
+          <MainContentRow>
+            <div className="flex justify-center w-full pt-24">
+              <UpgradePageContent plan={user.plan} />
+              </div>
+          </MainContentRow>
+        </div>
+      </div>
     </div>
+
   );
 };
 

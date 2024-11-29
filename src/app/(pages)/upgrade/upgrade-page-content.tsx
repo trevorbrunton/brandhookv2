@@ -24,15 +24,15 @@ export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
 
 
   return (
-    <div className="max-w-3xl flex flex-col gap-8">
+    <div className="max-w-3xl flex flex-col">
       <div>
-        <h1 className="mt-2 text-xl/8 font-medium tracking-tight text-gray-900">
-          {plan === "PRO" ? "Plan: Pro" : "Plan: Free"}
+        <h1 className="mt-2 text-xl/8 font-medium tracking-tight text-gray-900 mb-6">
+          {plan === "PRO" ? "Plan: Pro" : "You are on the free plan"}
         </h1>
         <p className="text-sm/6 text-gray-600 max-w-prose">
           {plan === "PRO"
-            ? "Thank you for supporting PingPanda. Find your increased usage limits below."
-            : "Get access to more events, categories and premium support."}
+            ? "Thank you for supporting cronicle. "
+            : "Get access to more storage and premium functions."}
         </p>
       </div>
 
@@ -41,8 +41,7 @@ export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
             onClick={() => createCheckoutSession()}
             className="inline cursor-pointer underline text-brand-600"
           >
-            {" "}
-            or upgrade now to increase your limit &rarr;
+            by upgrading to the Pro plan;
           </span>
         ) : null}
   

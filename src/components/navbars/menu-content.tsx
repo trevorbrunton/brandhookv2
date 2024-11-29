@@ -29,7 +29,7 @@ interface SidebarCategory {
 const menuItems: SidebarCategory[] = [
   {
     category: "Overview",
-    items: [{ href: "/", icon: Home, text: "Home" }],
+    items: [{ href: "/home", icon: Home, text: "Home" }],
   },
   {
     category: "Account",
@@ -40,7 +40,7 @@ const menuItems: SidebarCategory[] = [
     items: [
 
       {
-        href: "/dashboard/account-settings",
+        href: "/account-settings",
         icon: Settings,
         text: "Account Settings",
       },
@@ -71,7 +71,7 @@ const itemVariants = {
 export function MenuContent() {
   return (
     <motion.nav
-      className="flex flex-col items-start gap-6 px-2 py-5"
+      className="flex flex-col items-start gap-4 px-2 py-5 w-full"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -89,7 +89,7 @@ export function MenuContent() {
         <motion.li
           key={category}
           variants={itemVariants}
-          className="mb-4 md:mb-8"
+          className="mb-4"
         >
           <p className="text-xs font-medium leading-6 text-zinc-500">
             {category}

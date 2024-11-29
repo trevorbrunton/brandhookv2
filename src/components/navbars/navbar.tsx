@@ -13,9 +13,11 @@ export const Navbar = () => {
   const {userId} = useAuth();
 
   return (
-      <MaxWidthWrapper>
-      <nav className="sticky z-[100] h-16 inset-x-0 top-0 w-full border-b border-gray-200 bg-white/80 backdrop-blur-lg transition-all px-4
-    mb-2 mx-2">
+    <MaxWidthWrapper>
+      <nav
+        className="sticky z-[100] h-16 inset-x-0 top-0 border-b border-gray-200 bg-muted/40 backdrop-blur-lg transition-all px-4
+    mb-2 mx-2"
+      >
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex z-40 font-semibold">
             <span className="text-brand-700 tracking-widest font-bold text-2xl">
@@ -31,21 +33,10 @@ export const Navbar = () => {
                     Sign out
                   </Button>
                 </SignOutButton>
-
-
-                <Link
-                  href="/dashboard"
-                  className={buttonVariants({
-                    size: "sm",
-                    className: "flex items-center gap-1",
-                  })}
-                >
-                  Dashboard <ArrowRight className="ml-1.5 size-4" />
-                </Link>
               </>
             ) : (
               <>
-                <Link
+                {/* <Link
                   href="/pricing"
                   className={buttonVariants({
                     size: "sm",
@@ -53,7 +44,7 @@ export const Navbar = () => {
                   })}
                 >
                   Pricing
-                </Link>
+                </Link> */}
                 <Link
                   href="/sign-in"
                   className={buttonVariants({
@@ -79,8 +70,7 @@ export const Navbar = () => {
             )}
           </div>
         </div>
-
-    </nav>
-      </MaxWidthWrapper>
+      </nav>
+    </MaxWidthWrapper>
   );
 };
