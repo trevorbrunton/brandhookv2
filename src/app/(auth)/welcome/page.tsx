@@ -28,7 +28,7 @@ const Page = () => {
   //DEVNOTE - HOW DO I CATCH AN ERROR HERE? ******************
 
   useEffect(() => {
-    if (data?.isSynced) router.push("/dashboard");
+    if (data?.isSynced) router.push("/home");
   }, [data, router]);
 
   return (

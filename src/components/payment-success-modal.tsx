@@ -25,7 +25,7 @@ export const PaymentSuccessModal = () => {
 
   const handleClose = () => {
     setIsOpen(false)
-    router.push("/dashboard")
+    router.push("/home")
   }
 
   const isPaymentSuccessful = data?.plan === "PRO"
@@ -73,7 +73,7 @@ export const PaymentSuccessModal = () => {
             <div className="mt-8 w-full">
               <Button onClick={handleClose} className="h-12 w-full">
                 <CheckIcon className="mr-2 size-5" />
-                Go to Dashboard
+                Go to Home
               </Button>
             </div>
           </>
