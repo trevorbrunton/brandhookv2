@@ -2,10 +2,16 @@ import { MaxWidthWrapper } from "@/components/max-width-wrapper";
 import { Heading } from "@/components/heading";
 import { ShinyButton } from "@/components/shiny-button";
 import { Check } from "lucide-react";
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 
 
-export default function Home() {
+export default async function LandingPage() {
+  const auth = await currentUser();
+  if (auth) {
+    redirect("/home");
+  }
 
   return (
     <>
