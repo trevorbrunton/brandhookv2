@@ -13,6 +13,10 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { UserButton } from "@clerk/nextjs";
 
+interface MenuContentProps {
+  onLinkClick: () => void;
+  page: string;
+}
 
 
   interface SidebarItem {
@@ -68,7 +72,7 @@ const itemVariants = {
 
 
 
-export function MenuContent({onLinkClick}: {onLinkClick: () => void}) {
+export function MenuContent({onLinkClick, page}: MenuContentProps) {
   return (
     <motion.nav
       className="flex flex-col items-start gap-4 px-2 py-5 w-full"
@@ -84,9 +88,9 @@ export function MenuContent({onLinkClick}: {onLinkClick: () => void}) {
           },
         }}
       />
-
+      <span> {`on page ${page}`}</span>
       {menuItems.map(({ category, items }) => (
-        <motion.li key={category} variants={itemVariants} className="mb-4">
+        <motion.div key={category} variants={itemVariants} className="mb-4">
           <p className="text-xs font-medium leading-6 text-zinc-500">
             {category}
           </p>
@@ -106,7 +110,7 @@ export function MenuContent({onLinkClick}: {onLinkClick: () => void}) {
               </Link>
             ))}
           </div>
-        </motion.li>
+        </motion.div>
       ))}
     </motion.nav>
   );

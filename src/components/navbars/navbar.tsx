@@ -4,13 +4,14 @@ import { MaxWidthWrapper } from "../max-width-wrapper";
 import { SignOutButton } from "@clerk/nextjs";
 import { Button, buttonVariants } from "../ui/button";
 import { ArrowRight } from "lucide-react";
-// import { currentUser } from "@clerk/nextjs/server";
 import { useAuth } from "@clerk/nextjs";
 
 
 
+
 export const Navbar = () => {
-  const {userId} = useAuth();
+  const { userId } = useAuth();
+
 
   return (
     <MaxWidthWrapper>
@@ -24,7 +25,6 @@ export const Navbar = () => {
               cronicle
             </span>
           </Link>
-
           <div className="h-full flex items-center space-x-4">
             {userId ? (
               <>
