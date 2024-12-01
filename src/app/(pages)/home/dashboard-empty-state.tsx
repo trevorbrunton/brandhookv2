@@ -22,7 +22,7 @@ export const DashboardEmptyState = () => {
       <div className="flex justify-center w-full">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/brand-asset-wave.png"
+          src="/happy.jpeg"
           alt="No categories"
           className="size-48 -mt-24"
         />

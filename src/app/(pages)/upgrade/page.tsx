@@ -15,8 +15,16 @@ type PageProps = {
   }>;
 };
 
-const Page = async ({ searchParams }: PageProps) => {
+const UpgradePage = async ({ searchParams }: PageProps) => {
   const auth = await currentUser();
+  const navItems = [
+  {
+    label: "Home",
+    href: "/home",
+    tooltip: "Go home - test menu item only",
+  },
+];;
+
 
   if (!auth) {
     redirect("/sign-in");
@@ -47,7 +55,7 @@ const Page = async ({ searchParams }: PageProps) => {
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
-      <PageFrame page="home">
+      <PageFrame page="home" navItems={navItems}>
         {success && <PaymentSuccessModal />}
         <div className="flex flex-row flex-auto">
           <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
@@ -67,6 +75,6 @@ const Page = async ({ searchParams }: PageProps) => {
   );
 };
 
-export default Page;
+export default UpgradePage;
 
 

@@ -27,6 +27,7 @@ export default async function Dashboard({ searchParams }: PageProps) {
   const auth = await currentUser();
   const { theParams } = await searchParams;
   console.log("searchParams", theParams);
+  const navItems = null;
 
   if (!auth) {
     redirect("/sign-in");
@@ -43,7 +44,7 @@ export default async function Dashboard({ searchParams }: PageProps) {
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
-      <PageFrame page="home">
+      <PageFrame page="home" navItems={navItems}>
         <div className="flex flex-row flex-auto">
           <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
             <NavSideBar page="home" />

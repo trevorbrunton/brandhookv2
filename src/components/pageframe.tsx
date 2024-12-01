@@ -6,14 +6,24 @@ import { MenuContent } from "@/components/navbars/menu-content";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { NavItem } from "@/components/navbars/navbar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
+import { useRouter } from "next/navigation";
 
 interface PageFrameProps {
   children: ReactNode;
   page: string;
+  navItems: NavItem[] | null; 
 }
 
-export const PageFrame = ({ children, page }: PageFrameProps) => {
+export const PageFrame = ({ children, page,navItems }: PageFrameProps) => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const router = useRouter();
   const handleLinkClick = () => {
     setIsSheetOpen(false);
   };
@@ -21,24 +31,49 @@ export const PageFrame = ({ children, page }: PageFrameProps) => {
     <>
       <>
         <div className="hidden sm:block">
-          <Navbar />
+          <Navbar navItems={navItems} />
         </div>
         <MaxWidthWrapper>
           <div className="flex items-center justify-between border-b border-gray-200 p-4 sm:hidden">
             <p className="text-lg font-semibold">
-              <span className="text-brand-700">cronicle</span>
+              <span className="text-brand-700 text-xl">cronicle</span>
             </p>
-            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-              <SheetTrigger asChild>
-                <Button size="icon" variant="outline">
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Toggle Menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="pt-20 sm:max-w-xs">
-                <MenuContent onLinkClick={handleLinkClick} page={page} />
-              </SheetContent>
-            </Sheet>
+            <div className="h-full flex items-center space-x-4">
+              <TooltipProvider>
+                {navItems &&
+                  navItems.map((item) => (
+                    <Tooltip key={item.label}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-xs z-999"
+                          onClick={() => {
+                            router.push(item.href);
+                            router.refresh();
+                          }}
+                        >
+                          {item.label}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent sideOffset={16}>
+                        {item.tooltip}{" "}
+                      </TooltipContent>
+                    </Tooltip>
+                  ))}
+              </TooltipProvider>
+              <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+                <SheetTrigger asChild>
+                  <Button size="icon" variant="outline">
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Toggle Menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="pt-20 sm:max-w-xs">
+                  <MenuContent onLinkClick={handleLinkClick} page={page} />
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
           {children}
         </MaxWidthWrapper>

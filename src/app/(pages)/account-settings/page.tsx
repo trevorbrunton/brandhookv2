@@ -26,26 +26,27 @@ type PageProps = {
 //   },
 // ];
 
-export default async function SettingsPage() {
-const Page = async ({ searchParams }: PageProps) => {
-  const auth = await currentUser();
-  const { theParams } = await searchParams;
-  console.log("searchParams", theParams);
+export default async function SettingsPage({ searchParams }: PageProps) {
 
-  if (!auth) {
-    redirect("/sign-in");
-  }
-  //check if user has user profile  
-  // const userProfile = await createUserProfile();
-  // if (userProfile.success == "newUser") {
-  //   redirect("/settings");  //DEVNOTE - use query params to pass return page
-}
+    const auth = await currentUser();
+    const { theParams } = await searchParams;
+    console.log("searchParams", theParams);
+    const navItems = null;
+
+    if (!auth) {
+      redirect("/sign-in");
+    }
+    //check if user has user profile
+    // const userProfile = await createUserProfile();
+    // if (userProfile.success == "newUser") {
+    //   redirect("/settings");  //DEVNOTE - use query params to pass return page
   
-  console.log("Page", Page);
+
+
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
-      <PageFrame page="Account Settings">
+      <PageFrame page="Account Settings" navItems={navItems}>
         <div className="flex flex-row flex-auto">
           <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
             <NavSideBar page="Account Settings" />

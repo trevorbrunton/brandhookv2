@@ -5,12 +5,27 @@ import { SignOutButton } from "@clerk/nextjs";
 import { Button, buttonVariants } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 
+export interface NavItem  {
+  label: string;
+  href: string;
+  tooltip: string;
+};
 
+interface NavbarProps {
+  navItems: NavItem[] | null;
+}
 
-
-export const Navbar = () => {
+export const Navbar = ({navItems}: NavbarProps) => {
   const { userId } = useAuth();
+  const router = useRouter();
 
 
   return (
@@ -26,6 +41,27 @@ export const Navbar = () => {
             </span>
           </Link>
           <div className="h-full flex items-center space-x-4">
+            <TooltipProvider >
+              {navItems &&
+                navItems.map((item) => (
+                  <Tooltip key={item.label}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-xs z-999"
+                        onClick={() => {
+                          router.push(item.href);
+                          router.refresh();
+                        }}
+                      >
+                        {item.label}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent sideOffset={16}>{item.tooltip} </TooltipContent>
+                  </Tooltip>
+                ))}
+            </TooltipProvider>
             {userId ? (
               <>
                 <SignOutButton>
