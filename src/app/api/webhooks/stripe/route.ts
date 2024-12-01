@@ -21,11 +21,12 @@ export async function POST(req: Request) {
     if (!userId) {
       return new Response("Invalid metadata", { status: 400 });
     }
-
+    console.log("webhook received");
     await db.user.update({
       where: { externalId: userId },
       data: { plan: "PRO" },
     });
+    console.log("webhook processed");
   }
   console.log("webhook processed");
   return new Response("OK");
