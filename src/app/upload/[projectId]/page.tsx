@@ -1,12 +1,12 @@
-"use client";
 import { UploadFileForm } from "./upload-file-form";
 import { MainContentRow } from "@/components/main-content-row";
 import { PageHeader } from "@/components/page-header";
+import { PageFrame } from "@/components/pageframe";
 
-import { Navbar } from "@/components/navbars/navbar";
+import { NavSideBar } from "@/components/navbars/nav-side-bar";
 
-export default function UploadPage({ params }: { params: { projectId: string } }) {
-  const currentProjectId = params.projectId;
+export default async function UploadPage({ params }: { params: Promise<{ projectId: string }> }) {
+  const currentProjectId = (await params).projectId;
   const navItems = [
     {
       label: "Go Back",
@@ -15,20 +15,24 @@ export default function UploadPage({ params }: { params: { projectId: string } }
     },
   ];
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
-      <Navbar navItems={navItems} />
-      <div className="flex flex-row flex-auto">
+    <div className="flex w-full flex-col bg-muted/40">
+      <PageFrame page="home" navItems={navItems}>
         <div className="flex flex-row flex-auto">
+          <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
+            <NavSideBar page="home" />
+          </div>
           <div className="flex flex-col flex-auto">
-            <PageHeader title="Upload a Document" />
+            <PageHeader title="Upload File" />
             <MainContentRow>
-              <div className="flex flex-col items-center w-full">
+              <div className="flex justify-center w-full pt-24 min-h-full">
                 <UploadFileForm currentProjectId={currentProjectId} />
               </div>
             </MainContentRow>
           </div>
         </div>
-      </div>
+      </PageFrame>
     </div>
   );
 }
+
+

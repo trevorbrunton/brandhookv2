@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
+import { ProjectDocument } from "@/lib/project-types";
+
 import {
   Popover,
   PopoverContent,
@@ -19,7 +21,7 @@ import { nanoid } from "@/lib/utils";
 
 import { getSignedURL } from "@/app/actions/upload-helper";
 import { useRouter } from "next/navigation";
-import { ProjectDocument } from "@/lib/project-types";
+
 import { saveDocToDb } from "@/app/actions/save-doc-to-db";
 
 export function UploadFileForm({
@@ -95,20 +97,10 @@ export function UploadFileForm({
         const result = await handleFileUpload(file);
         console.log("File uploaded successfully");
         
-        const parsedResponse = await fetch("/api/parse-data", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/pdf",
-          },
-          body: file,
-        });
-        const response = await parsedResponse.json();
-
-      const newDocument: ProjectDocument = {
+        const newDocument: ProjectDocument = {
         documentId: nanoid(),
         title: documentTitle,
-        content: response.parsedText,
-        fileUrl: `https://going-circular.s3.ap-southeast-2.amazonaws.com/${result.uploadedFileName}`,
+        fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result.uploadedFileName}`,
         docType: "upload",
         projectId: currentProjectId,
         createDate: new Date().toLocaleDateString("eu-AU"),
@@ -117,6 +109,7 @@ export function UploadFileForm({
       try {
         await saveDocToDb(newDocument, currentProjectId);
       } catch (error) {
+        console.error(error);
         toast({
           title: "Database Error",
           description:
@@ -137,7 +130,7 @@ export function UploadFileForm({
         title: "Upload Successful",
         description: "Your document has beed saved",
       });
-      router.push(`/project-view/${currentProjectId}`);
+      router.push("/home");
     }
   };
   const onDrop = (acceptedFiles: File[]) => {
@@ -172,7 +165,7 @@ export function UploadFileForm({
 
   return (
     <>
-      <Card className="w-[800px] mt-8">
+      <Card className="w-full mt-8 border-none">
         <CardHeader>
           <h2 className="text-2xl font-semibold">Upload Document</h2>
         </CardHeader>
@@ -221,7 +214,7 @@ export function UploadFileForm({
                   </Popover>
                 </div>
               </div>
-              <div className="flex flex-col items-center gap-2 w-full border rounded">
+              <div className="flex flex-col items-center gap-2 w-full">
                 {previewUrl && file && (
                   <div className="mt-4">
                     {file.type.startsWith("image/") ? (
@@ -297,3 +290,5 @@ export function UploadFileForm({
     </>
   );
 }
+
+

@@ -42,13 +42,16 @@ const menuItems: SidebarCategory[] = [
   {
     category: "Settings",
     items: [
-
       {
         href: "/account-settings",
         icon: Settings,
         text: "Account Settings",
       },
     ],
+  },
+  {
+    category: "Account",
+    items: [{ href: "/upload/123", icon: Gem, text: "Upload" }],
   },
 ];
 

@@ -31,69 +31,41 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  EventCategories EventCategory[]
-  events          Event[]
-  Quota           Quota[]
+
 
   @@index([email, apiKey])
-  @@map("user")
+  @@map("users")
 }
 
-model EventCategory {
-  id    String  @id @default(cuid()) @map("_id")
-  name  String
-  color Int
-  emoji String?
+model Project {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  projectId        String            @unique
+  userEmail        String
+  projectName      String
+  projectDetails   String
+  projectDocuments ProjectDocument[]
+  objectives       String[]
+  rValues          String[]
+  projectStage     Int?
+  createDate       String
+  updateDate       String
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  events    Event[]
-
-  @@unique([name, userId])
-  @@map("event_categories")
+  @@map("projects")
 }
 
-enum DeliveryStatus {
-  PENDING
-  DELIVERED
-  FAILED
+model ProjectDocument {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  documentId String   @unique
+  title      String
+  content    String? // Optional field
+  fileUrl    String? // Optional field
+  docType    String
+  projectId  String
+  createDate String
+  updateDate String
+  Project    Project? @relation(fields: [projectId], references: [projectId])
+
+  @@map("project_documents")
 }
 
-model Event {
-  id               String @id @default(cuid()) @map("_id")
-  formattedMessage String
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
-  name   String
-  fields Json
-
-  deliveryStatus DeliveryStatus @default(PENDING)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  EventCategory   EventCategory? @relation(fields: [eventCategoryId], references: [id])
-  eventCategoryId String?
-
-  @@index([createdAt])
-  @@map("events")
-}
-
-model Quota {
-  id     String @id @default(cuid()) @map("_id")
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
-
-  year  Int
-  month Int
-  count Int @default(0)
-
-  updatedAt DateTime @updatedAt
-
-  @@map("quotas")
-}

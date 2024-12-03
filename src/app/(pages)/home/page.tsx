@@ -6,6 +6,7 @@ import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 
+
 type PageProps = {
   searchParams: Promise<{
     [key: string]: string | string[] | undefined;

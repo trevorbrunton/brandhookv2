@@ -4,7 +4,7 @@ import { Navbar } from "@/components/navbars/navbar"
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <>
-      <Navbar />
+      <Navbar navItems={null} />
       {children}
     </>
   )
