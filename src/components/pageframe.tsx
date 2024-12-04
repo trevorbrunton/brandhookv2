@@ -14,6 +14,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { useRouter } from "next/navigation";
+import { UserButton, SignOutButton } from "@clerk/nextjs";
 
 interface PageFrameProps {
   children: ReactNode;
@@ -62,6 +63,19 @@ export const PageFrame = ({ children, page,navItems }: PageFrameProps) => {
                     </Tooltip>
                   ))}
               </TooltipProvider>
+              <SignOutButton>
+                <Button size="sm" variant="ghost">
+                  Sign out
+                </Button>
+              </SignOutButton>
+              <UserButton
+                showName={false}
+                appearance={{
+                  elements: {
+                    userButtonBox: "flex-row-reverse",
+                  },
+                }}
+              />
               <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetTrigger asChild>
                   <Button size="icon" variant="outline">

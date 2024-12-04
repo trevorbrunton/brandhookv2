@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { MaxWidthWrapper } from "../max-width-wrapper";
-import { SignOutButton } from "@clerk/nextjs";
+// import { SignOutButton } from "@clerk/nextjs";
 import { Button, buttonVariants } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
@@ -12,21 +12,21 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
+import { UserButton, SignOutButton } from "@clerk/nextjs";
 
-export interface NavItem  {
+export interface NavItem {
   label: string;
   href: string;
   tooltip: string;
-};
+}
 
 interface NavbarProps {
   navItems: NavItem[] | null;
 }
 
-export const Navbar = ({navItems}: NavbarProps) => {
+export const Navbar = ({ navItems }: NavbarProps) => {
   const { userId } = useAuth();
   const router = useRouter();
-
 
   return (
     <MaxWidthWrapper>
@@ -41,7 +41,7 @@ export const Navbar = ({navItems}: NavbarProps) => {
             </span>
           </Link>
           <div className="h-full flex items-center space-x-4">
-            <TooltipProvider >
+            <TooltipProvider>
               {navItems &&
                 navItems.map((item) => (
                   <Tooltip key={item.label}>
@@ -58,17 +58,28 @@ export const Navbar = ({navItems}: NavbarProps) => {
                         {item.label}
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent sideOffset={16}>{item.tooltip} </TooltipContent>
+                    <TooltipContent sideOffset={16}>
+                      {item.tooltip}{" "}
+                    </TooltipContent>
                   </Tooltip>
                 ))}
             </TooltipProvider>
+
             {userId ? (
               <>
-                <SignOutButton>
+                 <SignOutButton>
                   <Button size="sm" variant="ghost">
                     Sign out
                   </Button>
-                </SignOutButton>
+                </SignOutButton> 
+                <UserButton
+                  showName={false}
+                  appearance={{
+                    elements: {
+                      userButtonBox: "flex-row-reverse",
+                    },
+                  }}
+                />
               </>
             ) : (
               <>

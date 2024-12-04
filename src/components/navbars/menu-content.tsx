@@ -11,7 +11,7 @@ import {
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { UserButton } from "@clerk/nextjs";
+
 
 interface MenuContentProps {
   onLinkClick: () => void;
@@ -83,15 +83,8 @@ export function MenuContent({onLinkClick, page}: MenuContentProps) {
       initial="hidden"
       animate="visible"
     >
-      <UserButton
-        showName
-        appearance={{
-          elements: {
-            userButtonBox: "flex-row-reverse",
-          },
-        }}
-      />
-      <span> {`on page ${page}`}</span>
+
+
       {menuItems.map(({ category, items }) => (
         <motion.div key={category} variants={itemVariants} className="mb-4">
           <p className="text-xs font-medium leading-6 text-zinc-500">
