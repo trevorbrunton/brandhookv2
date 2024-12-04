@@ -1,25 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Home,
-  Gem,  
-
-  Settings,
-  LucideIcon,
-} from "lucide-react";
+import { Home, Gem, Settings, LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
 
 interface MenuContentProps {
   onLinkClick: () => void;
   page: string;
 }
 
-
-  interface SidebarItem {
+interface SidebarItem {
   href: string;
   icon: LucideIcon;
   text: string;
@@ -73,9 +65,8 @@ const itemVariants = {
   },
 };
 
-
-
-export function MenuContent({onLinkClick, page}: MenuContentProps) {
+export function MenuContent({ onLinkClick, page }: MenuContentProps) {
+  console.log("PAGE:", page);
   return (
     <motion.nav
       className="flex flex-col items-start gap-4 px-2 py-5 w-full"
@@ -83,8 +74,6 @@ export function MenuContent({onLinkClick, page}: MenuContentProps) {
       initial="hidden"
       animate="visible"
     >
-
-
       {menuItems.map(({ category, items }) => (
         <motion.div key={category} variants={itemVariants} className="mb-4">
           <p className="text-xs font-medium leading-6 text-zinc-500">

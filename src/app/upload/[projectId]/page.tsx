@@ -9,8 +9,8 @@ export default async function UploadPage({ params }: { params: Promise<{ project
   const currentProjectId = (await params).projectId;
   const navItems = [
     {
-      label: "Go Back",
-      href: `/project-view/${currentProjectId}`,
+      label: "Home",
+      href: `/home`,
       tooltip: "Back to Project View",
     },
   ];
@@ -24,7 +24,7 @@ export default async function UploadPage({ params }: { params: Promise<{ project
           <div className="flex flex-col flex-auto">
             <PageHeader title="Upload File" />
             <MainContentRow>
-              <div className="flex justify-center w-full pt-24 min-h-full">
+              <div className="flex justify-center w-full sm:pt-24 pt-8 min-h-full">
                 <UploadFileForm currentProjectId={currentProjectId} />
               </div>
             </MainContentRow>

@@ -165,7 +165,7 @@ export function UploadFileForm({
 
   return (
     <>
-      <Card className="w-full mt-8 border-none">
+      <Card className="w-full border-none">
         <CardHeader>
           <h2 className="text-2xl font-semibold">Upload Document</h2>
         </CardHeader>
