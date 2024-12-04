@@ -1,4 +1,3 @@
-
 import { MainContentRow } from "@/components/main-content-row";
 import { PageHeader } from "@/components/page-header";
 import { PageFrame } from "@/components/pageframe";
@@ -12,37 +11,15 @@ type PageProps = {
   }>;
 };
 
-
-
-
-// import { LoadingSpinner } from "@/components/loading-spinner";
-// import { createUserProfile} from "@/app/actions/create-user-profile";
-
-// const navItems = [
-//   {
-//     label: "New Circular Initiative +",
-//     href: `/project-details/${nanoid()}`,
-//     tooltip: "Create a new circular initiative",
-//   },
-// ];
-
 export default async function SettingsPage({ searchParams }: PageProps) {
+  const auth = await currentUser();
+  const { theParams } = await searchParams;
+  console.log("searchParams", theParams);
+  const navItems = null;
 
-    const auth = await currentUser();
-    const { theParams } = await searchParams;
-    console.log("searchParams", theParams);
-    const navItems = null;
-
-    if (!auth) {
-      redirect("/sign-in");
-    }
-    //check if user has user profile
-    // const userProfile = await createUserProfile();
-    // if (userProfile.success == "newUser") {
-    //   redirect("/settings");  //DEVNOTE - use query params to pass return page
-  
-
-
+  if (!auth) {
+    redirect("/sign-in");
+  }
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
@@ -55,7 +32,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
             <PageHeader title="Account Settings" />
             <MainContentRow>
               <div className="flex justify-center w-full pt-24 min-h-full">
-                main content goes here
+                user setting content goes here
               </div>
             </MainContentRow>
           </div>
@@ -64,4 +41,3 @@ export default async function SettingsPage({ searchParams }: PageProps) {
     </div>
   );
 }
-

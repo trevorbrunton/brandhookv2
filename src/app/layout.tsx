@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Roboto } from "next/font/google";
+import { Toaster } from "@/components/ui/toaster";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -27,7 +28,10 @@ export default function RootLayout({
           className={`${roboto.className} antialiased min-h-[calc(100vh-1px)] flex flex-col  text-brand-950`}
         >
           <main className="relative flex-1 flex flex-col">
-            <Providers>{children}</Providers>
+            <Providers>
+              {children}
+              <Toaster />
+            </Providers>
           </main>
         </body>
       </html>

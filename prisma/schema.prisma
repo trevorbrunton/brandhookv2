@@ -37,35 +37,31 @@ model User {
   @@map("users")
 }
 
-model Project {
+model Collection {
   id               String            @id @default(auto()) @map("_id") @db.ObjectId
-  projectId        String            @unique
+  collectionId        String            @unique
   userEmail        String
-  projectName      String
-  projectDetails   String
-  projectDocuments ProjectDocument[]
-  objectives       String[]
-  rValues          String[]
-  projectStage     Int?
+  collectionName      String
+  collectionDetails   String
+  memories        Memory[]
   createDate       String
   updateDate       String
 
-  @@map("projects")
+  @@map("collections")
 }
 
-model ProjectDocument {
+model Memory {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   documentId String   @unique
   title      String
-  content    String? // Optional field
   fileUrl    String? // Optional field
   docType    String
-  projectId  String
+  collectionId  String 
   createDate String
   updateDate String
-  Project    Project? @relation(fields: [projectId], references: [projectId])
+  Collection   Collection? @relation(fields: [collectionId], references: [collectionId])
 
-  @@map("project_documents")
+  @@map("memories")
 }
 
 

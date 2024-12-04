@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
-import { ProjectDocument } from "@/lib/project-types";
+import { Memory } from "@/lib/collection-types";
 
 import {
   Popover,
@@ -96,27 +96,26 @@ export function UploadFileForm({
       if (file) {
         const result = await handleFileUpload(file);
         console.log("File uploaded successfully");
-        
-        const newDocument: ProjectDocument = {
-        documentId: nanoid(),
-        title: documentTitle,
-        fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result.uploadedFileName}`,
-        docType: "upload",
-        projectId: currentProjectId,
-        createDate: new Date().toLocaleDateString("eu-AU"),
-        updateDate: new Date().toLocaleDateString("eu-AU"),
-      };
-      try {
-        await saveDocToDb(newDocument, currentProjectId);
-      } catch (error) {
-        console.error(error);
-        toast({
-          title: "Database Error",
-          description:
-            "Your document was uploaded but not saved to your project.",
-        });
-      }
 
+        const newDocument: Memory = {
+          documentId: nanoid(),
+          title: documentTitle,
+          fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result.uploadedFileName}`,
+          docType: "goober",
+          collectionId: "recent",
+          createDate: new Date().toLocaleDateString("eu-AU"),
+          updateDate: new Date().toLocaleDateString("eu-AU"),
+        };
+        try {
+          await saveDocToDb(newDocument, currentProjectId);
+        } catch (error) {
+          console.error(error);
+          toast({
+            title: "Database Error",
+            description:
+              "Your document was uploaded but not saved to your project.",
+          });
+        }
       }
     } catch (error) {
       console.error(error);
@@ -125,7 +124,6 @@ export function UploadFileForm({
         description: "Something bad happened and your file didn't upload.",
       });
     } finally {
-
       toast({
         title: "Upload Successful",
         description: "Your document has beed saved",
@@ -183,7 +181,7 @@ export function UploadFileForm({
                 </div>
                 <div className="flex flex-col justify start items-start gap-x-2">
                   <span className="text-slate-900 text-sm">Document Date</span>
-                 
+
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -290,5 +288,3 @@ export function UploadFileForm({
     </>
   );
 }
-
-

@@ -1,21 +1,21 @@
 "use server";
 import { db } from "@/db";
-import { ProjectDocument } from "@/lib/project-types";
-import { revalidatePath } from "next/cache";
+import { Memory } from "@/lib/collection-types";
 
-export async function saveDocToDb(doc: ProjectDocument, projectId: string) {
+
+export async function saveDocToDb(doc: Memory, projectId: string) {
+  console.log("Saving doc to db", doc, projectId);
   try {
     if (!db) {
       throw new Error("Database not available");
     } else {
-      await db.projectDocument.upsert({
+      await db.memory.upsert({
         where: { documentId: doc.documentId },
         update: {
           ...doc,
         },
         create: { ...doc },
       });
-      revalidatePath(`/project-view/${projectId}`);
       return { success: "Document Saved" };
     }
   } catch (e) {

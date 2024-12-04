@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Gem, Settings, LucideIcon } from "lucide-react";
+import { Home, Gem, Settings, Folders, Upload, LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -24,8 +24,12 @@ interface SidebarCategory {
 
 const menuItems: SidebarCategory[] = [
   {
-    category: "Overview",
-    items: [{ href: "/home", icon: Home, text: "Home" }],
+    category: "Navigation",
+    items: [
+      { href: "/home", icon: Home, text: "Home" },
+      { href: "/upload/recent", icon: Upload, text: "Upload" },
+      { href: "/collection/recent", icon: Folders, text: "Collections" },
+    ],
   },
   {
     category: "Account",
@@ -40,10 +44,6 @@ const menuItems: SidebarCategory[] = [
         text: "Account Settings",
       },
     ],
-  },
-  {
-    category: "Account",
-    items: [{ href: "/upload/123", icon: Gem, text: "Upload" }],
   },
 ];
 

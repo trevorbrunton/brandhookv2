@@ -14,17 +14,18 @@ export default async function UploadPage({ params }: { params: Promise<{ project
       tooltip: "Back to Project View",
     },
   ];
+
   return (
     <div className="flex w-full flex-col bg-muted/40">
-      <PageFrame page="home" navItems={navItems}>
+      <PageFrame page="upload" navItems={navItems}>
         <div className="flex flex-row flex-auto">
           <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
-            <NavSideBar page="home" />
+            <NavSideBar page="upload" />
           </div>
           <div className="flex flex-col flex-auto">
             <PageHeader title="Upload File" />
             <MainContentRow>
-              <div className="flex justify-center w-full sm:pt-24 pt-8 min-h-full">
+              <div className="flex justify-center w-full  pt-8 min-h-full">
                 <UploadFileForm currentProjectId={currentProjectId} />
               </div>
             </MainContentRow>

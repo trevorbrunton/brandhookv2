@@ -6,28 +6,9 @@ import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 
-
-type PageProps = {
-  searchParams: Promise<{
-    [key: string]: string | string[] | undefined;
-  }>;
-};
-
-// import { LoadingSpinner } from "@/components/loading-spinner";
-// import { createUserProfile} from "@/app/actions/create-user-profile";
-
-// const navItems = [
-//   {
-//     label: "New Circular Initiative +",
-//     href: `/project-details/${nanoid()}`,
-//     tooltip: "Create a new circular initiative",
-//   },
-// ];
-
-export default async function Dashboard({ searchParams }: PageProps) {
+export default async function Home() {
   const auth = await currentUser();
-  const { theParams } = await searchParams;
-  console.log("searchParams", theParams);
+
   const navItems = null;
 
   if (!auth) {
@@ -37,7 +18,6 @@ export default async function Dashboard({ searchParams }: PageProps) {
   const user = await db.user.findUnique({
     where: { externalId: auth.id },
   });
-  console.log("USER IN DB:", user);
 
   if (!user) {
     return redirect("/welcome");
@@ -52,11 +32,7 @@ export default async function Dashboard({ searchParams }: PageProps) {
           </div>
           <div className="flex flex-col flex-auto">
             <PageHeader title="Home" />
-            <MainContentRow>
-              <div className="flex justify-center w-full pt-24 min-h-full">
-                main content goes here
-              </div>
-            </MainContentRow>
+            <MainContentRow>home page content goes here</MainContentRow>
           </div>
         </div>
       </PageFrame>
