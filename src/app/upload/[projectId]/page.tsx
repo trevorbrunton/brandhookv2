@@ -2,18 +2,25 @@ import { UploadFileForm } from "./upload-file-form";
 import { MainContentRow } from "@/components/main-content-row";
 import { PageHeader } from "@/components/page-header";
 import { PageFrame } from "@/components/pageframe";
+import { currentUser } from "@clerk/nextjs/server";
+import {db} from "@/db";
 
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
+import { redirect } from "next/navigation";
 
 export default async function UploadPage({ params }: { params: Promise<{ projectId: string }> }) {
   const currentProjectId = (await params).projectId;
-  const navItems = [
-    {
-      label: "Home",
-      href: `/home`,
-      tooltip: "Back to Project View",
-    },
-  ];
+  const auth = await currentUser();
+
+  const navItems = null;
+
+  if (!auth) {
+    redirect("/sign-in");
+  }
+  //check if user has user profile
+  const user = await db.user.findUnique({
+    where: { externalId: auth.id },
+  });
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
@@ -26,7 +33,7 @@ export default async function UploadPage({ params }: { params: Promise<{ project
             <PageHeader title="Upload File" />
             <MainContentRow>
               <div className="flex justify-center w-full  pt-8 min-h-full">
-                <UploadFileForm currentProjectId={currentProjectId} />
+                <UploadFileForm currentProjectId={currentProjectId} userId={user!.id} />
               </div>
             </MainContentRow>
           </div>

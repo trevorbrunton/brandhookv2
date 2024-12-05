@@ -25,9 +25,10 @@ import { useRouter } from "next/navigation";
 import { saveDocToDb } from "@/app/actions/save-doc-to-db";
 
 export function UploadFileForm({
-  currentProjectId,
+  currentProjectId, userId
 }: {
-  currentProjectId: string;
+    currentProjectId: string;
+    userId: string;
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [documentTitle, setDocumentTitle] = useState("");
@@ -100,6 +101,7 @@ export function UploadFileForm({
         const newDocument: Memory = {
           documentId: nanoid(),
           title: documentTitle,
+          userId: userId,
           fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result.uploadedFileName}`,
           docType: "goober",
           collectionId: "recent",

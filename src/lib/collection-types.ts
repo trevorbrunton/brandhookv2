@@ -3,6 +3,7 @@ import { z } from "zod";
 
 const MemorySchema = z.object({
   documentId: z.string(),
+  userId: z.string(),
   title: z.string(),
   content: z.string().optional(),
   fileUrl: z.string().optional(),

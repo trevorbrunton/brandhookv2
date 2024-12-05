@@ -6,7 +6,6 @@ import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 
-
 type PageProps = {
   params: Promise<{
     collectionId: string;
@@ -16,9 +15,13 @@ type PageProps = {
 export default async function Collection({ params }: PageProps) {
   const auth = await currentUser();
   const { collectionId } = await params;
-  console.log("collectionId", collectionId);
+
 
   const navItems = null;
+
+  if (!auth) {
+    redirect("/sign-in");
+  }
 
   if (!auth) {
     redirect("/sign-in");
@@ -31,16 +34,14 @@ export default async function Collection({ params }: PageProps) {
   if (!user) {
     return redirect("/welcome");
   }
-const collection = await db.collection.findFirst({
-  where: { collectionId: collectionId, userEmail: user.email },
-  include: { memories: true },
-});
+  const collection = await db.collection.findFirst({
+    where: { collectionId: collectionId, userId: user.id },
+    include: { memories: true },
+  });
   // const result = await fetchCollectionById(collectionId);
-  if (!collection){
+  if (!collection) {
     return <p> Project fetch failed </p>;
   }
-
-
 
   console.log("COLLECTION:", collection);
   return (
@@ -64,11 +65,17 @@ const collection = await db.collection.findFirst({
                     collection.memories.map((memory) => {
                       return (
                         <div key={memory.documentId}>
-                          <li>{memory.fileUrl}</li>
+                          <li>
+                            <div>
+                              {memory.fileUrl}
+                              {memory.collectionId}
+                            </div>
+                          </li>
                         </div>
                       );
                     })}
                 </div>
+                
               </div>
             </MainContentRow>
           </div>
