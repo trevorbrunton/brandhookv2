@@ -38,12 +38,10 @@ export default async function Collection({ params }: PageProps) {
     where: { collectionId: collectionId, userId: user.id },
     include: { memories: true },
   });
-  // const result = await fetchCollectionById(collectionId);
   if (!collection) {
     return <p> Project fetch failed </p>;
   }
 
-  console.log("COLLECTION:", collection);
   return (
     <div className="flex w-full flex-col bg-muted/40">
       <PageFrame page="collection" navItems={navItems}>
