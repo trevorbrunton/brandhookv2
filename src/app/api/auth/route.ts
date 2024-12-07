@@ -21,11 +21,23 @@ export async function GET() {
     console.log("USER IN DB:", user);
 
     if (!user) {
-      await db.user.create({
+      const newUser = await db.user.create({
         data: {
           quotaLimit: 100,
           externalId: auth.id,
           email: auth.emailAddresses[0].emailAddress,
+        },
+      });
+
+      await db.collection.create({
+        data: {
+          collectionId: "recent",
+          collectionName: "Recent Uploads",
+          collectionDetails: "A collection of your most recent uploads",
+          userId: newUser.id,
+          userEmail: newUser.email,
+          createDate: new Date().toISOString(),
+          updateDate: new Date().toISOString(),
         },
       });
     }

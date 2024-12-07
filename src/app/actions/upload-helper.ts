@@ -41,24 +41,28 @@ export const getSignedURL = async ({
   checksum,
   fileName,
 }: GetSignedURLParams): Promise<SignedURLResponse> => {
-  if (fileSize > maxFileSize) {
-    return { failure: "File size too large" };
+  try {
+    if (fileSize > maxFileSize) {
+      return { failure: "File size exceeds the maximum limit of 10GB" };
+    }
+
+    const fileId = nanoid();
+    const obscuredFileName = generateFileName(fileName);
+    const putObjectCommand = new PutObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME!,
+      Key: obscuredFileName,
+      ContentType: fileType,
+      ContentLength: fileSize,
+      ChecksumSHA256: checksum,
+    });
+
+    const url = await getSignedUrl(s3Client, putObjectCommand, {
+      expiresIn: 60,
+    });
+    return { success: { url, id: fileId, uploadedFileName: obscuredFileName } };
+  } catch (error) {
+    console.error("S3 presigned URL generation failed:", error);
+    return { failure: `S3 error: ${(error as Error).message}` };
   }
-
-  const fileId = nanoid();
-  const obscuredFileName = generateFileName(fileName);
-  const putObjectCommand = new PutObjectCommand({
-    Bucket: process.env.AWS_BUCKET_NAME!,
-    Key: obscuredFileName,
-    ContentType: fileType,
-    ContentLength: fileSize,
-    ChecksumSHA256: checksum,
-  });
-
-  const url = await getSignedUrl(
-    s3Client,
-    putObjectCommand,
-    { expiresIn: 60 } // 60 seconds
-  );
-  return { success: { url, id: fileId, uploadedFileName: obscuredFileName } };
 };
+

@@ -1,3 +1,4 @@
+// DEV Note - Review what format of docs should be allowed to be uploaded 
 "use client";
 import Image from "next/image";
 import { useState } from "react";
@@ -42,40 +43,53 @@ export function UploadFileForm({
   const [loading, setLoading] = useState(false);
   const buttonDisabled = loading;
 
-  const computeSHA256 = async (file: File) => {
-    const buffer = await file.arrayBuffer();
-    const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-    return hashHex;
-  };
+const computeSHA256 = async (file: File) => {
+  const hash = await crypto.subtle.digest(
+    "SHA-256",
+    await file.slice(0, 1_048_576).arrayBuffer() // Process the first MB for a quick checksum.
+  );
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+};
 
-  const handleFileUpload = async (file: File) => {
+
+const handleFileUpload = async (file: File) => {
+  try {
     const signedURLResult = await getSignedURL({
       fileSize: file.size,
       fileType: file.type,
       checksum: await computeSHA256(file),
       fileName: file.name,
       documentTitle,
-      documentDate: documentDate.toLocaleString("en-Au"),
+      documentDate: documentDate.toISOString(),
     });
 
-    if (signedURLResult.failure !== undefined) {
+    if (signedURLResult.failure) {
       throw new Error(signedURLResult.failure);
     }
-    const { url, id, uploadedFileName } = signedURLResult.success;
-    const result = await fetch(url, {
+
+    if (!signedURLResult.success) {
+      throw new Error("Failed to get signed URL");
+    }
+    const { url, uploadedFileName } = signedURLResult.success;
+    const uploadResult = await fetch(url, {
       method: "PUT",
-      headers: {
-        "Content-Type": file.type,
-      },
+      headers: { "Content-Type": file.type },
       body: file,
     });
 
-    return { uploadUrl: result.url, id, uploadedFileName };
-  };
+    if (!uploadResult.ok) {
+      throw new Error("Failed to upload file to the server");
+    }
+
+    return uploadedFileName;
+  } catch (error) {
+    console.error("File upload error:", error);
+    throw error; // Propagate the error for higher-level handling.
+  }
+};
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -102,7 +116,7 @@ export function UploadFileForm({
           documentId: nanoid(),
           title: documentTitle,
           userId: userId,
-          fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result.uploadedFileName}`,
+          fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
           docType: "goober",
           collectionId: "recent",
           createDate: new Date().toLocaleDateString("eu-AU"),

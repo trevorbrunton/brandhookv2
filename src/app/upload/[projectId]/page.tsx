@@ -22,6 +22,10 @@ export default async function UploadPage({ params }: { params: Promise<{ project
     where: { externalId: auth.id },
   });
 
+  if (!user) {
+    return redirect("/welcome");
+  }
+
   return (
     <div className="flex w-full flex-col bg-muted/40">
       <PageFrame page="upload" navItems={navItems}>
@@ -33,7 +37,7 @@ export default async function UploadPage({ params }: { params: Promise<{ project
             <PageHeader title="Upload File" />
             <MainContentRow>
               <div className="flex justify-center w-full  pt-8 min-h-full">
-                <UploadFileForm currentProjectId={currentProjectId} userId={user!.id} />
+                <UploadFileForm currentProjectId={currentProjectId} userId={user.id} />
               </div>
             </MainContentRow>
           </div>
