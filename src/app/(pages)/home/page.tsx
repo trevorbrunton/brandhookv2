@@ -6,6 +6,7 @@ import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 
+
 export default async function Home() {
   const auth = await currentUser();
 
@@ -33,6 +34,7 @@ export default async function Home() {
           <div className="flex flex-col flex-auto">
             <PageHeader title="Home" />
             <MainContentRow>home page content goes here</MainContentRow>
+            
           </div>
         </div>
       </PageFrame>

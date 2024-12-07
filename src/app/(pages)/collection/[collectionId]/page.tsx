@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
+import { MemoryIconList } from "@/components/collection-browser";
 
 type PageProps = {
   params: Promise<{
@@ -58,7 +59,7 @@ export default async function Collection({ params }: PageProps) {
                     ? collection.collectionName
                     : "No collection found"}
                 </div>
-                <div>
+                {/* <div>
                   {collection &&
                     collection.memories.map((memory) => {
                       return (
@@ -72,7 +73,8 @@ export default async function Collection({ params }: PageProps) {
                         </div>
                       );
                     })}
-                </div>
+                </div> */}
+                <MemoryIconList memories={collection.memories} />
                 
               </div>
             </MainContentRow>

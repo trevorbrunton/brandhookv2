@@ -14,16 +14,23 @@ const spinnerVariants = cva(
       size: "md",
     },
   }
+  
 )
 
 interface LoadingSpinnerProps extends VariantProps<typeof spinnerVariants> {
   className?: string
+  message?: string
 }
 
-export const LoadingSpinner = ({ size, className }: LoadingSpinnerProps) => {
+export const LoadingSpinner = ({ size, className, message = "Loading..." }: LoadingSpinnerProps) => {
+  if (typeof message !== "string") {
+    console.error("Invalid prop 'message': must be a string.");
+    message = "Loading...";
+  }
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex flex-row justify-center items-center">
       <div className={spinnerVariants({ size, className })} />
+      <p className="ml-2 text-brand-700 font-medium">{message}</p>
     </div>
   )
 }
