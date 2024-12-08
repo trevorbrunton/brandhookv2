@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { addCollectionToUser } from "@/app/actions/add-user-to-collection";
+import { addUserToCollection } from "@/app/actions/add-user-to-collection";
 
 interface CollectionFormProps {
 
@@ -53,7 +53,7 @@ export function AddUserToCollectionForm({
 
   function onSubmit(values: FormValues) {
     console.log("values", values);
-    addCollectionToUser(values.userId, values.collectionId);
+    addUserToCollection(values.userId, values.collectionId);
     setOpen(false);
   }
 
