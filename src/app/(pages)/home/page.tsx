@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
+import {CreateCollectionForm} from "@/components/create-collection-form";
+import { AddUserToCollectionForm } from "@/components/add-user-to-collection-form";
 
 
 export default async function Home() {
@@ -33,7 +35,10 @@ export default async function Home() {
           </div>
           <div className="flex flex-col flex-auto">
             <PageHeader title="Home" />
-            <MainContentRow>home page content goes here</MainContentRow>
+            <MainContentRow>
+              <CreateCollectionForm userId={user.id} userEmail={user.email} collectionId="new" />
+              <AddUserToCollectionForm userId={user.id}  collectionId="new" />
+            </MainContentRow>
             
           </div>
         </div>

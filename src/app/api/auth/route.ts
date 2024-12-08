@@ -23,9 +23,10 @@ export async function GET() {
     if (!user) {
       const newUser = await db.user.create({
         data: {
-          quotaLimit: 100,
           externalId: auth.id,
           email: auth.emailAddresses[0].emailAddress,
+          quotaLimit: 100, 
+          collections: []
         },
       });
 
@@ -36,6 +37,7 @@ export async function GET() {
           collectionDetails: "A collection of your most recent uploads",
           userId: newUser.id,
           userEmail: newUser.email,
+          users: [],
           createDate: new Date().toISOString(),
           updateDate: new Date().toISOString(),
         },

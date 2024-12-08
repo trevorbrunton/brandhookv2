@@ -15,7 +15,8 @@ const MemorySchema = z.object({
 export type Memory = z.infer<typeof MemorySchema>;  
 
 export const CollectionSchema = z.object({
-  projectId: z.string(),
+  collectionId: z.string(),
+  userId: z.string(),
   userEmail: z.string().email(),
   collectionName: z.string(),
   collectionDetails: z.string(),

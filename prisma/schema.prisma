@@ -26,6 +26,7 @@ model User {
   email     String   @unique
   apiKey    String   @unique @default(cuid())
   discordId String?
+  collections String[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -40,6 +41,7 @@ model Collection {
   userEmail         String
   collectionName    String
   collectionDetails String
+  users          String[]
   memories          Memory[]
   createDate        String
   updateDate        String

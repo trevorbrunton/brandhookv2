@@ -8,8 +8,8 @@ import {db} from "@/db";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { redirect } from "next/navigation";
 
-export default async function UploadPage({ params }: { params: Promise<{ projectId: string }> }) {
-  const currentProjectId = (await params).projectId;
+export default async function UploadPage({ params }: { params: Promise<{ collectionId: string }> }) {
+  const {collectionId} = (await params);
   const auth = await currentUser();
 
   const navItems = null;
@@ -37,7 +37,7 @@ export default async function UploadPage({ params }: { params: Promise<{ project
             <PageHeader title="Upload File" />
             <MainContentRow>
               <div className="flex justify-center w-full  pt-8 min-h-full">
-                <UploadFileForm currentProjectId={currentProjectId} userId={user.id} />
+                <UploadFileForm collectionId={collectionId} userId={user.id} />
               </div>
             </MainContentRow>
           </div>

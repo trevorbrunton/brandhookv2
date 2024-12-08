@@ -26,9 +26,9 @@ import { useRouter } from "next/navigation";
 import { saveDocToDb } from "@/app/actions/save-doc-to-db";
 
 export function UploadFileForm({
-  currentProjectId, userId
+  collectionId, userId
 }: {
-    currentProjectId: string;
+    collectionId: string;
     userId: string;
 }) {
   const [file, setFile] = useState<File | null>(null);
@@ -123,7 +123,7 @@ const handleFileUpload = async (file: File) => {
           updateDate: new Date().toLocaleDateString("eu-AU"),
         };
         try {
-          await saveDocToDb(newDocument, currentProjectId);
+          await saveDocToDb(newDocument, collectionId);
         } catch (error) {
           console.error(error);
           toast({
@@ -144,7 +144,7 @@ const handleFileUpload = async (file: File) => {
         title: "Upload Successful",
         description: "Your document has beed saved",
       });
-      router.push("/home");
+      router.push(`/collection/${collectionId}`);
     }
   };
   const onDrop = (acceptedFiles: File[]) => {
@@ -289,7 +289,7 @@ const handleFileUpload = async (file: File) => {
               <Button
                 type="button"
                 variant="destructive"
-                onClick={() => router.push(`/project-view/${currentProjectId}`)}
+                onClick={() => router.push(`/project-view/${collectionId}`)}
               >
                 Cancel
               </Button>

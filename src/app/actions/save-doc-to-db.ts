@@ -14,7 +14,7 @@ export async function saveDocToDb(doc: Memory, collectionId: string) {
       update: { ...doc },
       create: { ...doc },
     });
-    revalidatePath(`/project-view/${collectionId}`);
+    revalidatePath(`/collection/${collectionId}`);
     return { success: "Document saved successfully" };
   } catch (error) {
     console.error("Database operation failed:", error);
