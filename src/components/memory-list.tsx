@@ -47,7 +47,15 @@ export function MemoryList({ memories }: MemoryIconListProps) {
             }`}
             aria-label={memory.title}
           >
-            {getIcon(memory.docType || "file")}
+            {memory.docType === "image" ? (
+              <img
+                src={memory.fileUrl? memory.fileUrl : ""}
+                alt={memory.title}
+                className="w-24 "
+              />
+            ) : (
+              getIcon(memory.docType || "file")
+            )}
             <span className="mt-2 text-sm font-medium text-center line-clamp-2">
               {memory.title}
             </span>

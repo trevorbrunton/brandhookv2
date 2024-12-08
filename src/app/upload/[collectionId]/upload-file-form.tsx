@@ -117,7 +117,7 @@ const handleFileUpload = async (file: File) => {
           title: documentTitle,
           userId: userId,
           fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
-          docType: "goober",
+          docType: "image",
           collectionId: "recent",
           createDate: new Date().toLocaleDateString("eu-AU"),
           updateDate: new Date().toLocaleDateString("eu-AU"),
@@ -169,9 +169,17 @@ const handleFileUpload = async (file: File) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
-      // "application/pdf": [".pdf"],
+      "application/pdf": [".pdf"],
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        [".docx"],
+        [".docx", "doc"],
+      "image/jpeg": [".jpg", ".jpeg"],
+      "image/png": [".png"],
+      "image/gif": [".gif"],
+      "image/bmp": [".bmp"],
+      "image/webp": [".webp"],
+      "application/vnd.ms-powerpoint": [".ppt"],
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+        [".pptx"],
     },
     maxFiles: 1,
     onDrop,
