@@ -22,12 +22,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
+import { useToast } from "@/hooks/use-toast";
+import { nanoid } from "@/lib/utils";
 interface CollectionFormProps {
   userEmail: string;
   userId: string;
-  collectionId: string;
 }
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   collectionName: z.string().min(1, "Collection name is required"),
@@ -39,10 +40,9 @@ type FormValues = z.infer<typeof formSchema>;
 export function CreateCollectionForm({
   userEmail,
   userId,
-  collectionId,
 }: CollectionFormProps) {
   const [open, setOpen] = useState(false);
-
+  const { toast } = useToast();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -50,10 +50,46 @@ export function CreateCollectionForm({
       collectionDetails: "",
     },
   });
+  const router = useRouter();
 
-  function onSubmit(values: FormValues) {
-    console.log(values, userEmail, userId, collectionId);
-    setOpen(false);
+
+  async function onSubmit(values: FormValues) {
+    try {
+      const collectionId = nanoid();
+      console.log("Collection ID:", collectionId);
+      const response = await fetch("/api/create-collection", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...values,
+          userEmail,
+          userId,
+          collectionId: collectionId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create collection");
+      }
+
+      const data = await response.json();
+      console.log("Collection created:", data);
+      toast({
+        title: "Success",
+        description: "Collection created successfully",
+      });
+      setOpen(false);
+      router.push(`/collection/${collectionId}`);
+    } catch (error) {
+      console.error("Error creating collection:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create collection",
+        variant: "destructive",
+      });
+    }
   }
 
   return (

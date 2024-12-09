@@ -5,6 +5,7 @@ import { Home, Gem, Settings, Folders, Upload, LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { CollectionSelectorDialog } from "../collection-selector-dialog";
 
 interface MenuContentProps {
   onLinkClick: () => void;
@@ -28,11 +29,6 @@ const menuItems: SidebarCategory[] = [
     items: [
       { href: "/home", icon: Home, text: "Home" },
       { href: "/upload/recent", icon: Upload, text: "Upload" },
-      {
-        href: "/collection/675632f399c7351c78e976ea",
-        icon: Folders,
-        text: "Collections",
-      },
     ],
   },
   {
@@ -98,6 +94,10 @@ export function MenuContent({ onLinkClick, page }: MenuContentProps) {
                 {item.text}
               </Link>
             ))}
+          </div>
+          <div className="flex space-s-2 items-center">
+            <Folders className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+            <CollectionSelectorDialog />
           </div>
         </motion.div>
       ))}

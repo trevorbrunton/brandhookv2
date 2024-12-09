@@ -36,7 +36,7 @@ export default async function Home() {
           <div className="flex flex-col flex-auto">
             <PageHeader title="Home" />
             <MainContentRow>
-              <CreateCollectionForm userId={user.id} userEmail={user.email} collectionId="new" />
+              <CreateCollectionForm userId={user.id} userEmail={user.email} />
               <AddUserToCollectionForm userId={user.id}  collectionId="new" />
             </MainContentRow>
             

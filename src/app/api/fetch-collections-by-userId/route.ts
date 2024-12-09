@@ -19,7 +19,7 @@ export async function GET() {
 
   const collections = await db.collection.findMany({
     where: { userId: user.id },
-    select: { id: true, collectionName: true },
+    select: { id: true, collectionName: true, collectionId: true },
   })
 
   return NextResponse.json(collections)

@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 type Collection = {
   id: string
   collectionName: string
+  collectionId: string
 }
 
 export function CollectionSelectorDialog() {
@@ -17,10 +18,12 @@ export function CollectionSelectorDialog() {
     const [open, setOpen] = useState(false);
   const router = useRouter()
 
+
+  //DEVNOTE - CONVERT THIS TO USER REACT-QUERY
   useEffect(() => {
     const fetchCollections = async () => {
       try {
-        const response = await fetch('/api/collections')
+        const response = await fetch('/api/fetch-collections-by-userId')
         const data = await response.json()
         setCollections(data)
       } catch (error) {
@@ -37,6 +40,7 @@ export function CollectionSelectorDialog() {
 
   const handleGoToCollection = () => {
     if (selectedCollection) {
+      console.log('Go to collection:', selectedCollection)
       setOpen(false)
       router.push(`/collection/${selectedCollection}`)
     }
@@ -45,7 +49,7 @@ export function CollectionSelectorDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Select Collection</Button>
+        <Button variant="ghost">Go to Collection</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -58,7 +62,7 @@ export function CollectionSelectorDialog() {
             </SelectTrigger>
             <SelectContent>
               {collections.map((collection) => (
-                <SelectItem key={collection.id} value={collection.id}>
+                <SelectItem key={collection.id} value={collection.collectionId}>
                   {collection.collectionName}
                 </SelectItem>
               ))}
