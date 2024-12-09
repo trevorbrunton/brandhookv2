@@ -2,8 +2,10 @@
 
 import { type Memory } from "@prisma/client";
 import { File, Folder, Image, Video, Music, FileText } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { AddMemoryToCollectionDialog } from "./add-memory-to-collection-dialog";
+import {type Collection} from "@prisma/client";
 
 interface MemoryIconListProps {
   memories: Memory[];
@@ -20,11 +22,45 @@ const iconMap = {
 
 export function MemoryList({ memories }: MemoryIconListProps) {
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
+  const [collections, setCollections] = useState<
+    Collection[]
+  >([]);
+  const [selectedMemoryForCollection, setSelectedMemoryForCollection] =
+    useState<Memory | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchCollections = async () => {
+      try {
+        const response = await fetch("/api/fetch-collections-by-userId");
+        const data = await response.json();
+        setCollections(data);
+      } catch (error) {
+        console.error("Failed to fetch collections:", error);
+      }
+    };
+
+    fetchCollections();
+  }, []);
 
   const handleClick = (memory: Memory) => {
     setSelectedMemory(memory);
     console.log("Memory clicked:", memory);
   };
+
+  const handleOpenDialog = (memory: Memory) => {
+    setSelectedMemoryForCollection(memory);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedMemoryForCollection(null);
+  };
+
+
+
+  
 
   const getIcon = (type: string) => {
     const IconComponent = iconMap[type as keyof typeof iconMap] || File;
@@ -49,7 +85,7 @@ export function MemoryList({ memories }: MemoryIconListProps) {
           >
             {memory.docType === "image" ? (
               <img
-                src={memory.fileUrl? memory.fileUrl : ""}
+                src={memory.fileUrl ? memory.fileUrl : ""}
                 alt={memory.title}
                 className="w-24 "
               />
@@ -59,6 +95,15 @@ export function MemoryList({ memories }: MemoryIconListProps) {
             <span className="mt-2 text-sm font-medium text-center line-clamp-2">
               {memory.title}
             </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenDialog(memory);
+              }}
+              className="mt-2 px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded hover:bg-secondary/80"
+            >
+              Add to Collection
+            </button>
           </motion.div>
         ))}
       </div>
@@ -72,6 +117,13 @@ export function MemoryList({ memories }: MemoryIconListProps) {
           <p className="text-muted-foreground">{selectedMemory.fileUrl}</p>
         </motion.div>
       )}
+
+      <AddMemoryToCollectionDialog
+        isOpen={isDialogOpen}
+        onClose={handleCloseDialog}
+        selectedMemoryForCollection={selectedMemoryForCollection}
+        collections={collections}
+      />
     </div>
   );
 }

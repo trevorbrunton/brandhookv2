@@ -7,6 +7,8 @@ import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 import {CreateCollectionForm} from "@/components/create-collection-form";
 import { AddUserToCollectionForm } from "@/components/add-user-to-collection-form";
+import { MemoryList } from "@/components/memory-list";
+import { Heading } from "@/components/heading";
 
 
 export default async function Home() {
@@ -25,6 +27,13 @@ export default async function Home() {
   if (!user) {
     return redirect("/welcome");
   }
+    const collection = await db.collection.findFirst({
+      where: { collectionId: user.defaultCollection, userId: user.id },
+      include: { memories: true },
+    });
+    if (!collection) {
+      return <p> Collection fetch failed </p>;
+    }
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
@@ -37,9 +46,10 @@ export default async function Home() {
             <PageHeader title="Home" />
             <MainContentRow>
               <CreateCollectionForm userId={user.id} userEmail={user.email} />
-              <AddUserToCollectionForm userId={user.id}  collectionId="new" />
+              <AddUserToCollectionForm userId={user.id} collectionId="new" />
+              <Heading className="mx-auto sm:text-lg"> Recent Uploads </Heading>
+              <MemoryList memories={collection.memories} />
             </MainContentRow>
-            
           </div>
         </div>
       </PageFrame>
