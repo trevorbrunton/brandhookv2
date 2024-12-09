@@ -37,7 +37,7 @@ export default async function UploadPage({ params }: { params: Promise<{ collect
             <PageHeader title="Upload File" />
             <MainContentRow>
               <div className="flex justify-center w-full  pt-8 min-h-full">
-                <UploadFileForm collectionId={collectionId} userId={user.id} />
+                <UploadFileForm collectionId={collectionId} userId={user.id} defaultCollection={user.defaultCollection}/>
               </div>
             </MainContentRow>
           </div>

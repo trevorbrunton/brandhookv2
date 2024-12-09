@@ -1,6 +1,7 @@
 import {  NextResponse } from "next/server";
 import { db } from "@/db";
 import { currentUser } from "@clerk/nextjs/server";
+import { nanoid } from "@/lib/utils";
 
 export async function GET() {
   try {
@@ -19,12 +20,14 @@ export async function GET() {
     });
 
     console.log("USER IN DB:", user);
+    const defaultCollection = nanoid()
 
     if (!user) {
       const newUser = await db.user.create({
         data: {
           externalId: auth.id,
           email: auth.emailAddresses[0].emailAddress,
+          defaultCollection: defaultCollection,
           quotaLimit: 100, 
           collections: []
         },
@@ -32,7 +35,7 @@ export async function GET() {
 
       await db.collection.create({
         data: {
-          collectionId: "recent",
+          collectionId: defaultCollection,
           collectionName: "Recent Uploads",
           collectionDetails: "A collection of your most recent uploads",
           userId: newUser.id,

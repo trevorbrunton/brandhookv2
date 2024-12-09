@@ -6,6 +6,7 @@ import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 import { MemoryList } from "@/components/memory-list";
+import { CollectionSelectorDialog } from "@/components/collection-selector-dialog";
 
 type PageProps = {
   params: Promise<{
@@ -16,7 +17,6 @@ type PageProps = {
 export default async function Collection({ params }: PageProps) {
   const auth = await currentUser();
   const { collectionId } = await params;
-
 
   const navItems = null;
 
@@ -36,7 +36,7 @@ export default async function Collection({ params }: PageProps) {
     return redirect("/welcome");
   }
   const collection = await db.collection.findFirst({
-    where: { collectionId: collectionId, userId: user.id },
+    where: { id: collectionId, userId: user.id },
     include: { memories: true },
   });
   if (!collection) {
@@ -53,15 +53,15 @@ export default async function Collection({ params }: PageProps) {
           <div className="flex flex-col flex-auto">
             <PageHeader title={`Collection: ${collection.collectionName}`} />
             <MainContentRow>
-              <div className="flex flex-col justify-center w-full pt-24 min-h-full">
-                <div>
-                  {collection
-                    ? collection.collectionName
-                    : "No collection found"}
-                </div>
-
-                <MemoryList memories={collection.memories} />
+              <div className="flex flex-col items-center justify-center w-full pt-24 min-h-full">
                 
+                <CollectionSelectorDialog />
+                {collection && (
+                  <div className="mt-8">
+
+                    <MemoryList memories={collection.memories} />
+                  </div>
+                )}
               </div>
             </MainContentRow>
           </div>

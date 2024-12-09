@@ -28,7 +28,11 @@ const menuItems: SidebarCategory[] = [
     items: [
       { href: "/home", icon: Home, text: "Home" },
       { href: "/upload/recent", icon: Upload, text: "Upload" },
-      { href: "/collection/recent", icon: Folders, text: "Collections" },
+      {
+        href: "/collection/675632f399c7351c78e976ea",
+        icon: Folders,
+        text: "Collections",
+      },
     ],
   },
   {

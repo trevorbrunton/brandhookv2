@@ -26,10 +26,11 @@ import { useRouter } from "next/navigation";
 import { saveDocToDb } from "@/app/actions/save-doc-to-db";
 
 export function UploadFileForm({
-  collectionId, userId
+  collectionId, userId, defaultCollection
 }: {
     collectionId: string;
     userId: string;
+    defaultCollection: string;
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [documentTitle, setDocumentTitle] = useState("");
@@ -112,13 +113,35 @@ const handleFileUpload = async (file: File) => {
         const result = await handleFileUpload(file);
         console.log("File uploaded successfully");
 
+        // Determine the document type based on the file type
+        let docType: string;
+        const fileType = file.type;
+
+        if (fileType.startsWith("image/")) {
+          docType = "image";
+        } else if (fileType.startsWith("video/")) {
+          docType = "video";
+        } else if (
+          fileType === "application/pdf" ||
+          fileType === "application/msword" ||
+          fileType ===
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+          fileType === "application/vnd.ms-powerpoint" ||
+          fileType ===
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        ) {
+          docType = "document";
+        } else {
+          docType = "document";
+        }
+
         const newDocument: Memory = {
           documentId: nanoid(),
           title: documentTitle,
           userId: userId,
           fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
-          docType: "image",
-          collectionId: "recent",
+          docType: docType,
+          collectionId: defaultCollection,
           createDate: new Date().toLocaleDateString("eu-AU"),
           updateDate: new Date().toLocaleDateString("eu-AU"),
         };
@@ -144,7 +167,7 @@ const handleFileUpload = async (file: File) => {
         title: "Upload Successful",
         description: "Your document has beed saved",
       });
-      router.push(`/collection/${collectionId}`);
+      router.push(`/collection/${defaultCollection}`);
     }
   };
   const onDrop = (acceptedFiles: File[]) => {
@@ -171,7 +194,8 @@ const handleFileUpload = async (file: File) => {
     accept: {
       "application/pdf": [".pdf"],
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        [".docx", "doc"],
+        [".docx"],
+      "application/msword": [".doc"],
       "image/jpeg": [".jpg", ".jpeg"],
       "image/png": [".png"],
       "image/gif": [".gif"],
