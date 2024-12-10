@@ -86,7 +86,7 @@ export function AddMemoryToCollectionDialog({
           </SelectTrigger>
           <SelectContent>
             {collections.map((collection) => (
-              <SelectItem key={collection.id} value={collection.collectionId}>
+              <SelectItem key={collection.id} value={collection.id}>
                 {collection.collectionName}
               </SelectItem>
             ))}

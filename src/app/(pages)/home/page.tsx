@@ -28,7 +28,7 @@ export default async function Home() {
     return redirect("/welcome");
   }
     const collection = await db.collection.findFirst({
-      where: { collectionId: user.defaultCollection, userId: user.id },
+      where: { id: user.defaultCollectionId, userId: user.id },
       include: { memories: true },
     });
     if (!collection) {

@@ -36,7 +36,7 @@ export default async function Collection({ params }: PageProps) {
     return redirect("/welcome");
   }
   const collection = await db.collection.findFirst({
-    where: { collectionId: collectionId, userId: user.id },
+    where: { id: collectionId, userId: user.id },
     include: { memories: true },
   });
   if (!collection) {

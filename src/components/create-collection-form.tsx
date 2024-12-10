@@ -23,7 +23,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { nanoid } from "@/lib/utils";
+  
+
 interface CollectionFormProps {
   userEmail: string;
   userId: string;
@@ -55,8 +56,6 @@ export function CreateCollectionForm({
 
   async function onSubmit(values: FormValues) {
     try {
-      const collectionId = nanoid();
-      console.log("Collection ID:", collectionId);
       const response = await fetch("/api/create-collection", {
         method: "POST",
         headers: {
@@ -66,7 +65,6 @@ export function CreateCollectionForm({
           ...values,
           userEmail,
           userId,
-          collectionId: collectionId,
         }),
       });
 
@@ -81,7 +79,7 @@ export function CreateCollectionForm({
         description: "Collection created successfully",
       });
       setOpen(false);
-      router.push(`/collection/${collectionId}`);
+      router.push(`/collection/${data.id}`);
     } catch (error) {
       console.error("Error creating collection:", error);
       toast({

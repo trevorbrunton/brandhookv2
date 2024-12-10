@@ -26,11 +26,11 @@ import { useRouter } from "next/navigation";
 import { saveDocToDb } from "@/app/actions/save-doc-to-db";
 
 export function UploadFileForm({
-  collectionId, userId, defaultCollection
+  collectionId, userId, defaultCollectionId
 }: {
     collectionId: string;
     userId: string;
-    defaultCollection: string;
+    defaultCollectionId: string;
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [documentTitle, setDocumentTitle] = useState("");
@@ -141,7 +141,7 @@ const handleFileUpload = async (file: File) => {
           userId: userId,
           fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
           docType: docType,
-          collectionId: defaultCollection,
+          collectionId: defaultCollectionId,
           createDate: new Date().toLocaleDateString("eu-AU"),
           updateDate: new Date().toLocaleDateString("eu-AU"),
         };
@@ -167,7 +167,7 @@ const handleFileUpload = async (file: File) => {
         title: "Upload Successful",
         description: "Your document has beed saved",
       });
-      router.push(`/collection/${defaultCollection}`);
+      router.push(`/collection/${defaultCollectionId}`);
     }
   };
   const onDrop = (acceptedFiles: File[]) => {

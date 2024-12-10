@@ -8,7 +8,6 @@ const createCollectionSchema = z.object({
   collectionDetails: z.string(),
   userEmail: z.string().email(),
   userId: z.string(),
-  collectionId: z.string(),
 });
 
 export async function POST(request: Request) {
@@ -21,7 +20,6 @@ export async function POST(request: Request) {
     const newCollection = await db.collection.create({
       data: {
         userId: body.userId,
-        collectionId: body.collectionId,
         userEmail: body.userEmail,
         collectionName: body.collectionName,
         collectionDetails: body.collectionDetails,
