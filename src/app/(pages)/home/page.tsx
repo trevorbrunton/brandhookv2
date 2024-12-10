@@ -54,7 +54,7 @@ export default async function Home() {
               <CreateCollectionForm userId={user.id} userEmail={user.email} />
               <AddUserToCollectionForm userId={user.id} collectionId="new" />
               <Heading className="mx-auto sm:text-lg"> Recent Uploads </Heading>
-              <MemoryList memories={memories} />
+              <MemoryList memories={memories} collectionId={user.defaultCollectionId} />
             </MainContentRow>
           </div>
         </div>

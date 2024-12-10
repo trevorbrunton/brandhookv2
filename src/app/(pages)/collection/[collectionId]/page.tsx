@@ -62,7 +62,7 @@ export default async function Collection({ params }: PageProps) {
                 {collection && (
                   <div className="mt-8">
 
-                    <MemoryList memories={memories} />
+                    <MemoryList memories={memories} collectionId={collectionId} />
                   </div>
                 )}
               </div>
