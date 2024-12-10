@@ -95,12 +95,12 @@ export function MenuContent({ onLinkClick, page }: MenuContentProps) {
               </Link>
             ))}
           </div>
-          <div className="flex space-s-2 items-center">
-            <Folders className="size-4 text-zinc-500 group-hover:text-zinc-700" />
-            <CollectionSelectorDialog />
-          </div>
         </motion.div>
       ))}
+      <div className="flex space-s-2 items-center">
+        <Folders className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+        <CollectionSelectorDialog />
+      </div>
     </motion.nav>
   );
 }

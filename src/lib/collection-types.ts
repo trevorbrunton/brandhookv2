@@ -1,14 +1,13 @@
 import { z } from "zod";
 
 
-const MemorySchema = z.object({
-  documentId: z.string(),
+export const MemorySchema = z.object({
   userId: z.string(),
   title: z.string(),
   content: z.string().optional(),
   fileUrl: z.string().optional(),
   docType: z.string(),
-  collectionId: z.string(),
+  collections: z.array(z.string()),
   createDate: z.string(),
   updateDate: z.string(),
 });
@@ -20,7 +19,7 @@ export const CollectionSchema = z.object({
   userEmail: z.string().email(),
   collectionName: z.string(),
   collectionDetails: z.string(),
-  memories: z.array(MemorySchema),
+  memories: z.array(z.string()),
 
   createDate: z.string(),
   updateDate: z.string(),

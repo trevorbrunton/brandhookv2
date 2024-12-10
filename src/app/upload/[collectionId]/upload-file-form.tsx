@@ -18,7 +18,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { nanoid } from "@/lib/utils";
 
 import { getSignedURL } from "@/app/actions/upload-helper";
 import { useRouter } from "next/navigation";
@@ -136,17 +135,16 @@ const handleFileUpload = async (file: File) => {
         }
 
         const newDocument: Memory = {
-          documentId: nanoid(),
           title: documentTitle,
           userId: userId,
           fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
           docType: docType,
-          collectionId: defaultCollectionId,
+          collections: [defaultCollectionId],
           createDate: new Date().toLocaleDateString("eu-AU"),
           updateDate: new Date().toLocaleDateString("eu-AU"),
         };
         try {
-          await saveDocToDb(newDocument, collectionId);
+          await saveDocToDb(newDocument, defaultCollectionId);
         } catch (error) {
           console.error(error);
           toast({

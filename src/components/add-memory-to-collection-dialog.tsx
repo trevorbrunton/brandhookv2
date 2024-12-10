@@ -1,4 +1,9 @@
-import { useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
+import { addMemoryToCollection } from "@/app/actions/add-memory-to-collection";
+import { useToast } from "@/hooks/use-toast";
+import { type Collection } from "@prisma/client";
+import { type Memory } from "@prisma/client";
 import {
   Dialog,
   DialogContent,
@@ -14,53 +19,58 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { Memory } from "@prisma/client";
-import {type Collection } from "@prisma/client";
-
-
-
+import { useRouter } from "next/navigation";
 
 interface AddMemoryToCollectionDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  collections: Collection[];
   selectedMemoryForCollection: Memory | null;
 }
 
 export function AddMemoryToCollectionDialog({
   isOpen,
   onClose,
-  collections,
   selectedMemoryForCollection,
 }: AddMemoryToCollectionDialogProps) {
   const [selectedCollection, setSelectedCollection] = useState("");
+  const [collections, setCollections] = useState<Collection[]>([]);
   const { toast } = useToast();
-  console.log("collections", collections);
+const router = useRouter();
+
+
+  //DEV NOTE - CHANGE THIS TO USE REACT-QUERY
+  useEffect(() => {
+    const fetchCollections = async () => {
+      try {
+        const response = await fetch("/api/fetch-collections-by-userId");
+        const data = await response.json();
+        setCollections(data);
+      } catch (error) {
+        console.error("Failed to fetch collections:", error);
+      }
+    };
+
+    fetchCollections();
+  }, []);
 
   const handleSelect = async () => {
     console.log("Selected Collection:", selectedCollection);
     console.log("Selected Memory:", selectedMemoryForCollection);
     try {
-      const response = await fetch("/api/add-memory-to-collection", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          memoryId: selectedMemoryForCollection?.id || "",
-          collectionId: selectedCollection,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to add memory to collection");
+      if (selectedMemoryForCollection) {
+        await addMemoryToCollection(
+          selectedMemoryForCollection.id,
+          selectedCollection
+        );
+        toast({
+          title: "Success",
+          description: "Memory added to collection successfully",
+        });
+        router.push(`/collection/${selectedCollection}`);
+        onClose();
+      } else {
+        throw new Error("No memory selected");
       }
-      toast({
-        title: "Success",
-        description: "Memory added to collection successfully",
-      });
-      onClose();
     } catch (error) {
       console.error("Error adding memory to collection:", error);
       toast({

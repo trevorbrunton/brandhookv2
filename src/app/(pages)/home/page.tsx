@@ -29,11 +29,17 @@ export default async function Home() {
   }
     const collection = await db.collection.findFirst({
       where: { id: user.defaultCollectionId, userId: user.id },
-      include: { memories: true },
+     
     });
     if (!collection) {
       return <p> Collection fetch failed </p>;
     }
+  
+  //fetch the memories in the collection.memory array from the memory table
+    const memories = await db.memory.findMany({
+      where: { id: { in: collection.memories } },
+    });    
+
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
@@ -48,7 +54,7 @@ export default async function Home() {
               <CreateCollectionForm userId={user.id} userEmail={user.email} />
               <AddUserToCollectionForm userId={user.id} collectionId="new" />
               <Heading className="mx-auto sm:text-lg"> Recent Uploads </Heading>
-              <MemoryList memories={collection.memories} />
+              <MemoryList memories={memories} />
             </MainContentRow>
           </div>
         </div>

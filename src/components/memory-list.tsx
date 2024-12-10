@@ -2,10 +2,9 @@
 
 import { type Memory } from "@prisma/client";
 import { File, Folder, Image, Video, Music, FileText } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { AddMemoryToCollectionDialog } from "./add-memory-to-collection-dialog";
-import {type Collection} from "@prisma/client";
 
 interface MemoryIconListProps {
   memories: Memory[];
@@ -22,26 +21,9 @@ const iconMap = {
 
 export function MemoryList({ memories }: MemoryIconListProps) {
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
-  const [collections, setCollections] = useState<
-    Collection[]
-  >([]);
   const [selectedMemoryForCollection, setSelectedMemoryForCollection] =
     useState<Memory | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  useEffect(() => {
-    const fetchCollections = async () => {
-      try {
-        const response = await fetch("/api/fetch-collections-by-userId");
-        const data = await response.json();
-        setCollections(data);
-      } catch (error) {
-        console.error("Failed to fetch collections:", error);
-      }
-    };
-
-    fetchCollections();
-  }, []);
 
   const handleClick = (memory: Memory) => {
     setSelectedMemory(memory);
@@ -57,10 +39,6 @@ export function MemoryList({ memories }: MemoryIconListProps) {
     setIsDialogOpen(false);
     setSelectedMemoryForCollection(null);
   };
-
-
-
-  
 
   const getIcon = (type: string) => {
     const IconComponent = iconMap[type as keyof typeof iconMap] || File;
@@ -122,7 +100,6 @@ export function MemoryList({ memories }: MemoryIconListProps) {
         isOpen={isDialogOpen}
         onClose={handleCloseDialog}
         selectedMemoryForCollection={selectedMemoryForCollection}
-        collections={collections}
       />
     </div>
   );

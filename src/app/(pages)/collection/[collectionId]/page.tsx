@@ -35,13 +35,17 @@ export default async function Collection({ params }: PageProps) {
   if (!user) {
     return redirect("/welcome");
   }
-  const collection = await db.collection.findFirst({
-    where: { id: collectionId, userId: user.id },
-    include: { memories: true },
-  });
-  if (!collection) {
-    return <p> Project fetch failed </p>;
-  }
+    const collection = await db.collection.findFirst({
+      where: { id: collectionId, userId: user.id },
+    });
+    if (!collection) {
+      return <p> Collection fetch failed </p>;
+    }
+
+    //fetch the memories in the collection.memory array from the memory table
+    const memories = await db.memory.findMany({
+      where: { id: { in: collection.memories } },
+    }); 
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
@@ -58,7 +62,7 @@ export default async function Collection({ params }: PageProps) {
                 {collection && (
                   <div className="mt-8">
 
-                    <MemoryList memories={collection.memories} />
+                    <MemoryList memories={memories} />
                   </div>
                 )}
               </div>

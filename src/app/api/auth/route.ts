@@ -40,6 +40,7 @@ export async function GET() {
           userId: newUser.id,
           userEmail: newUser.email,
           users: [],
+          memories: [],
           createDate: new Date().toISOString(),
           updateDate: new Date().toISOString(),
         },

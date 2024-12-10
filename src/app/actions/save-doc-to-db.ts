@@ -9,11 +9,22 @@ export async function saveDocToDb(doc: Memory, collectionId: string) {
     if (!db) {
       throw new Error("Database connection not available");
     }
-    await db.memory.upsert({
-      where: { documentId: doc.documentId },
-      update: { ...doc },
-      create: { ...doc },
+    const memory = await db.memory.create({
+      data: { ...doc },
     });
+    const collection = await db.collection.findUnique({
+      where: { id: collectionId },
+    });
+    if (collection && !collection.memories.includes(memory.id)) {
+      await db.collection.update({
+        where: { id: collectionId },
+        data: {
+          memories: {
+            set: [...collection.memories, memory.id],
+          },
+        },
+      });
+    }
     revalidatePath(`/collection/${collectionId}`);
     return { success: "Document saved successfully" };
   } catch (error) {

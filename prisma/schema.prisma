@@ -43,7 +43,7 @@ model Collection {
   collectionName    String
   collectionDetails String
   users             String[]
-  memories          Memory[]
+  memories          String[]
   createDate        String
   updateDate        String
 
@@ -53,14 +53,13 @@ model Collection {
 model Memory {
   id           String      @id @default(auto()) @map("_id") @db.ObjectId
   userId       String      @unique
-  documentId   String      @unique
   title        String
   fileUrl      String? // Optional field
   docType      String
-  collectionId String      @db.ObjectId
+  collections String[]      
   createDate   String
   updateDate   String
-  Collection   Collection? @relation(fields: [collectionId], references: [id])
+
 
   @@map("memories")
 }
