@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Home, Gem, Settings, Folders, Upload, LucideIcon } from "lucide-react";
+
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -28,7 +29,7 @@ const menuItems: SidebarCategory[] = [
     category: "Navigation",
     items: [
       { href: "/home", icon: Home, text: "Home" },
-      { href: "/upload/recent", icon: Upload, text: "Upload" },
+      { href: "/upload", icon: Upload, text: "Upload" },
     ],
   },
   {

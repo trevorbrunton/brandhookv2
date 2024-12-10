@@ -325,7 +325,7 @@ const handleFileUpload = async (file: File) => {
               </Button>
 
               <Button type="submit" disabled={buttonDisabled}>
-                upload
+                Upload
               </Button>
             </div>
           </form>

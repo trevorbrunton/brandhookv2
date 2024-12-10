@@ -6,6 +6,10 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { AddMemoryToCollectionDialog } from "./add-memory-to-collection-dialog";
 import { removeMemoryFromCollection } from "@/app/actions/remove-memory-from-collection";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface MemoryIconListProps {
   memories: Memory[];
@@ -86,39 +90,39 @@ export function MemoryList({ memories, collectionId }: MemoryIconListProps) {
             <span className="mt-2 text-sm font-medium text-center line-clamp-2">
               {memory.title}
             </span>
-            {!isLoading && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOpenDialog(memory);
-                }}
-                className="mt-2 px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded hover:bg-secondary/80"
+            <div className="flex flex-col items-start mt-2">
+              {!isLoading && (
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenDialog(memory);
+                  }}
+                  variant="ghost"
+                  size="sm"
+                >
+                  Add to Collection
+                </Button>
+              )}
+              <Button
+                onClick={() => handleRemove(memory.id)}
+                variant="ghost"
+                size="sm"
+                disabled={isLoading === memory.id}
               >
-                Add to Collection
-              </button>
-            )}
-            <button
-              onClick={() => handleRemove(memory.id)}
-              disabled={isLoading === memory.id}
-              className="text-xs text-secondary-foreground"
-            >
-              {isLoading === memory.id
-                ? "Removing..."
-                : "Remove from collection"}
-            </button>
+                {isLoading === memory.id
+                  ? "Removing..."
+                  : "Remove from collection"}
+              </Button>
+              <Link
+                href={`/view-memory/${memory.id}`}
+                className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+              >
+                View Details
+              </Link>
+            </div>
           </motion.div>
         ))}
       </div>
-      {/* {selectedMemory && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-8 p-6 bg-card rounded-lg shadow-lg"
-        >
-          <h2 className="text-2xl font-bold mb-4">{selectedMemory.title}</h2>
-          <p className="text-muted-foreground">{selectedMemory.fileUrl}</p>
-        </motion.div>
-      )} */}
 
       <AddMemoryToCollectionDialog
         isOpen={isDialogOpen}
