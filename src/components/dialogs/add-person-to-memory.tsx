@@ -55,6 +55,7 @@ export function AddPerson({ memoryId }: AddPersonProps) {
     setSubmitted(true);
     const data = form.getValues();
     console.log(data);
+    console.log(memoryId)
     // Simulate adding people to a database or other state
     try {
       setOpen(false);
