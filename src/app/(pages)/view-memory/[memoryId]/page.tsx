@@ -7,6 +7,9 @@ import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 import { AddPerson } from "@/components/dialogs/add-person-to-memory";
 
+import { GoBackButton } from "@/components/go-back-button";
+
+
 
 
 type PageProps = {
@@ -56,16 +59,23 @@ export default async function ViewMemory({ params }: PageProps) {
             <PageHeader title={`Memory Details: ${memory.title}`} />
             <MainContentRow>
               <div className="flex items-start justify-start w-full min-h-full p-6 space-x-6">
-                {memory && (
-                  <div>
-                    <img
-                      src={memory.fileUrl ? memory.fileUrl : ""}
-                      alt={memory.title}
-                      className="w-72"
-                    />
-                  </div>
-                )}
-              <AddPerson memoryId={memoryId} />
+                <div className=" flex flex-col items-center space-y-6">
+                  {memory && (
+                    <div>
+                      <img
+                        src={memory.fileUrl ? memory.fileUrl : ""}
+                        alt={memory.title}
+                        className="w-72"
+                      />
+                    </div>
+                  )}
+                
+                    <GoBackButton />
+                </div>
+                <div className="flex items-center justify-start w-full min-h-full space-x-6">
+                  <AddPerson memoryId={memoryId} />
+                  <span>people details go here</span>
+                </div>
               </div>
             </MainContentRow>
           </div>

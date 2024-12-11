@@ -6,10 +6,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { AddMemoryToCollectionDialog } from "./add-memory-to-collection-dialog";
 import { removeMemoryFromCollection } from "@/app/actions/remove-memory-from-collection";
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
 
 interface MemoryIconListProps {
   memories: Memory[];
@@ -31,10 +30,11 @@ export function MemoryList({ memories, collectionId }: MemoryIconListProps) {
     useState<Memory | null>(null);
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const router = useRouter();
 
   const handleClick = (memory: Memory) => {
     setSelectedMemory(memory);
-    console.log("Memory clicked:", memory);
+    router.push(`/view-memory/${memory.id}`);
   };
 
   const handleOpenDialog = (memory: Memory) => {
@@ -113,12 +113,7 @@ export function MemoryList({ memories, collectionId }: MemoryIconListProps) {
                   ? "Removing..."
                   : "Remove from collection"}
               </Button>
-              <Link
-                href={`/view-memory/${memory.id}`}
-                className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-              >
-                View Details
-              </Link>
+
             </div>
           </motion.div>
         ))}
