@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { MultipleSelector } from "./multiple-selector";
 
 
 const names = ["Trevor Brunton", "Sophie Brunton"];
@@ -155,6 +156,7 @@ export function AddPerson({ memoryId }: AddPersonProps) {
             </div>
           </form>
         </Form>
+        <MultipleSelector />
       </DialogContent>
     </Dialog>
   );
