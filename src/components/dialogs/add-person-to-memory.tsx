@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   Dialog,
   DialogContent,
@@ -9,18 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Form,
-
-  FormLabel,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,52 +26,40 @@ interface AddPersonProps {
   memoryId: string;
 }
 
-
-
-export function AddPerson({ memoryId }: AddPersonProps) { 
+export function AddPerson({ memoryId }: AddPersonProps) {
   const [submitted, setSubmitted] = useState(false);
   const [open, setOpen] = useState(false);
-  const [selectedPeople, setSelectedPeople] = useState<string[]>(
-          []
-        );
+  const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof personSchema>>({
     resolver: zodResolver(personSchema),
-    defaultValues: { people: [{ name: "" }]},
+    defaultValues: { people: [] },
   });
-
 
   const handleSubmit = async () => {
     setSubmitted(true);
     const data = form.getValues();
     console.log(data);
-    console.log(memoryId)
+    console.log(memoryId);
     // Simulate adding people to a database or other state
     try {
-      setOpen(false);
+      // Here you would typically send the data to your backend
+      console.log("Submitting people:", data.people);
       setSubmitted(false);
+      setOpen(false);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const peopleOptions = names.map((name) => ({ label: name, value: name }));
+  const handlePeopleChange = (people: string[]) => {
+    setSelectedPeople(people);
+    form.setValue(
+      "people",
+      people.map((person) => ({ name: person }))
+    );
+  };
 
-
-
-    const handlePersonSelect = (person: string) => {
-      if (!selectedPeople.includes(person)) {
-        const updatedPeople = [...selectedPeople, person];
-        setSelectedPeople(updatedPeople);
-        form.setValue("people", updatedPeople.map((value) => ({ name: value })));
-      }
-    };
-
-    const handleRemovePerson = (rValue: string) => {
-      const updatedRValues = selectedPeople.filter((s) => s !== rValue);
-      setSelectedPeople(updatedRValues);
-      form.setValue("people", updatedRValues.map((value) => ({ name: value })));
-    };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -95,31 +72,12 @@ export function AddPerson({ memoryId }: AddPersonProps) {
           <DialogTitle>Tag People</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6"
-          >
-            <div className="mt-8">
-              <FormLabel>Select people</FormLabel>
-              <Controller
-                name="people"
-                control={form.control}
-                render={() => (
-                  <Select onValueChange={handlePersonSelect}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a person" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {peopleOptions.map((person) => (
-                        <SelectItem key={person.label} value={person.label}>
-                          {person.value}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <MultipleSelector
+              options={names.map((name) => ({ label: name, value: name }))}
+              value={selectedPeople}
+              onChange={handlePeopleChange}
+            />
             <div className="flex flex-wrap gap-2 mt-2">
               {selectedPeople.map((person) => (
                 <div
@@ -129,7 +87,11 @@ export function AddPerson({ memoryId }: AddPersonProps) {
                   {person}
                   <button
                     type="button"
-                    onClick={() => handleRemovePerson(person)}
+                    onClick={() =>
+                      handlePeopleChange(
+                        selectedPeople.filter((p) => p !== person)
+                      )
+                    }
                     className="ml-1 text-Foreground hover:text-blue-900 focus:outline-none"
                   >
                     <X size={14} />
@@ -137,7 +99,6 @@ export function AddPerson({ memoryId }: AddPersonProps) {
                 </div>
               ))}
             </div>
-
             <div className="flex flex-col-reverse md:flex-row justify-end md:space-x-4 space-y-4 md:space-y-0 mt-8">
               <Button
                 type="button"
@@ -156,7 +117,6 @@ export function AddPerson({ memoryId }: AddPersonProps) {
             </div>
           </form>
         </Form>
-        <MultipleSelector />
       </DialogContent>
     </Dialog>
   );

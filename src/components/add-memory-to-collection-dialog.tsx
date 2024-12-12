@@ -82,35 +82,38 @@ const router = useRouter();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add to Collection</DialogTitle>
-        </DialogHeader>
-        <Select
-          onValueChange={setSelectedCollection}
-          value={selectedCollection}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select a collection" />
-          </SelectTrigger>
-          <SelectContent>
-            {collections.map((collection) => (
-              <SelectItem key={collection.id} value={collection.id}>
-                {collection.collectionName}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleSelect} disabled={!selectedCollection}>
-            Add
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <>
+      {!collections ? null : (  
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add to Collection</DialogTitle>
+          </DialogHeader>
+          <Select
+            onValueChange={setSelectedCollection}
+            value={selectedCollection}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a collection" />
+            </SelectTrigger>
+            <SelectContent>
+              {collections.map((collection) => (
+                <SelectItem key={collection.id} value={collection.id}>
+                  {collection.collectionName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <DialogFooter>
+            <Button variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button onClick={handleSelect} disabled={!selectedCollection}>
+              Add
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>)}
+    </>
   );
 }
