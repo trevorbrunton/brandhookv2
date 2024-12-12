@@ -47,33 +47,40 @@ export function CollectionSelectorDialog() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost">Go to Collection</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Choose a Collection</DialogTitle>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <Select onValueChange={handleSelectCollection}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a collection" />
-            </SelectTrigger>
-            <SelectContent>
-              {collections.map((collection) => (
-                <SelectItem key={collection.id} value={collection.id}>
-                  {collection.collectionName}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button onClick={handleGoToCollection} disabled={!selectedCollection}>
-            Go to Collection
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <>
+      {!collections ? null: (
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button variant="ghost">Go to Collection</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Choose a Collection</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <Select onValueChange={handleSelectCollection}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a collection" />
+                </SelectTrigger>
+                <SelectContent>
+                  {collections.map((collection) => (
+                    <SelectItem key={collection.id} value={collection.id}>
+                      {collection.collectionName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={handleGoToCollection}
+                disabled={!selectedCollection}
+              >
+                Go to Collection
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   );
 }
 
