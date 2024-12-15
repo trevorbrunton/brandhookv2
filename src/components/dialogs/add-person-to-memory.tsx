@@ -15,7 +15,7 @@ import { X } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { MultipleSelector } from "./multiple-selector";
-import { addPeopleToMemory } from "@/app/actions/add-people-to-memory";
+// import { addPeopleToMemory } from "@/app/actions/add-people-to-memory";
 
 const names = ["Trevor Brunton", "Sophie Brunton"];
 const personSchema = z.object({
