@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Gem, Settings, Folders, Upload, LucideIcon } from "lucide-react";
+import { Home, Gem, Settings, Folders, Upload, UserSearch, LucideIcon } from "lucide-react";
 
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CollectionSelectorDialog } from "../collection-selector-dialog";
+import { PersonSelectorDialog } from "../person-selector-dialog";
 
 interface MenuContentProps {
   onLinkClick: () => void;
@@ -101,6 +102,10 @@ export function MenuContent({ onLinkClick, page }: MenuContentProps) {
       <div className="flex space-s-2 items-center">
         <Folders className="size-4 text-zinc-500 group-hover:text-zinc-700" />
         <CollectionSelectorDialog />
+      </div>
+      <div className="flex space-s-2 items-center">
+        <UserSearch className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+        <PersonSelectorDialog />
       </div>
     </motion.nav>
   );

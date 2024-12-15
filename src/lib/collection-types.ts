@@ -8,6 +8,9 @@ export const MemorySchema = z.object({
   fileUrl: z.string().optional(),
   docType: z.string(),
   collections: z.array(z.string()),
+  people: z.array(z.string()),
+  event: z.string(),
+  place: z.string(),
   createDate: z.string(),
   updateDate: z.string(),
 });
@@ -20,7 +23,9 @@ export const CollectionSchema = z.object({
   collectionName: z.string(),
   collectionDetails: z.string(),
   memories: z.array(z.string()),
-
+  people: z.array(z.string()),
+  places: z.array(z.string()),
+  events: z.array(z.string()),
   createDate: z.string(),
   updateDate: z.string(),
 });

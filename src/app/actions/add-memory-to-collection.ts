@@ -25,6 +25,7 @@ export async function addMemoryToCollection(
             memories: {
               set: [...collection.memories, memoryId],
             },
+            updateDate: new Date().toISOString(),
           },
         });
       }
@@ -40,6 +41,7 @@ export async function addMemoryToCollection(
             collections: {
               set: [...memory.collections, collectionId],
             },
+            updateDate: new Date().toISOString(),
           },
         });
       }

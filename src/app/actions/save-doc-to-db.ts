@@ -22,6 +22,7 @@ export async function saveDocToDb(doc: Memory, collectionId: string) {
           memories: {
             set: [...collection.memories, memory.id],
           },
+          updateDate: new Date().toISOString(),
         },
       });
     }

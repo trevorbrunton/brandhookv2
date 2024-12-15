@@ -140,6 +140,9 @@ const handleFileUpload = async (file: File) => {
           fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
           docType: docType,
           collections: [defaultCollectionId],
+          people: [],
+          event: "",
+          place: "",
           createDate: new Date().toLocaleDateString("eu-AU"),
           updateDate: new Date().toLocaleDateString("eu-AU"),
         };

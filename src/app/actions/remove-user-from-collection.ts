@@ -25,6 +25,7 @@ export async function removeUserFromCollection(
             collections: {
               set: user.collections.filter((id) => id !== collectionId),
             },
+            updateDate: new Date().toISOString(),
           },
         });
       }
@@ -43,6 +44,7 @@ export async function removeUserFromCollection(
             users: {
               set: collection.users.filter((id) => id !== userId),
             },
+            updateDate: new Date().toISOString(),
           },
         });
       }

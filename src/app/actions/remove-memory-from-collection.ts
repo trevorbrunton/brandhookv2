@@ -24,6 +24,7 @@ export async function removeMemoryFromCollection(
             memories: {
               set: collection.memories.filter((memory) => memory !== memoryId),
             },
+            updateDate: new Date().toISOString(),
           },
         });
       }
@@ -40,8 +41,11 @@ export async function removeMemoryFromCollection(
             where: { id: memoryId },
             data: {
               collections: {
-                set: memory.collections.filter((collection: string) => collection !== collectionId),
+                set: memory.collections.filter(
+                  (collection: string) => collection !== collectionId
+                ),
               },
+              updateDate: new Date().toISOString(),
             },
           });
         }

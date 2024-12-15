@@ -15,11 +15,11 @@ import { X } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { MultipleSelector } from "./multiple-selector";
-
+import { addPeopleToMemory } from "@/app/actions/add-people-to-memory";
 
 const names = ["Trevor Brunton", "Sophie Brunton"];
 const personSchema = z.object({
-  people: z.array(z.object({ name: z.string() })),
+  people: z.array(z.object({ personId: z.string() })),
 });
 
 interface AddPersonProps {
@@ -39,12 +39,14 @@ export function AddPerson({ memoryId }: AddPersonProps) {
   const handleSubmit = async () => {
     setSubmitted(true);
     const data = form.getValues();
-    console.log(data);
-    console.log(memoryId);
-    // Simulate adding people to a database or other state
     try {
-      // Here you would typically send the data to your backend
-      console.log("Submitting people:", data.people);
+      setSubmitted(false);
+      //create an array of personIds
+      const personIds = data.people.map((person) => person.personId);
+      // addPeopleToMemory(memoryId, personIds);
+      console.log("MemoryId", memoryId);
+      console.log("PersonIds", personIds);
+      form.reset();
       setSubmitted(false);
       setOpen(false);
     } catch (error) {
@@ -56,7 +58,7 @@ export function AddPerson({ memoryId }: AddPersonProps) {
     setSelectedPeople(people);
     form.setValue(
       "people",
-      people.map((person) => ({ name: person }))
+      people.map((person) => ({ personId: person }))
     );
   };
 

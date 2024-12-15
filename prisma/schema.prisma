@@ -28,8 +28,8 @@ model User {
   discordId           String?
   collections         String[]
   defaultCollectionId String
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  createDate          DateTime @default(now())
+  updateDate          DateTime @updatedAt
 
   @@index([email, apiKey])
   @@map("users")
@@ -44,6 +44,9 @@ model Collection {
   collectionDetails String
   users             String[]
   memories          String[]
+  events            String[]
+  places            String[]
+  people            String[]
   createDate        String
   updateDate        String
 
@@ -51,15 +54,63 @@ model Collection {
 }
 
 model Memory {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  userId       String      @unique
-  title        String
-  fileUrl      String? // Optional field
-  docType      String
-  collections String[]      
-  createDate   String
-  updateDate   String
-
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @unique
+  title       String
+  fileUrl     String? // Optional field
+  docType     String
+  createDate  String
+  updateDate  String
+  collections String[]
+  //Optional fields
+  people      String[]
+  event       String?
+  place       String?
 
   @@map("memories")
+}
+
+model Person {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String  @unique
+  name        String
+  createDate  String
+  updateDate  String
+  //Optional fields
+  dateOfBirth String?
+  memories    String[]
+  events      String[]
+  places      String[]
+
+  @@map("people")
+}
+
+model Events {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String  @unique
+  name        String
+  createDate  String
+  updateDate  String
+  //Optional fields
+  dateOfEvent String?
+  memories    String[]
+  people      String[]
+  place      String?
+
+  @@map("events")
+}
+
+model Place {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String  @unique
+  name        String
+  createDate  String
+  updateDate  String
+  //Optional fields
+  geolocation String?
+  memories    String[]
+  people      String[]
+  events      String[]
+
+  @@map("places")
 }

@@ -25,6 +25,7 @@ export async function addUserToCollection(
             collections: {
               push: collectionId,
             },
+            updateDate: new Date().toISOString(),
           },
         });
       }
