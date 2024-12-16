@@ -48,6 +48,8 @@ export default async function ViewMemory({ params }: PageProps) {
     return <p> Collection fetch failed </p>;
   }
 
+  //  DEVNOTE ----- NEED TO FETCH MEMORIES, EVENTS, PLACES    NO RETHINK THIS - THESE SHOULDN'T BE APGRADED HERE!!!!
+
   return (
     <div className="flex w-full flex-col bg-muted/40">
       <PageFrame page="memory" navItems={navItems}>

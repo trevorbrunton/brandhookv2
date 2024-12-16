@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
-import { AddPerson } from "@/components/dialogs/add-person-to-memory";
+
+import { MemoryDetailsForm } from "./memory-details-form";
 
 import { GoBackButton } from "@/components/go-back-button";
 
@@ -53,8 +54,8 @@ export default async function ViewMemory({ params }: PageProps) {
           <div className="flex flex-col flex-auto">
             <PageHeader title={`Memory Details: ${memory.title}`} />
             <MainContentRow>
-              <div className="flex items-start justify-start w-full min-h-full p-6 space-x-6">
-                <div className=" flex flex-col items-center space-y-6">
+              <div className="flex flex-col md:flex-row items-start justify-start w-full min-h-full p-4 md:p-6 space-y-6 md:space-y-0 md:space-x-6">
+                <div className="flex flex-col items-center space-y-6 md:w-1/3">
                   {memory && (
                     <div>
                       <img
@@ -67,9 +68,13 @@ export default async function ViewMemory({ params }: PageProps) {
 
                   <GoBackButton />
                 </div>
-                <div className="flex items-center justify-start w-full min-h-full space-x-6">
-                  <AddPerson memoryId={memoryId} />
-                  <span>people details go here</span>
+                <div className="flex flex-col items-center md:items-start justify-start w-full md:w-2/3 space-y-6">
+                  <MemoryDetailsForm
+                    people={[]}
+                    memories={[]}
+                    events={[]}
+                    places={[]}
+                  />
                 </div>
               </div>
             </MainContentRow>
