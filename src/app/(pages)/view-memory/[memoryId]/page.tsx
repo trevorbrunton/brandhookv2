@@ -7,6 +7,7 @@ import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 
 import { MemoryDetailsForm } from "./memory-details-form";
+import { AddPerson } from "@/components/dialogs/add-person-to-memory";
 
 import { GoBackButton } from "@/components/go-back-button";
 
@@ -71,10 +72,10 @@ export default async function ViewMemory({ params }: PageProps) {
                 <div className="flex flex-col items-center md:items-start justify-start w-full md:w-2/3 space-y-6">
                   <MemoryDetailsForm
                     people={[]}
-                    memories={[]}
                     events={[]}
                     places={[]}
                   />
+                  <AddPerson memoryId={memory.id} />
                 </div>
               </div>
             </MainContentRow>

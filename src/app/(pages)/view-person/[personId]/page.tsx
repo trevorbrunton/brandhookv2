@@ -82,9 +82,7 @@ export default async function ViewMemory({ params }: PageProps) {
                       dateOfBirth: person?.dateOfBirth ?? undefined,
                       picUrl: person?.picUrl ?? undefined,
                     }}
-                    memories={[]}
-                    events={[]}
-                    places={[]}
+
                   />
                 </div>
               </div>

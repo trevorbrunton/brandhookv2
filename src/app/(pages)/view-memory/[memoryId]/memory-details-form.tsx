@@ -30,7 +30,6 @@ type MemoryFormData = z.infer<typeof memorySchema>;
 interface PeopleFormProps {
   initialData?: MemoryFormData;
   people: { label: string; value: string }[];
-  memories: { label: string; value: string }[];
   events: { label: string; value: string }[];
   places: { label: string; value: string }[];
 }
@@ -38,7 +37,6 @@ interface PeopleFormProps {
 export function MemoryDetailsForm({
   initialData,
   people,
-  memories,
   events,
   places,
 }: PeopleFormProps) {
@@ -96,31 +94,6 @@ export function MemoryDetailsForm({
                           value={field.value}
                           onChange={field.onChange}
                           type="people"
-                        />
-                      )}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="memories"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Memories</FormLabel>
-                  <FormControl>
-                    <Controller
-                      name="memories"
-                      control={form.control}
-                      render={({ field }) => (
-                        <MultipleSelector
-                          options={memories}
-                          value={field.value}
-                          onChange={field.onChange}
-                          type="memories"
                         />
                       )}
                     />

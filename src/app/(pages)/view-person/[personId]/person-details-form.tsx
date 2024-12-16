@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -15,14 +15,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MultipleSelector } from "@/components/dialogs/generalised-multiple-selector";
+import { updatePersonDetails } from "@/app/actions/update-person-details";
 
 const personSchema = z.object({
+  id: z.string(),
   name: z.string().min(1, "Name is required"),
   dateOfBirth: z.string().optional(),
-  memories: z.array(z.string()),
-  events: z.array(z.string()),
-  places: z.array(z.string()),
   picUrl: z.string().url().optional().or(z.literal("")),
 });
 
@@ -30,27 +28,18 @@ type PersonFormData = z.infer<typeof personSchema>;
 
 interface PeopleFormProps {
   initialData?: PersonFormData;
-  memories: { label: string; value: string }[];
-  events: { label: string; value: string }[];
-  places: { label: string; value: string }[];
 }
 
-export function PersonDetailsForm({
-  initialData,
-  memories,
-  events,
-  places,
-}: PeopleFormProps) {
+export function PersonDetailsForm({ initialData }: PeopleFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  console.log("initialData", initialData);
 
   const form = useForm<PersonFormData>({
     resolver: zodResolver(personSchema),
     defaultValues: initialData || {
       name: "",
       dateOfBirth: "",
-      memories: [],
-      events: [],
-      places: [],
       picUrl: "",
     },
   });
@@ -59,6 +48,7 @@ export function PersonDetailsForm({
     setIsSubmitting(true);
     try {
       console.log("Submitting form data:", data);
+      updatePersonDetails(initialData?.id ?? "",data.name, data.dateOfBirth ?? "", data.picUrl ?? "");
       form.reset(data);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -83,7 +73,7 @@ export function PersonDetailsForm({
             <FormField
               control={form.control}
               name="name"
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
@@ -102,81 +92,6 @@ export function PersonDetailsForm({
                   <FormLabel>Date of Birth</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="memories"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Memories</FormLabel>
-                  <FormControl>
-                    <Controller
-                      name="memories"
-                      control={form.control}
-                      render={({ field }) => (
-                        <MultipleSelector
-                          options={memories}
-                          value={field.value}
-                          onChange={field.onChange}
-                          type="memories"
-                        />
-                      )}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="events"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Events</FormLabel>
-                  <FormControl>
-                    <Controller
-                      name="events"
-                      control={form.control}
-                      render={({ field }) => (
-                        <MultipleSelector
-                          options={events}
-                          value={field.value}
-                          onChange={field.onChange}
-                          type="events"
-                        />
-                      )}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="places"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Places</FormLabel>
-                  <FormControl>
-                    <Controller
-                      name="places"
-                      control={form.control}
-                      render={({ field }) => (
-                        <MultipleSelector
-                          options={places}
-                          value={field.value}
-                          onChange={field.onChange}
-                          type="places"
-                        />
-                      )}
-                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -210,4 +125,3 @@ export function PersonDetailsForm({
     </Card>
   );
 }
-

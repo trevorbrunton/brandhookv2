@@ -117,3 +117,18 @@ model Place {
 
   @@map("places")
 }
+
+model Thing {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String  
+  name        String
+  createDate  String
+  updateDate  String
+  //Optional fields
+  memories    String[]
+  events      String[]
+  places      String[]
+  picUrl      String?
+
+  @@map("things")
+}

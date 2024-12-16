@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { MultipleSelector } from "./multiple-selector";
+import { MultipleSelector } from "./halfway_multiple-selector";
 import { addPeopleToMemory } from "@/app/actions/add-people-to-memory";
 
 const names = ["Trevor Brunton", "Sophie Brunton"];
