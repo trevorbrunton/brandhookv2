@@ -9,9 +9,6 @@ import { AddPerson } from "@/components/dialogs/add-person-to-memory";
 
 import { GoBackButton } from "@/components/go-back-button";
 
-
-
-
 type PageProps = {
   params: Promise<{
     memoryId: string;
@@ -39,14 +36,12 @@ export default async function ViewMemory({ params }: PageProps) {
   if (!user) {
     return redirect("/welcome");
   }
-    const memory = await db.memory.findFirst({
-      where: { id: memoryId },
-    });
-    if (!memory) {
-      return <p> Collection fetch failed </p>;
-    }
-
-
+  const memory = await db.memory.findFirst({
+    where: { id: memoryId },
+  });
+  if (!memory) {
+    return <p> Collection fetch failed </p>;
+  }
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
@@ -69,8 +64,8 @@ export default async function ViewMemory({ params }: PageProps) {
                       />
                     </div>
                   )}
-                
-                    <GoBackButton />
+
+                  <GoBackButton />
                 </div>
                 <div className="flex items-center justify-start w-full min-h-full space-x-6">
                   <AddPerson memoryId={memoryId} />

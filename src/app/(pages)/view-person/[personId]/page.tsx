@@ -6,12 +6,9 @@ import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 import { PeopleDialog } from "@/components/dialogs/create-person-record";
-
+import { PersonDetailsForm } from "./person-details-form";
 
 import { GoBackButton } from "@/components/go-back-button";
-
-
-
 
 type PageProps = {
   params: Promise<{
@@ -24,8 +21,8 @@ export default async function ViewMemory({ params }: PageProps) {
   const { personId } = await params;
 
   if (personId === "new") {
-      return <PeopleDialog />;
-    }
+    return <PeopleDialog />;
+  }
 
   const navItems = null;
 
@@ -44,14 +41,12 @@ export default async function ViewMemory({ params }: PageProps) {
   if (!user) {
     return redirect("/welcome");
   }
-    const person = await db.person.findFirst({
-      where: { id: personId },
-    });
-    if (!person) {
-      return <p> Collection fetch failed </p>;
-    }
-
-
+  const person = await db.person.findFirst({
+    where: { id: personId },
+  });
+  if (!person) {
+    return <p> Collection fetch failed </p>;
+  }
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
@@ -65,26 +60,32 @@ export default async function ViewMemory({ params }: PageProps) {
               title={`Person Details: ${person?.name ?? "New Person"}`}
             />
             <MainContentRow>
-              <div className="flex items-start justify-start w-full min-h-full p-6 space-x-6">
-                <div className=" flex flex-col items-center space-y-6">
+              <div className="flex flex-col md:flex-row items-start justify-start w-full min-h-full p-4 md:p-6 space-y-6 md:space-y-0 md:space-x-6">
+                <div className="flex flex-col items-center space-y-6 md:w-1/3">
                   {person && (
-                    <div>
+                    <div className="w-full flex justify-center">
                       <img
                         src={person.picUrl || "/shadow.jpg"}
                         alt={person.name}
-                        className="w-72"
+                        className="w-48 md:w-72 rounded-lg shadow-md"
                       />
                     </div>
                   )}
-
                   <GoBackButton />
                 </div>
-                <div className="flex items-center justify-start w-full min-h-full space-x-6">
-                  {/* <AddPerson memoryId={memoryId} /> */}
-                  <span>people details go here</span>
+                <div className="flex flex-col items-center md:items-start justify-start w-full md:w-2/3 space-y-6">
+                  <PersonDetailsForm
+                    initialData={{
+                      ...person,
+                      dateOfBirth: person?.dateOfBirth ?? undefined,
+                      picUrl: person?.picUrl ?? undefined,
+                    }}
+                    memories={[]}
+                    events={[]}
+                    places={[]}
+                  />
                 </div>
               </div>
-
             </MainContentRow>
           </div>
         </div>
