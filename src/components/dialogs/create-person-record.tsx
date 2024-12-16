@@ -1,126 +1,94 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-    DialogTitle,
-  DialogTrigger
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import {useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
-import { Trash2Icon } from "lucide-react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { Input } from "../ui/input";
+import { createPerson } from "@/app/actions/create-person";
 
-const names = ["Trevor Brunton", "Sophie Brunton"];
+
 const personSchema = z.object({
-  people: z.array(z.object({ name: z.string() })),
+  name: z.string().min(1, { message: "Name is required" }),
 });
-
-
 
 export function PeopleDialog() {
   const [submitted, setSubmitted] = useState(false);
-      const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof personSchema>>({
     resolver: zodResolver(personSchema),
-    defaultValues: { people: [{ name: "" }] },
-  });
-
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "people",
+    defaultValues: { name: "" },
   });
 
   const handleSubmit = async () => {
     setSubmitted(true);
     const data = form.getValues();
-    console.log(data);
-    // Simulate adding people to a database or other state
     try {
+     const person = await createPerson(data.name);
       setOpen(false);
+      router.push(`/view-person/${person.id}`);
     } catch (error) {
       console.error(error);
     }
   };
-
-  const peopleOptions = names.map((name) => ({ label: name, value: name }));
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost">Add a Person</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md w-full p-6">
         <DialogHeader>
-          <DialogTitle>People</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">Add a New Person</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4"
-          >
-            {fields.map((field, index) => (
-              <div key={field.id} className="flex items-center space-x-2">
-                <FormField
-                  control={form.control}
-                  name={`people.${index}.name`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Select onValueChange={field.onChange}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Name..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {peopleOptions.map((option) => (
-                              <SelectItem
-                                key={option.value}
-                                value={option.value}
-                              >
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button size="sm" type="button" onClick={() => remove(index)}>
-                  <Trash2Icon className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
-            <Button type="button" onClick={() => append({ name: "" })}>
-              Add Person
-            </Button>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 gap-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter the person's name" {...field} className="w-full" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <div className="flex justify-end space-x-2">
-              <Button type="submit" disabled={submitted}>
+              <Button type="submit" disabled={submitted} className="w-full sm:w-auto">
                 Submit
               </Button>
               <Button
                 type="button"
                 variant="destructive"
                 onClick={() => setOpen(false)}
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>

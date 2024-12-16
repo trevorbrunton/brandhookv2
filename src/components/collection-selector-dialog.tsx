@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState} from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
+import { useQuery } from '@tanstack/react-query'
 
 type Collection = {
   id: string
@@ -13,26 +14,24 @@ type Collection = {
 }
 
 export function CollectionSelectorDialog() {
-  const [collections, setCollections] = useState<Collection[]>([])
+
   const [selectedCollection, setSelectedCollection] = useState<string | null>(null)
     const [open, setOpen] = useState(false);
   const router = useRouter()
 
 
-  //DEVNOTE - CONVERT THIS TO USER REACT-QUERY
-  useEffect(() => {
-    const fetchCollections = async () => {
-      try {
-        const response = await fetch('/api/fetch-collections-by-userId')
-        const data = await response.json()
-        setCollections(data)
-      } catch (error) {
-        console.error('Failed to fetch collections:', error)
-      }
-    }
 
-    fetchCollections()
-  }, [])
+
+  const { data: collections } = useQuery<Collection[]>({
+    queryKey: ['collections'],
+    queryFn: async () => {
+      const response = await fetch('/api/fetch-collections-by-userId')
+
+      return response.json()
+    }
+  })
+
+
 
   const handleSelectCollection = (collectionId: string) => {
     setSelectedCollection(collectionId)

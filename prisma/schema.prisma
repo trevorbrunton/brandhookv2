@@ -72,7 +72,7 @@ model Memory {
 
 model Person {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String  @unique
+  userId      String  
   name        String
   createDate  String
   updateDate  String
@@ -81,13 +81,14 @@ model Person {
   memories    String[]
   events      String[]
   places      String[]
+  picUrl      String?
 
   @@map("people")
 }
 
 model Events {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String  @unique
+  userId      String  
   name        String
   createDate  String
   updateDate  String
@@ -96,13 +97,14 @@ model Events {
   memories    String[]
   people      String[]
   place      String?
+  picUrl      String?
 
   @@map("events")
 }
 
 model Place {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String  @unique
+  userId      String  
   name        String
   createDate  String
   updateDate  String
@@ -111,6 +113,7 @@ model Place {
   memories    String[]
   people      String[]
   events      String[]
+  picUrl      String?
 
   @@map("places")
 }

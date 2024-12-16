@@ -5,9 +5,10 @@ import { redirect } from "next/navigation";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
-// import { AddPerson } from "@/components/dialogs/add-person-to-memory";
+import { PeopleDialog } from "@/components/dialogs/create-person-record";
 
-// import { GoBackButton } from "@/components/go-back-button";
+
+import { GoBackButton } from "@/components/go-back-button";
 
 
 
@@ -23,7 +24,7 @@ export default async function ViewMemory({ params }: PageProps) {
   const { personId } = await params;
 
   if (personId === "new") {
-      return <p> Create a new person! </p>;
+      return <PeopleDialog />;
     }
 
   const navItems = null;
@@ -60,29 +61,30 @@ export default async function ViewMemory({ params }: PageProps) {
             <NavSideBar page="memory" />
           </div>
           <div className="flex flex-col flex-auto">
-            <PageHeader title={`Person Details: ${person?.name ??"New Person"}`} />
+            <PageHeader
+              title={`Person Details: ${person?.name ?? "New Person"}`}
+            />
             <MainContentRow>
-              {/*}  <div className="flex items-start justify-start w-full min-h-full p-6 space-x-6">
+              <div className="flex items-start justify-start w-full min-h-full p-6 space-x-6">
                 <div className=" flex flex-col items-center space-y-6">
-                  {memory && (
+                  {person && (
                     <div>
                       <img
-                        src={memory.fileUrl ? memory.fileUrl : ""}
-                        alt={memory.title}
+                        src={person.picUrl || "/shadow.jpg"}
+                        alt={person.name}
                         className="w-72"
                       />
                     </div>
                   )}
-                
-                    <GoBackButton />
+
+                  <GoBackButton />
                 </div>
                 <div className="flex items-center justify-start w-full min-h-full space-x-6">
-                  <AddPerson memoryId={memoryId} />
+                  {/* <AddPerson memoryId={memoryId} /> */}
                   <span>people details go here</span>
                 </div>
-              </div>*/}
-        hello {personId}
-        hello {user?.id ?? "no user"}
+              </div>
+
             </MainContentRow>
           </div>
         </div>
