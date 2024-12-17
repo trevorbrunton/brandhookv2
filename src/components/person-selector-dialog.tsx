@@ -29,7 +29,7 @@ export function PersonSelectorDialog() {
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  console.log("baingan");
+
 
   const { data: people } = useQuery<Person[]>({
     queryKey: ["people"],

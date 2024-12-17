@@ -7,7 +7,7 @@ import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 
 import { MemoryDetailsForm } from "./memory-details-form";
-import { AddPerson } from "@/components/dialogs/add-person-to-memory";
+
 
 import { GoBackButton } from "@/components/go-back-button";
 
@@ -45,6 +45,21 @@ export default async function ViewMemory({ params }: PageProps) {
     return <p> Collection fetch failed </p>;
   }
 
+  const people = await db.person.findMany({
+    where: { userId: user.id },
+  });
+
+  const formattedPeople = people.map(person => ({
+    label: person.name,
+    value: person.name,
+    personId: person.id,
+  }));
+
+  const selectedPeople = memory.people.map((person) => {
+    const foundPerson = formattedPeople.find((p) => p.personId === person);
+    return foundPerson ? foundPerson.value : "";
+  });
+
   return (
     <div className="flex w-full flex-col bg-muted/40">
       <PageFrame page="memory" navItems={navItems}>
@@ -71,11 +86,19 @@ export default async function ViewMemory({ params }: PageProps) {
                 </div>
                 <div className="flex flex-col items-center md:items-start justify-start w-full md:w-2/3 space-y-6">
                   <MemoryDetailsForm
-                    people={[]}
-                    events={[]}
-                    places={[]}
+                    initialData={{
+                      place: memory.place ? memory.place : "",
+                      title: memory.title,
+                      people: selectedPeople,
+                      event: memory.event ? memory.event : "",
+                      id: memory.id,
+                      userId: memory.userId
+                    }}
+                    allPeople={formattedPeople}
+                    allEvents={[]}
+                    allPlaces={[]}
                   />
-                  <AddPerson memoryId={memory.id} />
+
                 </div>
               </div>
             </MainContentRow>

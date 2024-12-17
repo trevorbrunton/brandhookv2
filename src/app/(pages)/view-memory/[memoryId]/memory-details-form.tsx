@@ -15,54 +15,77 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MultipleSelector } from "@/components/dialogs/generalised-multiple-selector";
+// import { MultipleSelector } from "@/components/dialogs/generalised-multiple-selector";
+import { PeopleMultipleSelector } from "@/components/dialogs/people-multiple-selector";
+import { X } from "lucide-react";
+import { updateMemoryDetails } from "@/app/actions/update-memory-details";
+
 
 const memorySchema = z.object({
+  id: z.string(),
   people: z.array(z.string()),
-  memories: z.array(z.string()),
-  events: z.array(z.string()),
-  places: z.array(z.string()),
-  picUrl: z.string().url().optional().or(z.literal("")),
+  event: z.string(),
+  place: z.string(),
+  title: z.string().min(1),
+  userId: z.string(),
 });
 
 type MemoryFormData = z.infer<typeof memorySchema>;
 
-interface PeopleFormProps {
+interface MemoryFormProps {
   initialData?: MemoryFormData;
-  people: { label: string; value: string }[];
-  events: { label: string; value: string }[];
-  places: { label: string; value: string }[];
+  allPeople: { label: string; value: string, personId: string }[];
+  allEvents: { label: string; value: string }[];
+  allPlaces: { label: string; value: string }[];
+
 }
 
 export function MemoryDetailsForm({
   initialData,
-  people,
-  events,
-  places,
-}: PeopleFormProps) {
+  allPeople,
+  allEvents,
+  allPlaces,
+
+}: MemoryFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   const form = useForm<MemoryFormData>({
     resolver: zodResolver(memorySchema),
     defaultValues: initialData || {
       people: [],
-      memories: [],
-      events: [],
-      places: [],
-
+      event: "",
+      place: "",
+      title: "",
     },
   });
+  console.log("Initial data:", initialData);
+  console.log("Form data:", form.getValues());
+  console.log("All people:", allPeople);
+  console.log("All events:", allEvents);
+  console.log("All places:", allPlaces);
+
 
   const handleSubmit = async (data: MemoryFormData) => {
     setIsSubmitting(true);
     try {
       console.log("Submitting form data:", data);
+      //look up personId from person name in allPeople
+      const peopleIds = data.people
+        .map((person) => allPeople.find((p) => p.value === person)?.personId)
+        .filter((id): id is string => id !== undefined);
+
+      await updateMemoryDetails(data.id, peopleIds);
       form.reset(data);
     } catch (error) {
       console.error("Error submitting form:", error);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handlePeopleChange = (people: string[]) => {
+    form.setValue("people", people);
   };
 
   return (
@@ -89,11 +112,10 @@ export function MemoryDetailsForm({
                       name="people"
                       control={form.control}
                       render={({ field }) => (
-                        <MultipleSelector
-                          options={people}
+                        <PeopleMultipleSelector
+                          options={allPeople}
                           value={field.value}
                           onChange={field.onChange}
-                          type="people"
                         />
                       )}
                     />
@@ -102,10 +124,31 @@ export function MemoryDetailsForm({
                 </FormItem>
               )}
             />
-
+            <div className="flex flex-wrap gap-2 mt-2">
+              {form.watch("people").map((person) => (
+                <div
+                  key={person}
+                  className="bg-gray-100 text-sm px-2 py-1 rounded-full flex items-center"
+                >
+                  {person}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handlePeopleChange(
+                        form.watch("people").filter((p) => p !== person)
+                      )
+                    }
+                    className="ml-1 text-Foreground hover:text-blue-900 focus:outline-none"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+{/* 
             <FormField
               control={form.control}
-              name="events"
+              name="event"
               render={() => (
                 <FormItem>
                   <FormLabel>Events</FormLabel>
@@ -126,11 +169,11 @@ export function MemoryDetailsForm({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
-            <FormField
+            {/* <FormField
               control={form.control}
-              name="places"
+              name="place"
               render={() => (
                 <FormItem>
                   <FormLabel>Places</FormLabel>
@@ -151,8 +194,7 @@ export function MemoryDetailsForm({
                   <FormMessage />
                 </FormItem>
               )}
-            />
-
+            /> */}
 
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting
@@ -167,4 +209,3 @@ export function MemoryDetailsForm({
     </Card>
   );
 }
-

@@ -27,7 +27,7 @@ interface MultipleSelectorProps {
   onChange: (value: string[]) => void;
 }
 
-export function MultipleSelector({
+export function PeopleMultipleSelector({
   options,
   value,
   onChange,
