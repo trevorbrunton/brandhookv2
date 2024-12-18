@@ -160,7 +160,7 @@ export function MemoryDetailsForm({
                       control={form.control}
                       render={({ field }) => (
                         <EventComboBox
-                          options={allPeople}
+                          options={allEvents}
                           value={field.value}
                           onChange={field.onChange}
                         />
@@ -184,7 +184,7 @@ export function MemoryDetailsForm({
                       control={form.control}
                       render={({ field }) => (
                         <EventComboBox
-                          options={allPeople}
+                          options={allPlaces}
                           value={field.value}
                           onChange={field.onChange}
                         />

@@ -8,6 +8,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CollectionSelectorDialog } from "../collection-selector-dialog";
 import { PersonSelectorDialog } from "../person-selector-dialog";
+import { PlaceSelectorDialog } from "../place-selector-dialog";
+import { EventSelectorDialog } from "../event-selector-dialog";
 
 interface MenuContentProps {
   onLinkClick: () => void;
@@ -106,6 +108,8 @@ export function MenuContent({ onLinkClick, page }: MenuContentProps) {
       <div className="flex space-s-2 items-center">
         <UserSearch className="size-4 text-zinc-500 group-hover:text-zinc-700" />
         <PersonSelectorDialog />
+        <PlaceSelectorDialog />
+        <EventSelectorDialog />
       </div>
     </motion.nav>
   );
