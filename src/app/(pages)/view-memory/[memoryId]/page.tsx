@@ -44,7 +44,7 @@ export default async function ViewMemory({ params }: PageProps) {
   if (!memory) {
     return <p> Collection fetch failed </p>;
   }
-
+//get allPeople
   const people = await db.person.findMany({
     where: { userId: user.id },
   });
@@ -55,6 +55,30 @@ export default async function ViewMemory({ params }: PageProps) {
     personId: person.id,
   }));
 
+  //get allEvents
+  const events = await db.event.findMany({
+    where: { userId: user.id },
+  });
+
+  const formattedEvents = events.map(event => ({
+    label: event.name,
+    value: event.name,
+    eventId: event.id,
+  }));
+
+  //get allPlaces
+
+  const places = await db.place.findMany({
+    where: { userId: user.id },
+  });
+
+  const formattedPlaces = places.map(place => ({
+    label: place.name,
+    value: place.name,
+    placeId: place.id,
+  }));
+
+  //get names of selected people for display in memory-details-form
   const selectedPeople = memory.people.map((person) => {
     const foundPerson = formattedPeople.find((p) => p.personId === person);
     return foundPerson ? foundPerson.value : "";
@@ -88,6 +112,7 @@ export default async function ViewMemory({ params }: PageProps) {
                   <MemoryDetailsForm
                     initialData={{
                       place: memory.place ? memory.place : "",
+
                       title: memory.title,
                       people: selectedPeople,
                       event: memory.event ? memory.event : "",
@@ -95,8 +120,8 @@ export default async function ViewMemory({ params }: PageProps) {
                       userId: memory.userId
                     }}
                     allPeople={formattedPeople}
-                    allEvents={[]}
-                    allPlaces={[]}
+                    allEvents={formattedEvents}
+                    allPlaces={formattedPlaces}
                   />
 
                 </div>

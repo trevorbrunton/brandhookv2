@@ -86,7 +86,7 @@ model Person {
   @@map("people")
 }
 
-model Events {
+model Event {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   userId      String  
   name        String

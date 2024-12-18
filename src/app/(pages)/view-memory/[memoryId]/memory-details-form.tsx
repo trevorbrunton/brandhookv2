@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PeopleMultipleSelector } from "@/components/dialogs/people-multiple-selector";
 import { X } from "lucide-react";
 import { updateMemoryDetails } from "@/app/actions/update-memory-details";
+import {EventComboBox} from "@/components/dialogs/event-combo-box";
 
 
 const memorySchema = z.object({
@@ -35,8 +36,8 @@ type MemoryFormData = z.infer<typeof memorySchema>;
 interface MemoryFormProps {
   initialData?: MemoryFormData;
   allPeople: { label: string; value: string, personId: string }[];
-  allEvents: { label: string; value: string }[];
-  allPlaces: { label: string; value: string }[];
+  allEvents: { label: string; value: string, eventId:string}[];
+  allPlaces: { label: string; value: string, placeId: string }[];
 
 }
 
@@ -70,7 +71,8 @@ export function MemoryDetailsForm({
     setIsSubmitting(true);
     try {
       console.log("Submitting form data:", data);
-      //look up personId from person name in allPeople
+
+      //look up personId from person name in allPeople for each selected person
       const peopleIds = data.people
         .map((person) => allPeople.find((p) => p.value === person)?.personId)
         .filter((id): id is string => id !== undefined);
@@ -145,23 +147,22 @@ export function MemoryDetailsForm({
                 </div>
               ))}
             </div>
-{/* 
+
             <FormField
               control={form.control}
               name="event"
               render={() => (
                 <FormItem>
-                  <FormLabel>Events</FormLabel>
+                  <FormLabel>Event</FormLabel>
                   <FormControl>
                     <Controller
-                      name="events"
+                      name="event"
                       control={form.control}
                       render={({ field }) => (
-                        <MultipleSelector
-                          options={events}
+                        <EventComboBox
+                          options={allPeople}
                           value={field.value}
                           onChange={field.onChange}
-                          type="events"
                         />
                       )}
                     />
@@ -169,24 +170,23 @@ export function MemoryDetailsForm({
                   <FormMessage />
                 </FormItem>
               )}
-            /> */}
+            />
 
-            {/* <FormField
+            <FormField
               control={form.control}
-              name="place"
+              name="event"
               render={() => (
                 <FormItem>
-                  <FormLabel>Places</FormLabel>
+                  <FormLabel>Place</FormLabel>
                   <FormControl>
                     <Controller
-                      name="places"
+                      name="event"
                       control={form.control}
                       render={({ field }) => (
-                        <MultipleSelector
-                          options={places}
+                        <EventComboBox
+                          options={allPeople}
                           value={field.value}
                           onChange={field.onChange}
-                          type="places"
                         />
                       )}
                     />
@@ -194,11 +194,11 @@ export function MemoryDetailsForm({
                   <FormMessage />
                 </FormItem>
               )}
-            /> */}
+            />
 
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting
-                ? "Submitting..."
+                ? "Updating..."
                 : initialData
                 ? "Update Memory"
                 : "Add Memory"}

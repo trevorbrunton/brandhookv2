@@ -26,7 +26,7 @@ interface MultipleSelectorProps {
   options: Framework[];
   value: string[];
   onChange: (value: string[]) => void;
-  type: "people" | "memories" | "events" | "places";
+  type: "people" | "event" | "places";
 }
 
 export function MultipleSelector({
@@ -81,20 +81,12 @@ export function MultipleSelector({
                 value={newItem}
                 onChange={(e) => setNewItem(e.target.value)}
                 placeholder={`Add new ${
-                  type === "memories"
-                    ? "memory"
-                    : type === "people"
-                    ? "person"
-                    : type.slice(0, -1)
+                 type
                 }`}
               />
               <button onClick={() => handleAddItem(newItem)}>
                 Add{" "}
-                {type === "memories"
-                  ? "memory"
-                  : type === "people"
-                  ? "person"
-                  : type.slice(0, -1)}
+                {type}
               </button>
             </div>
           </CommandEmpty>

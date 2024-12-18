@@ -13,6 +13,7 @@ import {
   CommandList,
   CommandItem,
 } from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -73,14 +74,15 @@ export function PeopleMultipleSelector({
           <CommandInput placeholder="Search people..." />
           <CommandEmpty>
             <div>
-              <input
-                type="text"
-                value={newPerson}
-                onChange={(e) => setNewPerson(e.target.value)}
-                placeholder="Add new person"
+              <Input
+              type="text"
+              value={newPerson}
+              onChange={(e) => setNewPerson(e.target.value)}
+              placeholder="Add a person"
+
               />
               <button onClick={() => handleAddPerson(newPerson)}>
-                Add Person
+              Add Person
               </button>
             </div>
           </CommandEmpty>
