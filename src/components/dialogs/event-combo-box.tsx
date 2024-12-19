@@ -19,6 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
+import {createEvent } from "@/app/actions/create-event";
 
 interface Framework {
   label: string;
@@ -41,11 +42,12 @@ export function EventComboBox({ options, value, onChange }: EventCommandProps) {
     onChange(newValue);
   };
 
-  const handleAddEvent = (event: string) => {
+  const handleAddEvent = async (event: string) => {
     if (event && !localOptions.some((option) => option.value === event)) {
       const newOption = { label: event, value: event };
       setLocalOptions([...localOptions, newOption]);
       onChange(event);
+      await createEvent(event)
       setNewEvent("");
     }
   };
@@ -77,7 +79,7 @@ export function EventComboBox({ options, value, onChange }: EventCommandProps) {
                   placeholder="Add an event"
                 />
                 <button onClick={() => handleAddEvent(newEvent)}>
-                  Add Person
+                  Add Event
                 </button>
               </div>
             </CommandEmpty>

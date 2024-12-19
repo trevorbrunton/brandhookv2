@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 
+import { createPlace } from "@/app/actions/create-place";
+
 interface Framework {
   label: string;
   value: string;
@@ -41,11 +43,12 @@ export function PlaceComboBox({ options, value, onChange }: PlaceCommandProps) {
     onChange(newValue);
   };
 
-  const handleAddplace = (place: string) => {
+  const handleAddplace = async (place: string) => {
     if (place && !localOptions.some((option) => option.value === place)) {
       const newOption = { label: place, value: place };
       setLocalOptions([...localOptions, newOption]);
       onChange(place);
+      await createPlace(place);
       setNewplace("");
     }
   };
@@ -77,7 +80,7 @@ export function PlaceComboBox({ options, value, onChange }: PlaceCommandProps) {
                   placeholder="Add an place"
                 />
                 <button onClick={() => handleAddplace(newplace)}>
-                  Add Person
+                  Add Place
                 </button>
               </div>
             </CommandEmpty>

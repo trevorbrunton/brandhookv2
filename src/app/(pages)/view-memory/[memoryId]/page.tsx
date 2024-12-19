@@ -84,6 +84,10 @@ export default async function ViewMemory({ params }: PageProps) {
     return foundPerson ? foundPerson.value : "";
   });
 
+  //get name of selected event and place for display in memory-details-form
+  const selectedEvent = formattedEvents.find((e) => e.eventId === memory.event);
+  const selectedPlace = formattedPlaces.find((p) => p.placeId === memory.place);
+
   return (
     <div className="flex w-full flex-col bg-muted/40">
       <PageFrame page="memory" navItems={navItems}>
@@ -111,11 +115,11 @@ export default async function ViewMemory({ params }: PageProps) {
                 <div className="flex flex-col items-center md:items-start justify-start w-full md:w-2/3 space-y-6">
                   <MemoryDetailsForm
                     initialData={{
-                      place: memory.place ? memory.place : "",
+                      place: selectedPlace? selectedPlace.value : "",
 
                       title: memory.title,
                       people: selectedPeople,
-                      event: memory.event ? memory.event : "",
+                      event: selectedEvent? selectedEvent.value : "",
                       id: memory.id,
                       userId: memory.userId
                     }}

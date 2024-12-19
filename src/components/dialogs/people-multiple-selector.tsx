@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createPerson } from "@/app/actions/create-person";
 
 interface Framework {
   label: string;
@@ -31,16 +32,17 @@ interface MultipleSelectorProps {
 export function PeopleMultipleSelector({
   options,
   value,
-  onChange,
+  onChange,   
 }: MultipleSelectorProps) {
   const [newPerson, setNewPerson] = useState("");
   const [localOptions, setLocalOptions] = useState(options);
 
-  const handleAddPerson = (person: string) => {
+  const handleAddPerson = async (person: string) => {
     if (person && !localOptions.some((option) => option.value === person)) {
       const newOption = { label: person, value: person };
       setLocalOptions([...localOptions, newOption]);
       onChange([...value, person]);
+      await createPerson(person);
       setNewPerson("");
     }
   };

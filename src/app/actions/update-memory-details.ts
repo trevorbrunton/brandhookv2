@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-export async function updateMemoryDetails(memoryId: string, people: string[]) {
+export async function updateMemoryDetails(memoryId: string, people: string[], event: string, place: string) {
   const auth = await currentUser();
   if (!auth) {
     throw new Error("Not authenticated");
@@ -23,6 +23,8 @@ export async function updateMemoryDetails(memoryId: string, people: string[]) {
     data: {
       people,
       updateDate: new Date().toISOString(),
+      event,
+      place,
     },
   });
   revalidatePath(`/view-memory/${memoryId}`);

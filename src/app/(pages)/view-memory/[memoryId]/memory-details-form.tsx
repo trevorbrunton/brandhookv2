@@ -19,7 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PeopleMultipleSelector } from "@/components/dialogs/people-multiple-selector";
 import { X } from "lucide-react";
 import { updateMemoryDetails } from "@/app/actions/update-memory-details";
-import {EventComboBox} from "@/components/dialogs/event-combo-box";
+import { EventComboBox } from "@/components/dialogs/event-combo-box";
+import { PlaceComboBox } from "@/components/dialogs/place-combo-box";
 
 
 const memorySchema = z.object({
@@ -76,8 +77,15 @@ export function MemoryDetailsForm({
       const peopleIds = data.people
         .map((person) => allPeople.find((p) => p.value === person)?.personId)
         .filter((id): id is string => id !== undefined);
+      
+      //look up eventId from event name in allEvents
+      const eventId = allEvents.find((e) => e.value === data.event)?.eventId;
 
-      await updateMemoryDetails(data.id, peopleIds);
+      //look up placeId from place name in allPlaces
+      const placeId = allPlaces.find((p) => p.value === data.place)?.placeId;
+
+   
+      await updateMemoryDetails(data.id, peopleIds, eventId || "", placeId || "");
       form.reset(data);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -174,16 +182,16 @@ export function MemoryDetailsForm({
 
             <FormField
               control={form.control}
-              name="event"
+              name="place"
               render={() => (
                 <FormItem>
                   <FormLabel>Place</FormLabel>
                   <FormControl>
                     <Controller
-                      name="event"
+                      name="place"
                       control={form.control}
                       render={({ field }) => (
-                        <EventComboBox
+                        <PlaceComboBox
                           options={allPlaces}
                           value={field.value}
                           onChange={field.onChange}
