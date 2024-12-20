@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { createPlace } from "@/app/actions/create-place";
-import { Label } from "@/components/ui/label";
+
 
 interface Framework {
   label: string;
