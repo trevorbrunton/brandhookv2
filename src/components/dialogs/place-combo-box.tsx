@@ -60,12 +60,7 @@ export function PlaceComboBox({ options, value, onChange }: PlaceCommandProps) {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <Label
-        htmlFor="place-select"
-        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-      >
-        Select Place
-      </Label>
+    
       <PopoverTrigger asChild>
         <Button
           variant="outline"

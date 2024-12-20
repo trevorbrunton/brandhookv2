@@ -60,12 +60,7 @@ export function EventComboBox({ options, value, onChange }: EventCommandProps) {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <Label
-        htmlFor="event-select"
-        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-      >
-        Select Event
-      </Label>
+
       <PopoverTrigger asChild>
         <Button
           variant="outline"
