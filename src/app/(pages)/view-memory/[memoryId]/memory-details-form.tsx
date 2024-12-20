@@ -17,7 +17,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 // import { MultipleSelector } from "@/components/dialogs/generalised-multiple-selector";
 import { PeopleMultipleSelector } from "@/components/dialogs/people-multiple-selector";
-import { X } from "lucide-react";
 import { updateMemoryDetails } from "@/app/actions/update-memory-details";
 import { EventComboBox } from "@/components/dialogs/event-combo-box";
 import { PlaceComboBox } from "@/components/dialogs/place-combo-box";
@@ -94,9 +93,7 @@ export function MemoryDetailsForm({
     }
   };
 
-  const handlePeopleChange = (people: string[]) => {
-    form.setValue("people", people);
-  };
+
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -134,27 +131,7 @@ export function MemoryDetailsForm({
                 </FormItem>
               )}
             />
-            <div className="flex flex-wrap gap-2 mt-2">
-              {form.watch("people").map((person) => (
-                <div
-                  key={person}
-                  className="bg-gray-100 text-sm px-2 py-1 rounded-full flex items-center"
-                >
-                  {person}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handlePeopleChange(
-                        form.watch("people").filter((p) => p !== person)
-                      )
-                    }
-                    className="ml-1 text-Foreground hover:text-blue-900 focus:outline-none"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              ))}
-            </div>
+
 
             <FormField
               control={form.control}

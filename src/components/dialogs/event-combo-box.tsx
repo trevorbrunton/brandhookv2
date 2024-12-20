@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-import {createEvent } from "@/app/actions/create-event";
+import { createEvent } from "@/app/actions/create-event";
+import { Label } from "@/components/ui/label";
 
 interface Framework {
   label: string;
@@ -33,13 +34,17 @@ interface EventCommandProps {
 }
 
 export function EventComboBox({ options, value, onChange }: EventCommandProps) {
+  const [open, setOpen] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(value);
   const [newEvent, setNewEvent] = React.useState("");
   const [localOptions, setLocalOptions] = React.useState(options);
 
+  console.log("selected value", selectedValue);
+
   const handleSetValue = (newValue: string) => {
     setSelectedValue(newValue);
     onChange(newValue);
+    setOpen(false);
   };
 
   const handleAddEvent = async (event: string) => {
@@ -47,40 +52,41 @@ export function EventComboBox({ options, value, onChange }: EventCommandProps) {
       const newOption = { label: event, value: event };
       setLocalOptions([...localOptions, newOption]);
       onChange(event);
-      await createEvent(event)
+      await createEvent(event);
       setNewEvent("");
+      setOpen(false);
     }
   };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
+      <Label
+        htmlFor="event-select"
+        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      >
+        Select Event
+      </Label>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
           role="combobox"
-          className="w-full justify-between"
+          aria-expanded={open}
+          className="w-full justify-between mt-1.5"
+          id="event-select"
         >
           {value
             ? localOptions.find((option) => option.value === value)?.label
             : "Select event..."}
-          <ChevronsUpDown className="opacity-50" />
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Search framework..." className="h-9" />
+      <PopoverContent className="w-full p-0">
+        <Command className="w-full">
+          <CommandInput placeholder="Search events..." className="h-9" />
           <CommandList>
             <CommandEmpty>
-              <div>
-                <Input
-                  type="text"
-                  value={newEvent}
-                  onChange={(e) => setNewEvent(e.target.value)}
-                  placeholder="Add an event"
-                />
-                <button onClick={() => handleAddEvent(newEvent)}>
-                  Add Event
-                </button>
+              <div className="p-2 text-sm text-muted-foreground">
+                No events found.
               </div>
             </CommandEmpty>
             <CommandGroup>
@@ -88,16 +94,13 @@ export function EventComboBox({ options, value, onChange }: EventCommandProps) {
                 <CommandItem
                   key={option.value}
                   value={option.value}
-                  onSelect={(currentValue) => {
-                    handleSetValue(
-                      currentValue === selectedValue ? "" : currentValue
-                    );
-                  }}
+                  onSelect={handleSetValue}
+                  className="flex items-center justify-between"
                 >
                   {option.label}
                   <Check
                     className={cn(
-                      "ml-auto",
+                      "ml-auto h-4 w-4",
                       value === option.value ? "opacity-100" : "opacity-0"
                     )}
                   />
@@ -105,6 +108,27 @@ export function EventComboBox({ options, value, onChange }: EventCommandProps) {
               ))}
             </CommandGroup>
           </CommandList>
+          <div className="p-2 border-t">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAddEvent(newEvent);
+              }}
+              className="flex items-center space-x-2"
+            >
+              <Input
+                type="text"
+                value={newEvent}
+                onChange={(e) => setNewEvent(e.target.value)}
+                placeholder="Add new event"
+                className="flex-grow"
+              />
+              <Button type="submit" size="sm" disabled={!newEvent}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add
+              </Button>
+            </form>
+          </div>
         </Command>
       </PopoverContent>
     </Popover>
