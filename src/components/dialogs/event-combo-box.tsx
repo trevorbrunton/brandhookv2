@@ -19,7 +19,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { createEvent } from "@/app/actions/create-event";
 
 interface Framework {
