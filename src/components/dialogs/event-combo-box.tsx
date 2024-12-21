@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
+import { Check, ChevronsUpDown, PlusCircle, X } from 'lucide-react';
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -19,8 +19,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { createEvent } from "@/app/actions/create-event";
-
 
 interface Framework {
   label: string;
@@ -42,8 +42,13 @@ export function EventComboBox({ options, value, onChange }: EventCommandProps) {
   console.log("selected value", selectedValue);
 
   const handleSetValue = (newValue: string) => {
-    setSelectedValue(newValue);
-    onChange(newValue);
+    if (newValue === selectedValue) {
+      setSelectedValue("");
+      onChange("");
+    } else {
+      setSelectedValue(newValue);
+      onChange(newValue);
+    }
     setOpen(false);
   };
 
@@ -58,9 +63,14 @@ export function EventComboBox({ options, value, onChange }: EventCommandProps) {
     }
   };
 
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedValue("");
+    onChange("");
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
-
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -69,9 +79,17 @@ export function EventComboBox({ options, value, onChange }: EventCommandProps) {
           className="w-full justify-between mt-1.5"
           id="event-select"
         >
-          {value
-            ? localOptions.find((option) => option.value === value)?.label
-            : "Select event..."}
+          {value ? (
+             <div className="flex items-center truncate">
+              {localOptions.find((option) => option.value === value)?.label}
+              <X
+                className="ml-1 h-3 w-3 shrink-0 opacity-50 hover:opacity-100"
+                onClick={handleClear}
+              />
+            </div>
+          ) : (
+            "Select event..."
+          )}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -89,7 +107,7 @@ export function EventComboBox({ options, value, onChange }: EventCommandProps) {
                 <CommandItem
                   key={option.value}
                   value={option.value}
-                  onSelect={handleSetValue}
+                  onSelect={() => handleSetValue(option.value)}
                   className="flex items-center justify-between"
                 >
                   {option.label}
@@ -129,3 +147,4 @@ export function EventComboBox({ options, value, onChange }: EventCommandProps) {
     </Popover>
   );
 }
+
