@@ -5,11 +5,11 @@ import { redirect } from "next/navigation";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
-import {CreateCollectionForm} from "@/components/create-collection-form";
+import { CreateCollectionForm } from "@/components/create-collection-form";
 import { AddUserToCollectionForm } from "@/components/add-user-to-collection-form";
-import { MemoryList } from "@/components/memory-list";
+import { StackedMemoryList } from "@/components/stacked-memory-list";
 import { Heading } from "@/components/heading";
-
+import { Kanban } from "@/components/kanban";
 
 export default async function Home() {
   const auth = await currentUser();
@@ -27,19 +27,17 @@ export default async function Home() {
   if (!user) {
     return redirect("/welcome");
   }
-    const collection = await db.collection.findFirst({
-      where: { id: user.defaultCollectionId, userId: user.id },
-     
-    });
-    if (!collection) {
-      return <p> Collection fetch failed </p>;
-    }
-  
-  //fetch the memories in the collection.memory array from the memory table
-    const memories = await db.memory.findMany({
-      where: { id: { in: collection.memories } },
-    });    
+  const collection = await db.collection.findFirst({
+    where: { id: user.defaultCollectionId, userId: user.id },
+  });
+  if (!collection) {
+    return <p> Collection fetch failed </p>;
+  }
 
+  //fetch the memories in the collection.memory array from the memory table
+  const memories = await db.memory.findMany({
+    where: { id: { in: collection.memories } },
+  });
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
@@ -54,10 +52,14 @@ export default async function Home() {
               <CreateCollectionForm userId={user.id} userEmail={user.email} />
               <AddUserToCollectionForm userId={user.id} collectionId="new" />
               <Heading className="mx-auto sm:text-lg"> Recent Uploads </Heading>
-              <MemoryList memories={memories} collectionId={user.defaultCollectionId} />
+              <StackedMemoryList
+                memories={memories}
+                collectionId={user.defaultCollectionId}
+              />
             </MainContentRow>
           </div>
         </div>
+        <Kanban />
       </PageFrame>
     </div>
   );

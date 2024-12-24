@@ -5,8 +5,7 @@ import { redirect } from "next/navigation";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
-import { MemoryList } from "@/components/memory-list";
-
+import { MemoryList } from "@/components/old-memory-list";
 
 type PageProps = {
   params: Promise<{
@@ -35,17 +34,17 @@ export default async function Collection({ params }: PageProps) {
   if (!user) {
     return redirect("/welcome");
   }
-    const collection = await db.collection.findFirst({
-      where: { id: collectionId, userId: user.id },
-    });
-    if (!collection) {
-      return <p> Collection fetch failed </p>;
-    }
+  const collection = await db.collection.findFirst({
+    where: { id: collectionId, userId: user.id },
+  });
+  if (!collection) {
+    return <p> Collection fetch failed </p>;
+  }
 
-    //fetch the memories in the collection.memory array from the memory table
-    const memories = await db.memory.findMany({
-      where: { id: { in: collection.memories } },
-    }); 
+  //fetch the memories in the collection.memory array from the memory table
+  const memories = await db.memory.findMany({
+    where: { id: { in: collection.memories } },
+  });
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
@@ -58,11 +57,12 @@ export default async function Collection({ params }: PageProps) {
             <PageHeader title={`Collection: ${collection.collectionName}`} />
             <MainContentRow>
               <div className="flex flex-col items-center justify-start w-full min-h-full">
-                
                 {collection && (
                   <div className="mt-8">
-
-                    <MemoryList memories={memories} collectionId={collectionId} />
+                    <MemoryList
+                      memories={memories}
+                      collectionId={collectionId}
+                    />
                   </div>
                 )}
               </div>
