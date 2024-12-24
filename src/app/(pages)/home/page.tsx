@@ -7,7 +7,8 @@ import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 import { CreateCollectionForm } from "@/components/create-collection-form";
 import { AddUserToCollectionForm } from "@/components/add-user-to-collection-form";
-import { StackedMemoryList } from "@/components/stacked-memory-list";
+// import { StackedMemoryList } from "@/components/stacked-memory-list";
+import { MemoryList } from "@/components/memory-list";
 import { Heading } from "@/components/heading";
 import { Kanban } from "@/components/kanban";
 
@@ -52,9 +53,9 @@ export default async function Home() {
               <CreateCollectionForm userId={user.id} userEmail={user.email} />
               <AddUserToCollectionForm userId={user.id} collectionId="new" />
               <Heading className="mx-auto sm:text-lg"> Recent Uploads </Heading>
-              <StackedMemoryList
+              <MemoryList
                 memories={memories}
-                collectionId={user.defaultCollectionId}
+                collectionId={collection.id}
               />
             </MainContentRow>
           </div>
