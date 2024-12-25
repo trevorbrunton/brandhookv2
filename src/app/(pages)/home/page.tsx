@@ -7,10 +7,9 @@ import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 import { CreateCollectionForm } from "@/components/create-collection-form";
 import { AddUserToCollectionForm } from "@/components/add-user-to-collection-form";
-// import { StackedMemoryList } from "@/components/stacked-memory-list";
 import { MemoryList } from "@/components/memory-list";
 import { Heading } from "@/components/heading";
-import { Kanban } from "@/components/kanban";
+import { Kanban } from "@/components/dnd-collections";
 
 export default async function Home() {
   const auth = await currentUser();
@@ -56,11 +55,11 @@ export default async function Home() {
               <MemoryList
                 memories={memories}
                 collectionId={collection.id}
-              />
+              /><Kanban />
             </MainContentRow>
           </div>
         </div>
-        <Kanban />
+        
       </PageFrame>
     </div>
   );
