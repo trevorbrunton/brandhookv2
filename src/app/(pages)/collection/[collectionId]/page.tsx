@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
-import { MemoryList } from "@/components/old-memory-list";
+import { MemoryList } from "@/components/tile-memory-list";
 
 type PageProps = {
   params: Promise<{
