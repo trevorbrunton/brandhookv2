@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AddMemoryToCollectionDialog } from "./add-memory-to-collection-dialog";
 import { removeMemoryFromCollection } from "@/app/actions/remove-memory-from-collection";
 import { useRouter } from "next/navigation";
-import { MemoryCard } from "@/components/MemoryCard";
+import { MemoryCard } from "@/components/memory-card";
 
 interface MemoryIconListProps {
   memories: Memory[];
