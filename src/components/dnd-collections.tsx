@@ -42,41 +42,26 @@ export function DNDCollection({ collections, memories }: DNDCollectionProps) {
   const [board, setBoard] = useState<BoardState>({ columns: {} });
   const { toast } = useToast();
 
-  useEffect(() => {
-    const initialData: BoardState = {
-      columns: collections.reduce((acc, collection, index) => {
-        const columnId = `column${index + 1}`;
-        acc[columnId] = {
-          id: columnId,
-          title: collection.collectionName,
-          items: collection.memories.map((memoryId) => {
-            const memory = memories.find((m) => m.id === memoryId);
-            return {
-              id: nanoid(),
-              memoryId,
-              title: memory?.title || "Unknown Memory",
-              fileUrl: memory?.fileUrl || "",
-            };
-          }),
-        };
-        return acc;
-      }, {} as BoardState["columns"]),
-    };
+   useEffect(() => {
+     const initialColumns = collections.reduce((acc, collection, index) => {
+       acc[`column${index + 1}`] = {
+         id: `column${index + 1}`,
+         title: collection.collectionName,
+         items: collection.memories.map((memoryId) => {
+           const memory = memories.find((m) => m.id === memoryId);
+           return {
+             id: nanoid(),
+             memoryId,
+             title: memory?.title || "Unknown Memory",
+             fileUrl: memory?.fileUrl || "",
+           };
+         }),
+       };
+       return acc;
+     }, {} as { [key: string]: Column });
 
-    //create of lookup table for item.id to memoryId
-    const itemMemoryMap: Record<string, string> = {};
-    collections.forEach((collection) => {
-      collection.memories.forEach((memoryId) => {
-        itemMemoryMap[memoryId] = collection.id;
-      });
-    });
-    //create a lookup table for columnId to collectionId
-    const columnCollectionMap: Record<string, string> = {};
-    collections.forEach((collection, index) => {
-      columnCollectionMap[`column${index + 1}`] = collection.id;
-    });
-    setBoard(initialData);
-  }, [collections, memories]);
+     setBoard({ columns: initialColumns });
+   }, [collections, memories]);
 
   const onDragEnd = async (result: DropResult) => {
     const { source, destination, type, draggableId } = result;
