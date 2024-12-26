@@ -9,7 +9,6 @@ import { CreateCollectionForm } from "@/components/create-collection-form";
 import { AddUserToCollectionForm } from "@/components/add-user-to-collection-form";
 import { MemoryList } from "@/components/memory-list";
 import { Heading } from "@/components/heading";
-import { Kanban } from "@/components/kanban";
 import {DNDCollection} from "@/components/dnd-collections";
 
 export default async function Home() {
