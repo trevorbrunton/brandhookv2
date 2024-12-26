@@ -9,7 +9,6 @@ import {
 } from "@hello-pangea/dnd";
 import { useToast } from "@/hooks/use-toast";
 
-import { Input } from "@/components/ui/input";
 import { Collection, Memory } from "@prisma/client";
 
 import { addMemoryToCollection } from "@/app/actions/add-memory-to-collection";
@@ -41,7 +40,6 @@ type BoardState = {
 
 export function DNDCollection({ collections, memories }: DNDCollectionProps) {
   const [board, setBoard] = useState<BoardState>({ columns: {} });
-  const [newColumnTitle, setNewColumnTitle] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -164,22 +162,6 @@ export function DNDCollection({ collections, memories }: DNDCollectionProps) {
     console.log("result", result);  
   };
 
-  const addNewColumn = () => {
-    if (newColumnTitle.trim() === "") return;
-
-    const newColumnId = `column${Object.keys(board.columns).length + 1}`;
-    setBoard({
-      columns: {
-        ...board.columns,
-        [newColumnId]: {
-          id: newColumnId,
-          title: newColumnTitle,
-          items: [],
-        },
-      },
-    });
-    setNewColumnTitle("");
-  };
 
   return (
     <div className="p-4 w-full overflow-x-auto">
@@ -270,21 +252,7 @@ export function DNDCollection({ collections, memories }: DNDCollectionProps) {
           )}
         </Droppable>
       </DragDropContext>
-      <div className="mt-4 flex flex-col sm:flex-row gap-2">
-        <Input
-          type="text"
-          value={newColumnTitle}
-          onChange={(e) => setNewColumnTitle(e.target.value)}
-          placeholder="New column title"
-          className="max-w-full sm:max-w-xs mb-2 sm:mb-0"
-        />
-        <button
-          onClick={addNewColumn}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-        >
-          Add Column
-        </button>
-      </div>
+
     </div>
   );
 }
