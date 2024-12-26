@@ -152,19 +152,8 @@ export function DNDCollection({ collections, memories }: DNDCollectionProps) {
     <div className="p-4 w-full overflow-x-auto">
       <h1 className="text-2xl font-bold mb-4">Collections</h1>
       <div className="flex flex-wrap gap-4 mb-4">
-        {collections.map((collection) => (
-          <div
-            key={collection.id}
-            className="bg-white p-4 rounded-lg shadow-sm flex-1 min-w-[250px]"
-          >
-            <h2 className="font-semibold mb-2 text-lg">
-              {collection.collectionName}
-            </h2>
-            <p className="text-sm text-gray-600">
-              {collection.collectionDetails}
-            </p>
-          </div>
-        ))}
+
+    
       </div>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="board" type="COLUMN" direction="horizontal">

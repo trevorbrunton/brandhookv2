@@ -63,7 +63,7 @@ export default async function Home() {
               <MemoryList
                 memories={memories}
                 collectionId={collection.id}
-              /><Kanban />
+              />
               <DNDCollection collections={collections} memories={memories} />
             </MainContentRow>
           </div>
