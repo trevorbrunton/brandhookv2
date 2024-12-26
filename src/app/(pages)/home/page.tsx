@@ -9,7 +9,8 @@ import { CreateCollectionForm } from "@/components/create-collection-form";
 import { AddUserToCollectionForm } from "@/components/add-user-to-collection-form";
 import { MemoryList } from "@/components/memory-list";
 import { Heading } from "@/components/heading";
-import { Kanban } from "@/components/dnd-collections";
+import { Kanban } from "@/components/kanban";
+import {DNDCollection} from "@/components/dnd-collections";
 
 export default async function Home() {
   const auth = await currentUser();
@@ -34,6 +35,13 @@ export default async function Home() {
     return <p> Collection fetch failed </p>;
   }
 
+    const collections = await db.collection.findMany({
+      where: {  userId: user.id },
+    });
+    if (!collections) {
+      return <p> Collections fetch failed </p>;
+    }
+
   //fetch the memories in the collection.memory array from the memory table
   const memories = await db.memory.findMany({
     where: { id: { in: collection.memories } },
@@ -56,6 +64,7 @@ export default async function Home() {
                 memories={memories}
                 collectionId={collection.id}
               /><Kanban />
+              <DNDCollection collections={collections} memories={memories} />
             </MainContentRow>
           </div>
         </div>
