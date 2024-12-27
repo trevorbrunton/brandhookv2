@@ -149,19 +149,16 @@ export function DNDCollection({ collections, memories }: DNDCollectionProps) {
 
 
   return (
-    <div className="p-4 w-full overflow-x-auto">
-      <h1 className="text-2xl font-bold mb-4">Collections</h1>
-      <div className="flex flex-wrap gap-4 mb-4">
+    <div className="flex flex-col items-center min-w-full">
+      <h1 className="text-2xl font-bold mb-12">Collections</h1>
 
-    
-      </div>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="board" type="COLUMN" direction="horizontal">
           {(provided) => (
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="flex flex-col sm:flex-row gap-4 min-w-full sm:min-w-0"
+              className="flex flex-col sm:flex-row gap-4 min-w-full sm:min-w-0 space-x-12"
             >
               {Object.values(board.columns).map((column, index) => (
                 <Draggable

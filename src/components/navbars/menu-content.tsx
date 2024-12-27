@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Gem, Settings, Folders, Upload, UserSearch, LucideIcon, MapPinned, PartyPopper } from "lucide-react";
+import { Home, Gem, Settings, Folders, Upload, UserSearch, LucideIcon, MapPinned, PartyPopper, Columns2 } from "lucide-react";
 
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
@@ -33,6 +33,7 @@ const menuItems: SidebarCategory[] = [
     items: [
       { href: "/home", icon: Home, text: "Home" },
       { href: "/upload", icon: Upload, text: "Upload" },
+      { href: "/memory-sorter", icon: Columns2, text: "Memory Sorter" },
     ],
   },
   {

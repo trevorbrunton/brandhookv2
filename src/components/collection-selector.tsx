@@ -1,0 +1,92 @@
+"use client";
+
+import { useState } from "react";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { useQuery } from "@tanstack/react-query";
+import { Collection, Memory } from "@prisma/client";
+import { fetchMemoriesByCollection } from "@/app/actions/fetch-memories-by-collection";
+import { fetchCollectionsByUserId } from "@/app/actions/fetch-collections-by-userId";
+
+
+interface CollectionSelectorProps {
+  setCollection: (collection: Collection) => void;
+  setMemories: (memories: Memory[]) => void;
+}
+
+export function CollectionSelector({setCollection, setMemories}: CollectionSelectorProps) {
+  const [selectedCollection, setSelectedCollection] = useState<string | null>(
+    null
+  );
+
+  const { data: collections } = useQuery<Collection[]>({
+    queryKey: ["collections"],
+    queryFn: async (): Promise<Collection[]> => {
+      const response = await fetchCollectionsByUserId();
+      if (!Array.isArray(response)) {
+        throw new Error("Invalid response format");
+      }
+      console.log("collections:", response);
+      setCollection(
+        collections?.find((c) => c.id === selectedCollection) as Collection
+      );
+      return response;
+    },
+  });
+
+
+  const { data: memories } = useQuery<Memory[]>({
+    queryKey: ["memories", selectedCollection],
+    queryFn: async () => {
+      if (selectedCollection === null) return [];
+      const collection = collections?.find((c) => c.id === selectedCollection);
+      console.log("collection from query:", collection);
+      if (!collection) return [];
+      console.log("collection:", collection.id);
+      const memories = await fetchMemoriesByCollection(collection);
+      console.log("memories:", memories);
+      setMemories(memories as Memory[]);
+      return Array.isArray(memories) ? memories : [];
+    },
+    enabled: !!selectedCollection && !!collections,
+  });
+
+  console.log(memories)
+
+
+
+  const handleSelectCollection = (collectionId: string) => {
+    setSelectedCollection(collectionId);
+    setCollection(collections?.find((c) => c.id === collectionId) as Collection);
+    
+  };
+
+  return (
+    <>
+
+      {!collections ? null : (
+        <div className="grid gap-4 py-4">
+          <Select onValueChange={handleSelectCollection}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a collection" />
+            </SelectTrigger>
+            <SelectContent>
+              {collections.map((collection) => (
+                <SelectItem key={collection.id} value={collection.id}>
+                  {collection.collectionName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+    </>
+  );
+}
