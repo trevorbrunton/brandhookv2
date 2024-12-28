@@ -33,7 +33,7 @@ export function CollectionSelector({setCollection, setMemories}: CollectionSelec
       if (!Array.isArray(response)) {
         throw new Error("Invalid response format");
       }
-      console.log("collections:", response);
+      console.log("collections from query", response);
       setCollection(
         collections?.find((c) => c.id === selectedCollection) as Collection
       );
@@ -42,23 +42,20 @@ export function CollectionSelector({setCollection, setMemories}: CollectionSelec
   });
 
 
-  const { data: memories } = useQuery<Memory[]>({
+  const {} = useQuery<Memory[]>({
     queryKey: ["memories", selectedCollection],
     queryFn: async () => {
       if (selectedCollection === null) return [];
       const collection = collections?.find((c) => c.id === selectedCollection);
-      console.log("collection from query:", collection);
       if (!collection) return [];
-      console.log("collection:", collection.id);
       const memories = await fetchMemoriesByCollection(collection);
-      console.log("memories:", memories);
       setMemories(memories as Memory[]);
       return Array.isArray(memories) ? memories : [];
     },
     enabled: !!selectedCollection && !!collections,
   });
 
-  console.log(memories)
+
 
 
 

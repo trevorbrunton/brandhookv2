@@ -22,6 +22,7 @@ export async function fetchCollectionsByUserId() {
       where: { userId: user.id },
 
     });
+   
     return collections;
   } catch (error) {
     console.error("Error fetching collections by userId:", error);

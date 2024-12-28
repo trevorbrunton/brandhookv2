@@ -53,6 +53,8 @@ const router = useRouter();
     fetchCollections();
   }, []);
 
+  if (!collections) return null;
+
   const handleSelect = async () => {
     console.log("Selected Collection:", selectedCollection);
     console.log("Selected Memory:", selectedMemoryForCollection);

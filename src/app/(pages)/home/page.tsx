@@ -7,9 +7,9 @@ import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 import { CreateCollectionForm } from "@/components/create-collection-form";
 import { AddUserToCollectionForm } from "@/components/add-user-to-collection-form";
-import { MemoryList } from "@/components/memory-list";
+import { MemoryList } from "@/components/tile-memory-list";
 import { Heading } from "@/components/heading";
-import { DNDCollection } from "@/components/dnd-collections";
+
 
 
 
@@ -65,8 +65,6 @@ export default async function Home() {
                 memories={memories}
                 collectionId={collection.id}
               />
-
-              <DNDCollection collections={collections} memories={memories} />
             </MainContentRow>
           </div>
         </div>

@@ -9,7 +9,7 @@ import { PageFrame } from "@/components/pageframe";
 import { CollectionSelector } from "@/components/collection-selector";
 import { Collection, Memory } from "@prisma/client";
 
-import { DNDCollection } from "@/components/dnd-collections";
+import { MemoryDnd } from "@/components/memory-dnd";
 
 export default function Home() {
   const navItems = null;
@@ -18,39 +18,34 @@ export default function Home() {
   const [memories1, setMemories1] = useState<Memory[]>([]);
   const [memories2, setMemories2] = useState<Memory[]>([]);
 
+  const collections = [collection1, collection2];
+  const memories = [memories1, memories2];
+
   return (
     <div className="flex w-full flex-col bg-muted/40">
-      <PageFrame page="home" navItems={navItems}>
+      <PageFrame page="memory-sorter" navItems={navItems}>
         <div className="flex flex-row flex-auto">
           <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
-            <NavSideBar page="home" />
+            <NavSideBar page="memory-sorter" />
           </div>
           <div className="flex flex-col flex-auto">
             <PageHeader title="Memory Sorter" />
             <MainContentRow>
               <div className="grid grid-cols-2 gap-16 py-4 mx-40">
-                <div className="flex flex-col gap-4">
-                  <CollectionSelector
-                    setCollection={setCollection1}
-                    setMemories={setMemories1}
-                  />
-                  {collection1 && collection1.collectionName}
-                  {memories1.map((memory) => (
-                    <div key={memory.id}>{memory.title}</div>
-                  ))}
-                </div>
-                <div>
-                  <CollectionSelector
-                    setCollection={setCollection2}
-                    setMemories={setMemories2}
-                  />
-                  {collection2 && collection2.collectionName}
-                  {memories2.map((memory) => (
-                    <div key={memory.id}>{memory.title}</div>
-                  ))}
-                </div>
+                <CollectionSelector
+                  setCollection={setCollection1}
+                  setMemories={setMemories1}
+                />
+
+                <CollectionSelector
+                  setCollection={setCollection2}
+                  setMemories={setMemories2}
+                />
               </div>
-              {/* <DNDCollection collections={collections} memories={memories} /> */}
+              <MemoryDnd
+                collections={collections.filter((c) => c !== null)}
+                memories={memories}
+              />
             </MainContentRow>
           </div>
         </div>

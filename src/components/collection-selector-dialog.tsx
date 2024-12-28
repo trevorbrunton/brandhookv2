@@ -6,12 +6,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
+import { fetchCollectionsByUserId } from '@/app/actions/fetch-collections-by-userId'
+import { Collection } from '@prisma/client'
 
-type Collection = {
-  id: string
-  collectionName: string
-  collectionId: string
-}
+
+
 
 export function CollectionSelectorDialog() {
 
@@ -25,9 +24,11 @@ export function CollectionSelectorDialog() {
   const { data: collections } = useQuery<Collection[]>({
     queryKey: ['collections'],
     queryFn: async () => {
-      const response = await fetch('/api/fetch-collections-by-userId')
-
-      return response.json()
+      const response = await fetchCollectionsByUserId()
+      if ('error' in response) {
+        throw new Error(response.error)
+      }
+      return response as Collection[]
     }
   })
 
@@ -39,7 +40,6 @@ export function CollectionSelectorDialog() {
 
   const handleGoToCollection = () => {
     if (selectedCollection) {
-      console.log('Go to collection:', selectedCollection)
       setOpen(false)
       router.push(`/collection/${selectedCollection}`)
     }
