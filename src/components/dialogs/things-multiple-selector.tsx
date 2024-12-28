@@ -16,28 +16,28 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
-import { Check, ChevronsUpDown, X, UserPlus } from "lucide-react";
+import { Check, ChevronsUpDown, X, Plus } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { createPerson } from "@/app/actions/create-person";
+import { createThing } from "@/app/actions/create-thing";
 import { Badge } from "@/components/ui/badge";
 
-interface Person {
+interface Thing {
   label: string;
   value: string;
 }
 
 interface MultipleSelectorProps {
-  options: Person[];
+  options: Thing[];
   value: string[];
   onChange: (value: string[]) => void;
 }
 
-export function PeopleMultipleSelector({
+export function ThingsMultipleSelector({
   options,
   value,
   onChange,
 }: MultipleSelectorProps) {
-  const [newPerson, setNewPerson] = useState("");
+  const [newThing, setNewThing] = useState("");
   const [localOptions, setLocalOptions] = useState(options);
   const [open, setOpen] = useState(false);
 
@@ -45,13 +45,13 @@ export function PeopleMultipleSelector({
     setLocalOptions(options);
   }, [options]);
 
-  const handleAddPerson = async (person: string) => {
-    if (person && !localOptions.some((option) => option.value === person)) {
-      const newOption = { label: person, value: person };
-      setLocalOptions([...localOptions, newOption]);
-      onChange([...value, person]);
-      await createPerson(person);
-      setNewPerson("");
+  const handleAddThing = async (thing: string) => {
+    if (thing && !localOptions.some((option) => option.value === thing)) {
+        const newOption = { label: thing, value: thing };
+        setLocalOptions([...localOptions, newOption]);
+      onChange([...value, thing]);
+      await createThing(thing);
+        setNewThing("");
     }
   };
 
@@ -80,29 +80,29 @@ export function PeopleMultipleSelector({
             <span className="truncate">
               {value.length > 0
                 ? `${value.length} selected`
-                : "Select people..."}
+                : "Select things..."}
             </span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0 sm:w-[480px]">
           <Command className="max-h-[300px] overflow-y-auto">
-            <CommandInput placeholder="Search people..." />
+            <CommandInput placeholder="Search things..." />
             <CommandEmpty>
               <div className="flex items-center space-x-2 p-2">
                 <Input
                   type="text"
-                  value={newPerson}
-                  onChange={(e) => setNewPerson(e.target.value)}
-                  placeholder="Add a person"
+                  value={newThing}
+                  onChange={(e) => setNewThing(e.target.value)}
+                  placeholder="Add a thing"
                   className="flex-grow"
                 />
                 <Button
                   size="sm"
-                  onClick={() => handleAddPerson(newPerson)}
-                  disabled={!newPerson}
+                  onClick={() => handleAddThing(newThing)}
+                  disabled={!newThing}
                 >
-                  <UserPlus className="mr-2 h-4 w-4" />
+                  <Plus className="mr-2 h-4 w-4" />
                   Add
                 </Button>
               </div>
@@ -135,27 +135,31 @@ export function PeopleMultipleSelector({
         </PopoverContent>
       </Popover>
       <div className="flex flex-wrap gap-2">
-        {value.map((val) => (
-          <Badge key={val} variant="secondary" className="animate-fadeIn">
-            {val}
-            <button
-              className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  removeValue(val);
-                }
-              }}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              onClick={() => removeValue(val)}
-            >
-              <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-            </button>
-          </Badge>
-        ))}
+        {value.map((val) => {
+          const option = localOptions.find((opt) => opt.value === val);
+          return (
+            <Badge key={val} variant="secondary" className="animate-fadeIn">
+              {option ? option.label : val}
+              <button
+                className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    removeValue(val);
+                  }
+                }}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onClick={() => removeValue(val)}
+              >
+                <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+              </button>
+            </Badge>
+          );
+        })}
       </div>
     </div>
   );
 }
+

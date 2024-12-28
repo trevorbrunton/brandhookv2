@@ -54,6 +54,17 @@ export default async function ViewMemory({ params }: PageProps) {
     value: person.name,
     personId: person.id,
   }));
+  //getAllThings
+  const things = await db.thing.findMany({
+    where: { userId: user.id },
+  });
+
+    const formattedThings = things.map(thing => ({
+      label: thing.name,
+      value: thing.name,
+      thingId: thing.id,
+    }));
+
 
   //get allEvents
   const events = await db.event.findMany({
@@ -82,6 +93,14 @@ export default async function ViewMemory({ params }: PageProps) {
   const selectedPeople = memory.people.map((person) => {
     const foundPerson = formattedPeople.find((p) => p.personId === person);
     return foundPerson ? foundPerson.value : "";
+  });
+
+
+
+  //get names of selected things for display in memory-details-form
+  const selectedThings = memory.things.map((thing) => {
+    const foundThing = formattedThings.find((t) => t.thingId === thing);
+    return foundThing ? foundThing.value : "";
   });
 
   //get name of selected event and place for display in memory-details-form
@@ -119,13 +138,14 @@ export default async function ViewMemory({ params }: PageProps) {
 
                       title: memory.title,
                       people: selectedPeople,
+                      things: selectedThings,
                       event: selectedEvent? selectedEvent.value : "",
                       id: memory.id,
-                      userId: memory.userId
                     }}
                     allPeople={formattedPeople}
                     allEvents={formattedEvents}
                     allPlaces={formattedPlaces}
+                    allThings={formattedThings}
                   />
 
                 </div>

@@ -64,6 +64,7 @@ model Memory {
   collections String[]
   //Optional fields
   people      String[]
+  things      String[]
   event       String?
   place       String?
 

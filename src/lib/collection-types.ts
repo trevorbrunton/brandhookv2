@@ -9,6 +9,7 @@ export const MemorySchema = z.object({
   docType: z.string(),
   collections: z.array(z.string()),
   people: z.array(z.string()),
+  things: z.array(z.string()),
   event: z.string(),
   place: z.string(),
   createDate: z.string(),

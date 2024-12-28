@@ -141,6 +141,7 @@ const handleFileUpload = async (file: File) => {
           docType: docType,
           collections: [defaultCollectionId],
           people: [],
+          things: [],
           event: "",
           place: "",
           createDate: new Date().toLocaleDateString("eu-AU"),

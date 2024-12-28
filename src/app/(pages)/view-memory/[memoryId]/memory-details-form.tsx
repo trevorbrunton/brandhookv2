@@ -15,8 +15,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { MultipleSelector } from "@/components/dialogs/generalised-multiple-selector";
 import { PeopleMultipleSelector } from "@/components/dialogs/people-multiple-selector";
+import { ThingsMultipleSelector } from "@/components/dialogs/things-multiple-selector";
 import { updateMemoryDetails } from "@/app/actions/update-memory-details";
 import { EventComboBox } from "@/components/dialogs/event-combo-box";
 import { PlaceComboBox } from "@/components/dialogs/place-combo-box";
@@ -28,7 +28,7 @@ const memorySchema = z.object({
   event: z.string(),
   place: z.string(),
   title: z.string().min(1),
-  userId: z.string(),
+  things: z.array(z.string()),
 });
 
 type MemoryFormData = z.infer<typeof memorySchema>;
@@ -38,6 +38,7 @@ interface MemoryFormProps {
   allPeople: { label: string; value: string, personId: string }[];
   allEvents: { label: string; value: string, eventId:string}[];
   allPlaces: { label: string; value: string, placeId: string }[];
+  allThings: { label: string; value: string, thingId: string }[];
 
 }
 
@@ -46,6 +47,7 @@ export function MemoryDetailsForm({
   allPeople,
   allEvents,
   allPlaces,
+  allThings,
 
 }: MemoryFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,6 +60,7 @@ export function MemoryDetailsForm({
       event: "",
       place: "",
       title: "",
+      things: [],
     },
   });
   console.log("Initial data:", initialData);
@@ -76,6 +79,10 @@ export function MemoryDetailsForm({
       const peopleIds = data.people
         .map((person) => allPeople.find((p) => p.value === person)?.personId)
         .filter((id): id is string => id !== undefined);
+      //look up thingId from thing name in allThings for each selected thing  
+      const thingsIds = data.things
+        .map((thing) => allThings.find((t) => t.value === thing)?.thingId)
+        .filter((id): id is string => id !== undefined);
       
       //look up eventId from event name in allEvents
       const eventId = allEvents.find((e) => e.value === data.event)?.eventId;
@@ -84,7 +91,7 @@ export function MemoryDetailsForm({
       const placeId = allPlaces.find((p) => p.value === data.place)?.placeId;
 
    
-      await updateMemoryDetails(data.id, peopleIds, eventId || "", placeId || "");
+      await updateMemoryDetails(data.id, peopleIds, thingsIds, eventId || "", placeId || "");
       form.reset(data);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -131,7 +138,29 @@ export function MemoryDetailsForm({
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="things"
+              render={() => (
+                <FormItem>
+                  <FormLabel>Things</FormLabel>
+                  <FormControl>
+                    <Controller
+                      name="things"
+                      control={form.control}
+                      render={({ field }) => (
+                        <ThingsMultipleSelector
+                          options={allThings}
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      )}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
