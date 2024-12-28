@@ -80,7 +80,7 @@ export function MemoryDnd({ collections, memories }: MemoryDndProps) {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="grid grid-cols-2 gap-12 mx-40">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 p-4 md:p-8 mx-auto">
         {board[0] &&
           board[1] &&
           board.map((collection, index) => (
@@ -93,35 +93,34 @@ export function MemoryDnd({ collections, memories }: MemoryDndProps) {
                     {...provided.droppableProps}
                     className="min-h-full "
                   >
-                  {Array.isArray(savedMemories[index]) &&
-                    savedMemories[index].map((memory, index) => (
-                      <Draggable
-                        key={memory.id}
-                        draggableId={collection.id+ "*" + memory.id}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className="flex items-center bg-white rounded-lg border-2 p-2 mt-2"
-                          >
-                            <img
-                              src={memory.fileUrl || ""}
-                              alt={memory.title || ""}
-                              className="w-10 h-10 mr-2 rounded object-cover"
-                            />
-                            <span className="truncate">
-                              {memory.title || ""}
-                            </span>
-                           
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                  {provided.placeholder}
-                </div>
+                    {Array.isArray(savedMemories[index]) &&
+                      savedMemories[index].map((memory, index) => (
+                        <Draggable
+                          key={memory.id}
+                          draggableId={collection.id + "*" + memory.id}
+                          index={index}
+                        >
+                          {(provided) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className="flex items-center bg-white rounded-lg border-2 p-2 mt-2 min-w-64"
+                            >
+                              <img
+                                src={memory.fileUrl || ""}
+                                alt={memory.title || ""}
+                                className="w-10 h-10 mr-2 rounded object-cover"
+                              />
+                              <span className="truncate">
+                                {memory.title || ""}
+                              </span>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                    {provided.placeholder}
+                  </div>
                 )}
               </Droppable>
             </div>

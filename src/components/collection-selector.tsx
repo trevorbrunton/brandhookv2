@@ -69,7 +69,7 @@ export function CollectionSelector({setCollection, setMemories}: CollectionSelec
     <>
 
       {!collections ? null : (
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-4 py-4 lg:min-w-64 min-w-52">
           <Select onValueChange={handleSelectCollection}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a collection" />
