@@ -31,7 +31,7 @@ export default function Home() {
           <div className="flex flex-col flex-auto">
             <PageHeader title="Memory Sorter" />
             <MainContentRow>
-              <div className="grid grid-cols-2 gap-16 py-4 justify-between mx-auto">
+              <div className="grid grid-cols-2 gap-12 py-4 justify-between mx-auto">
                 <CollectionSelector
                   setCollection={setCollection1}
                   setMemories={setMemories1}
