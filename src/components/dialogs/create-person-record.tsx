@@ -1,5 +1,5 @@
 "use client";
-
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -27,6 +27,7 @@ import { Input } from "../ui/input";
 import { createPerson } from "@/app/actions/create-person";
 
 
+
 const personSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
 });
@@ -35,22 +36,32 @@ export function PeopleDialog() {
   const [submitted, setSubmitted] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
+    const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof personSchema>>({
     resolver: zodResolver(personSchema),
     defaultValues: { name: "" },
   });
 
+
+  const mutation = useMutation({
+    mutationFn: (name: string) => createPerson(name),
+    onSuccess: (person) => {
+      queryClient.invalidateQueries({ queryKey: ["people"] });
+      setOpen(false);
+      if ("id" in person) {
+        router.push(`/view-person/${person.id}`);
+      }
+    },
+    onError: (error) => {
+      console.error("Failed to create person:", error);
+    },
+  });
+
   const handleSubmit = async () => {
     setSubmitted(true);
     const data = form.getValues();
-    try {
-     const person = await createPerson(data.name);
-      setOpen(false);
-      router.push(`/view-person/${person.id}`);
-    } catch (error) {
-      console.error(error);
-    }
+    mutation.mutate(data.name);
   };
 
   return (

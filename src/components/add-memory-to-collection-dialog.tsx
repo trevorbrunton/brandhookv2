@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { fetchCollectionsByUserId } from "@/app/actions/fetch-collections-by-userId";
 
 interface AddMemoryToCollectionDialogProps {
   isOpen: boolean;
@@ -42,9 +43,12 @@ const router = useRouter();
   useEffect(() => {
     const fetchCollections = async () => {
       try {
-        const response = await fetch("/api/fetch-collections-by-userId");
-        const data = await response.json();
-        setCollections(data);
+        const response = await fetchCollectionsByUserId();
+        if ('error' in response) {
+          console.error("Failed to fetch collections:", response.error);
+        } else {
+          setCollections(response);
+        }
       } catch (error) {
         console.error("Failed to fetch collections:", error);
       }

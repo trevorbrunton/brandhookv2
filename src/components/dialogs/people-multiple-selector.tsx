@@ -20,6 +20,7 @@ import { Check, ChevronsUpDown, X, UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createPerson } from "@/app/actions/create-person";
 import { Badge } from "@/components/ui/badge";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Person {
   label: string;
@@ -40,17 +41,27 @@ export function PeopleMultipleSelector({
   const [newPerson, setNewPerson] = useState("");
   const [localOptions, setLocalOptions] = useState(options);
   const [open, setOpen] = useState(false);
+   const queryClient = useQueryClient();
 
   useEffect(() => {
     setLocalOptions(options);
   }, [options]);
+
+    const createPersonMutation = useMutation({
+      mutationFn: (person: string) => createPerson(person),
+      onSuccess: () => {
+        // Invalidate and refetch
+        queryClient.invalidateQueries({ queryKey: ["people"] });
+
+      },
+    });
 
   const handleAddPerson = async (person: string) => {
     if (person && !localOptions.some((option) => option.value === person)) {
       const newOption = { label: person, value: person };
       setLocalOptions([...localOptions, newOption]);
       onChange([...value, person]);
-      await createPerson(person);
+      await createPersonMutation.mutate(person);
       setNewPerson("");
     }
   };

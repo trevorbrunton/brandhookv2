@@ -4,6 +4,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 export async function createThing(name: string) {
+  try {
     console.log("Creating person", name);
     const auth = await currentUser();
     if (!auth) {
@@ -17,7 +18,6 @@ export async function createThing(name: string) {
     if (!user) {
       throw new Error("User not found");
     }
-  try {
     const newThing = await db.thing.create({
       data: {
         userId: user.id,
