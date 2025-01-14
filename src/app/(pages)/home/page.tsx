@@ -5,10 +5,9 @@ import { redirect } from "next/navigation";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
-import { CreateCollectionForm } from "@/components/create-collection-form";
-import { AddUserToCollectionForm } from "@/components/add-user-to-collection-form";
-import { MemoryList } from "@/components/tile-memory-list";
-import { Heading } from "@/components/heading";
+
+import { ProjectTable } from "@/components/tables/project-table";
+
 
 
 
@@ -29,12 +28,7 @@ export default async function Home() {
   if (!user) {
     return redirect("/welcome");
   }
-  const collection = await db.collection.findFirst({
-    where: { id: user.defaultCollectionId, userId: user.id },
-  });
-  if (!collection) {
-    return <p> Collection fetch failed </p>;
-  }
+
 
     const collections = await db.collection.findMany({
       where: {  userId: user.id },
@@ -43,10 +37,7 @@ export default async function Home() {
       return <p> Collections fetch failed </p>;
     }
 
-  //fetch the memories in the collection.memory array from the memory table
-  const memories = await db.memory.findMany({
-    where: { id: { in: collection.memories } },
-  });
+
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
@@ -58,13 +49,10 @@ export default async function Home() {
           <div className="flex flex-col flex-auto">
             <PageHeader title="Home" />
             <MainContentRow>
-              <CreateCollectionForm userId={user.id} userEmail={user.email} />
-              <AddUserToCollectionForm userId={user.id} collectionId="new" />
-              <Heading className="mx-auto sm:text-lg"> Recent Uploads </Heading>
-              <MemoryList
-                memories={memories}
-                collectionId={collection.id}
-              />
+
+
+              <ProjectTable />
+              
             </MainContentRow>
           </div>
         </div>

@@ -36,9 +36,7 @@ export const PageFrame = ({ children, page,navItems }: PageFrameProps) => {
         </div>
         <MaxWidthWrapper>
           <div className="flex items-center justify-between border-b border-gray-200 p-4 sm:hidden">
-            <p className="text-lg font-semibold">
-              <span className="text-brand-700 text-xl">cronicle</span>
-            </p>
+           <img src="/brandhook.png" alt="Brandhook" className="h-12 w-auto"/>
             <div className="h-full flex items-center space-x-4">
               <TooltipProvider>
                 {navItems &&

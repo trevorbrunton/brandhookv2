@@ -19,17 +19,16 @@ enum Plan {
 }
 
 model User {
-  id                  String   @id @default(cuid()) @map("_id")
-  externalId          String?  @unique
-  quotaLimit          Int
-  plan                Plan     @default(FREE)
-  email               String   @unique
-  apiKey              String   @unique @default(cuid())
-  discordId           String?
-  collections         String[]
-  defaultCollectionId String
-  createDate          DateTime @default(now())
-  updateDate          DateTime @updatedAt
+  id               String   @id @default(cuid()) @map("_id")
+  externalId       String?  @unique
+  quotaLimit       Int
+  plan             Plan     @default(FREE)
+  email            String   @unique
+  apiKey           String   @unique @default(cuid())
+  discordId        String?
+  projects         String[]
+  createDate       DateTime @default(now())
+  updateDate       DateTime @updatedAt
 
   @@index([email, apiKey])
   @@map("users")
@@ -63,7 +62,7 @@ model Memory {
   updateDate  String
   collections String[]
   //Optional fields
-  people      String[]
+  people      String[] 
   things      String[]
   event       String?
   place       String?
@@ -73,7 +72,7 @@ model Memory {
 
 model Person {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String  
+  userId      String
   name        String
   createDate  String
   updateDate  String
@@ -89,7 +88,7 @@ model Person {
 
 model Event {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String  
+  userId      String
   name        String
   createDate  String
   updateDate  String
@@ -97,7 +96,7 @@ model Event {
   dateOfEvent String?
   memories    String[]
   people      String[]
-  place      String?
+  place       String?
   picUrl      String?
 
   @@map("events")
@@ -105,7 +104,7 @@ model Event {
 
 model Place {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String  
+  userId      String
   name        String
   createDate  String
   updateDate  String
@@ -120,16 +119,46 @@ model Place {
 }
 
 model Thing {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String  
-  name        String
-  createDate  String
-  updateDate  String
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String
+  name       String
+  createDate String
+  updateDate String
   //Optional fields
-  memories    String[]
-  events      String[]
-  places      String[]
-  picUrl      String?
+  memories   String[]
+  events     String[]
+  places     String[]
+  picUrl     String?
 
   @@map("things")
+}
+
+model Project {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  projectId        String
+  userId           String
+  projectName      String
+  projectDetails    String
+  projectDocuments String[]
+  createDate       String
+  updateDate       String
+
+  @@map("projects")
+}
+
+model ProjectDocument {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  projectDocumentId String
+  projectId         String
+  title             String
+  interviewee       String?
+  interviewDate     String?
+  conversationName  String?
+  content           String?
+  fileUrl           String?
+  docType           String
+  createDate        String
+  updateDate        String
+
+  @@map("project_documents")
 }
