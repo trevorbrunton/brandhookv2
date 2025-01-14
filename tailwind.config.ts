@@ -15,6 +15,7 @@ const config: Config = {
         heading: ["var(--font-heading)", ...fontFamily.sans],
       },
       colors: {
+        brown: "#A38f88",
         brand: {
           "25": "#F8F9FD",
           "50": "#F0F4FA",
@@ -29,11 +30,7 @@ const config: Config = {
           "900": "#1B2A61",
           "950": "#111A3E",
         },
-        "discord-background": "#36393f",
-        "discord-brand-color": "#5865f2",
-        "discord-gray": "#36393f",
-        "discord-text": "#dcddde",
-        "discord-timestamp": "#72767d",
+
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

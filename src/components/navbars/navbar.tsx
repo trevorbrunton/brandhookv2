@@ -36,9 +36,10 @@ export const Navbar = ({ navItems }: NavbarProps) => {
       >
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex z-40 font-semibold">
-            <span className="text-brand-700 tracking-widest font-bold text-2xl">
-              cronicle
-            </span>
+            <img
+              src="/brandhook.png"
+              alt="Brandhook"
+              className="h-12 w-auto"/>
           </Link>
           <div className="h-full flex items-center space-x-4">
             <TooltipProvider>
@@ -73,8 +74,10 @@ export const Navbar = ({ navItems }: NavbarProps) => {
                   </Button>
                 </SignOutButton> 
                 <UserButton
+                 
                   showName={false}
                   appearance={{
+                    
                     elements: {
                       userButtonBox: "flex-row-reverse",
                     },
@@ -108,7 +111,7 @@ export const Navbar = ({ navItems }: NavbarProps) => {
                   href="/sign-up"
                   className={buttonVariants({
                     size: "sm",
-                    className: "flex items-center gap-1.5",
+                    className: "flex items-center gap-1.5 bg-brand-25 text-white",
                   })}
                 >
                   Sign up <ArrowRight className="size-4" />

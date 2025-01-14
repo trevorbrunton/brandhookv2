@@ -6,14 +6,15 @@ import { Providers } from "@/components/providers";
 import { Roboto } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 
+
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["100", "300", "400", "700", "900"],
 });
 
 export const metadata: Metadata = {
-  title: "cronicle",
-  description: "Tell your story, your way",
+  title: "Brandhook",
+  description: "Take your brand further.",
 };
 
 export default function RootLayout({
@@ -22,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider dynamic>
+    <ClerkProvider dynamic >
       <html lang="en">
         <body
           className={`${roboto.className} antialiased min-h-[calc(100vh-1px)] flex flex-col  text-brand-950`}
