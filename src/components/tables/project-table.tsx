@@ -1,6 +1,6 @@
+"use client";
 
-
-
+import { useQuery } from "@tanstack/react-query";
 import {
   Table,
   TableBody,
@@ -13,34 +13,38 @@ import { Project } from "@prisma/client";
 import { fetchAllProjectsByUserId } from "@/app/actions/fetch-all-projects-by-userId";
 import { ActionsButton } from "@/components/tables/actions-button";
 import { NewProjectDialog } from "@/components/dialogs/new-project-details-dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {LoadingSpinner} from "@/components/loading-spinner";
 import Link from 'next/link';
 
-export async function ProjectTable() {
+export function ProjectTable() {
 
-
-
-
-  const result = await fetchAllProjectsByUserId();
-  if ('error' in result) {
-    console.error("Error fetching projects:", result.error);
-    return {
-      error: `Failed to fetch projects: ${result.error}`,
-    };
+  const { data: projects } = useQuery<Project[]>({
+    queryFn: async () => {
+      const result = await fetchAllProjectsByUserId();
+      if ('error' in result) {
+        console.error("Error fetching projects:", result.error);
+        return [];
+      }
+      return result;
+    },
+    queryKey: ["all_projects"],
+  });
+  if (!projects) {
+    return (
+      <div className="mt-20">
+        <LoadingSpinner size="md" message="Loading projects..." />
+      </div>
+    );
   }
-  const projects = result as Project[];
-
-
-
-
   if (projects.length === 0) {
     return (
-      <Card className="w-full">
+      <Card className="m-20 ">
         <CardHeader>
-          <CardTitle>Projects</CardTitle>
+          
         </CardHeader>
         <CardContent className="text-center">
-          <p className="mb-6">No projects found</p>
+          <p className="mb-6">You have no projects yet</p>
           <NewProjectDialog />
         </CardContent>
       </Card>
@@ -88,10 +92,10 @@ export async function ProjectTable() {
                     </div>
                     <div className="mt-1 text-xs text-gray-400 lg:hidden">
                       Created:
-                      {new Date(project.createDate).toLocaleDateString()}
+                      {project.createDate}
                       <br />
                       Updated:
-                      {new Date(project.updateDate).toLocaleDateString()}
+                      {project.updateDate}
                     </div>
                   </TableCell>
                   <TableCell className="hidden max-w-[300px] truncate py-4 px-4 md:table-cell">

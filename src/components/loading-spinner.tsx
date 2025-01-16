@@ -1,7 +1,7 @@
 import { cva, VariantProps } from "class-variance-authority"
 
 const spinnerVariants = cva(
-  "border-4 rounded-full border-brand-200 border-t-brand-700 animate-spin duration-700",
+  "border-4 rounded-full border-brown border-t-white animate-spin duration-700",
   {
     variants: {
       size: {
@@ -30,7 +30,7 @@ export const LoadingSpinner = ({ size, className, message = "Loading..." }: Load
   return (
     <div className="flex flex-row justify-center items-center">
       <div className={spinnerVariants({ size, className })} />
-      <p className="ml-2 text-brand-700 font-medium">{message}</p>
+      <p className="ml-2 text-brown font-medium">{message}</p>
     </div>
   )
 }

@@ -1,20 +1,17 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import { Button } from "@/components/ui/button";
 import { Ellipsis } from "lucide-react";
 import { deleteProject } from "@/app/actions/delete-project";
-import { RUSureDialog } from "@/components/r-u-sure-dialog";
-
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 
 interface SelectButtonProps {
   projectId: string;
@@ -22,45 +19,28 @@ interface SelectButtonProps {
 
 export function ActionsButton({ projectId }: SelectButtonProps) {
   const [open, setOpen] = useState(false);
-  const [doIt, setDoIt] = useState(false);
   const router = useRouter();
 
-  // Open Warning Dialog
-  const warning = () => {
-    setOpen(true);
-  };
+  const handleDeleteConfirm = useCallback(async () => {
+    console.log("Deleting project: ", projectId);
+    const result = await deleteProject(projectId);
+    if (result.success) {
+      console.log("Project deleted: ", projectId);
+      // Optionally, you can refresh the page or navigate away
+      // router.refresh(); // If you want to refresh the current page
+      // router.push('/projects'); // If you want to navigate to a projects list page
+    } else {
+      console.error("Project not deleted: ", projectId);
+      // Optionally, you can show an error message to the user
+    }
+  }, [projectId]);
 
-  // Get Return Value from Warning Dialog
-  const registerReturnValue = (value: boolean) => {
-    setDoIt(value);
-    setOpen(false);
-  };
-  // Called from UseEffect to get accurate value of doIt
-  const zapProject = useCallback(
-    async (projectId: string) => {
-      if (doIt) {
-        console.log("Deleting project: ", projectId);
-        const result = await deleteProject(projectId);
-        if (result.success) {
-          console.log("Project deleted: ", projectId);
-        } else {
-          console.error("Project not deleted: ", projectId);
-        }
-      } else {
-        console.log("Not deleting project: ", projectId);
-      }
-    },
-    [doIt]
-  );
-
- // Call zapProject when doIt changes
-  useEffect(() => {
-    zapProject(projectId);
-    console.log("return value: ", doIt);
-  }, [doIt, zapProject, projectId]);
+  const handleDeleteCancel = useCallback(() => {
+    console.log("Deletion cancelled for project: ", projectId);
+  }, [projectId]);
 
   return (
-<>
+    <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="link">
@@ -81,22 +61,23 @@ export function ActionsButton({ projectId }: SelectButtonProps) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <Button
-              variant="ghost"
-              onClick={() => {
-                warning();
-              }}
-            >
+            <Button variant="ghost" onClick={() => setOpen(true)}>
               Delete Project
             </Button>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <RUSureDialog
+      <ConfirmationDialog
         open={open}
-        setOpen={setOpen}
-        registerReturnValue={registerReturnValue}
+        onOpenChange={setOpen}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        title="Delete Project"
+        description="Are you sure you want to delete this project? This action cannot be undone."
+        confirmText="Yes, delete project"
+        cancelText="No, keep project"
+        destructive={true}
       />
-  </>
+    </>
   );
 }
