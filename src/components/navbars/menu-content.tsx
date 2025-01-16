@@ -1,15 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Gem, Settings, Folders, Upload, UserSearch, LucideIcon, MapPinned, PartyPopper, Columns2 } from "lucide-react";
+import { Home, Gem, Settings, Upload, LucideIcon, Columns2 } from "lucide-react";
 
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { CollectionSelectorDialog } from "../collection-selector-dialog";
-import { PersonSelectorDialog } from "../person-selector-dialog";
-import { PlaceSelectorDialog } from "../place-selector-dialog";
-import { EventSelectorDialog } from "../event-selector-dialog";
 
 interface MenuContentProps {
   onLinkClick: () => void;
@@ -102,26 +98,7 @@ export function MenuContent({ onLinkClick, page }: MenuContentProps) {
           </div>
         </motion.div>
       ))}
-      <div className="flex flex-col">
 
-      <div className="flex items-center">
-        <Folders className="size-4 text-zinc-500 group-hover:text-zinc-700" />
-        <CollectionSelectorDialog />
-      </div>
-
-    <div className="flex items-center">
-      <UserSearch className="size-4 text-zinc-500 group-hover:text-zinc-700" />
-      <PersonSelectorDialog />
-    </div>
-    <div className="flex items-center">
-      <MapPinned className="size-4 text-zinc-500 group-hover:text-zinc-700" />
-      <PlaceSelectorDialog />
-    </div>
-    <div className="flex items-center">
-      <PartyPopper className="size-4 text-zinc-500 group-hover:text-zinc-700" />
-      <EventSelectorDialog />
-        </div>
-      </div>
       
         
      

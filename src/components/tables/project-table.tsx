@@ -1,4 +1,4 @@
-import React from "react";
+
 
 import {
   Table,
@@ -9,10 +9,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+
 import { Project } from "@prisma/client";
 import { fetchAllProjectsByUserId } from "@/app/actions/fetch-all-projects-by-userId";
 // import { SelectButton } from "@/app/dashboard/select-button";
 // import { ActionsButton } from "@/app/dashboard/actions-button";
+import { ProjectDetailsDialog } from "@/components/dialogs/project-details-dialog";
 
 
 export async function ProjectTable() {
@@ -23,6 +25,7 @@ export async function ProjectTable() {
 
 
   return (
+    
     <Table className="w-full">
       <TableHeader className="bg-gray-100">
         <TableRow className="hidden sm:table-row">
@@ -38,13 +41,19 @@ export async function ProjectTable() {
         {Array.isArray(projects) && projects.length === 0 ? (
           <TableRow>
             <TableCell colSpan={6} className="text-center">
-              No projects found
+                <div className="mb-6">No projects found </div>
+                <ProjectDetailsDialog 
+                  projectId={"123"}
+                  userEmail={"trevor@trevor.com"}
+                  projectName={"New Project"}
+                  projectDetails={""}
+                />
             </TableCell>
           </TableRow>
         ) : (
           
             Array.isArray(projects) && projects.map((project: Project) => (
-              <React.Fragment key={project.projectId}>
+              <div key={project.projectId}>
                 <TableRow className="hidden sm:table-row">
                   <TableCell className="font-medium">
                     {project.projectName}
@@ -94,11 +103,12 @@ export async function ProjectTable() {
                     </div>
                   </TableCell>
                 </TableRow>
-              </React.Fragment>
+              </div>
             ))
           
         )}
       </TableBody>
-    </Table>
+      </Table>
+     
   );
 }
