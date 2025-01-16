@@ -1,5 +1,6 @@
 
 
+
 import {
   Table,
   TableBody,
@@ -8,107 +9,112 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-
 import { Project } from "@prisma/client";
 import { fetchAllProjectsByUserId } from "@/app/actions/fetch-all-projects-by-userId";
-// import { SelectButton } from "@/app/dashboard/select-button";
-// import { ActionsButton } from "@/app/dashboard/actions-button";
-import { ProjectDetailsDialog } from "@/components/dialogs/project-details-dialog";
-
+import { ActionsButton } from "@/components/tables/actions-button";
+import { NewProjectDialog } from "@/components/dialogs/new-project-details-dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from 'next/link';
 
 export async function ProjectTable() {
-  const projects = await fetchAllProjectsByUserId();
-  if (!projects) {
-    console.error("failed to fetch projects");
+
+
+
+
+  const result = await fetchAllProjectsByUserId();
+  if ('error' in result) {
+    console.error("Error fetching projects:", result.error);
+    return {
+      error: `Failed to fetch projects: ${result.error}`,
+    };
+  }
+  const projects = result as Project[];
+
+
+
+
+  if (projects.length === 0) {
+    return (
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Projects</CardTitle>
+        </CardHeader>
+        <CardContent className="text-center">
+          <p className="mb-6">No projects found</p>
+          <NewProjectDialog />
+        </CardContent>
+      </Card>
+    );
   }
 
-
   return (
-    
-    <Table className="w-full">
-      <TableHeader className="bg-gray-100">
-        <TableRow className="hidden sm:table-row">
-          <TableHead>Project Name</TableHead>
-          <TableHead>Description</TableHead>
-          <TableHead>Date Created</TableHead>
-          <TableHead>Last Updated</TableHead>
-          <TableHead className="text-right">Select</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {Array.isArray(projects) && projects.length === 0 ? (
-          <TableRow>
-            <TableCell colSpan={6} className="text-center">
-                <div className="mb-6">No projects found </div>
-                <ProjectDetailsDialog 
-                  projectId={"123"}
-                  userEmail={"trevor@trevor.com"}
-                  projectName={"New Project"}
-                  projectDetails={""}
-                />
-            </TableCell>
-          </TableRow>
-        ) : (
-          
-            Array.isArray(projects) && projects.map((project: Project) => (
-              <div key={project.projectId}>
-                <TableRow className="hidden sm:table-row">
-                  <TableCell className="font-medium">
-                    {project.projectName}
+    <div className="w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead className="w-[250px] py-3 px-4 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
+                Project Name
+              </TableHead>
+              <TableHead className="hidden py-3 px-4 text-left text-xs font-medium uppercase tracking-wide text-gray-500 md:table-cell">
+                Description
+              </TableHead>
+              <TableHead className="hidden py-3 px-4 text-left text-xs font-medium uppercase tracking-wide text-gray-500 lg:table-cell">
+                Date Created
+              </TableHead>
+              <TableHead className="hidden py-3 px-4 text-left text-xs font-medium uppercase tracking-wide text-gray-500 lg:table-cell">
+                Last Updated
+              </TableHead>
+              <TableHead className="py-3 px-4 text-center text-xs font-medium uppercase tracking-wide text-gray-500">
+                Actions
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {projects.map((project) => (
+
+                <TableRow
+                  className="border-b border-gray-200 last:border-b-0"
+                  key={project.projectId}
+                >
+                  <TableCell className="py-4 px-4">
+                  <div className="font-medium text-gray-900">
+                    <Link href={`/project-view/${encodeURIComponent(project.projectId)}`}>
+                      {project.projectName}
+                      </Link>
+                    </div>
+                    <div className="mt-1 text-sm text-gray-500 md:hidden">
+                      {project.projectDetails}
+                    </div>
+                    <div className="mt-1 text-xs text-gray-400 lg:hidden">
+                      Created:
+                      {new Date(project.createDate).toLocaleDateString()}
+                      <br />
+                      Updated:
+                      {new Date(project.updateDate).toLocaleDateString()}
+                    </div>
                   </TableCell>
-                  <TableCell className="max-w-[300px] truncate">
+                  <TableCell className="hidden max-w-[300px] truncate py-4 px-4 md:table-cell">
                     {project.projectDetails}
                   </TableCell>
-                  <TableCell>{project.createDate}</TableCell>
-                  <TableCell>{project.updateDate}</TableCell>
-                  {/* <TableCell className="text-right">
-                <SelectButton
-                  projectId={project.projectId}
-                  projectName={project.projectName}
-                />
-              </TableCell>
-              <TableCell className="text-right">
-                <ActionsButton projectId={project.projectId} />
-              </TableCell> */}
-                </TableRow>
-                <TableRow className="sm:hidden">
-                  <TableCell colSpan={6}>
-                    <div className="space-y-2 py-2">
-                      <div>
-                        <span className="font-semibold text-lg">
-                          {project.projectName}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="font-semibold">Description:</span>{" "}
-                        {project.projectDetails}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Date Created:</span>{" "}
-                        {project.createDate}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Last Updated:</span>{" "}
-                        {project.updateDate}
-                      </div>
-                      {/* <div className="flex justify-between items-center mt-2">
-                    <SelectButton
-                      projectId={project.projectId}
-                      projectName={project.projectName}
-                    />
-                    <ActionsButton projectId={project.projectId} />
-                  </div> */}
+                  <TableCell className="hidden whitespace-nowrap py-4 px-4 text-sm text-gray-500 lg:table-cell">
+                    {project.createDate}
+                  </TableCell>
+                  <TableCell className="hidden whitespace-nowrap py-4 px-4 text-sm text-gray-500 lg:table-cell">
+                   {project.updateDate}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap py-4 px-4 text-center text-sm font-medium">
+                    <div className="flex items-center justify-center space-x-2">
+         
+                      <ActionsButton projectId={project.projectId} />
                     </div>
                   </TableCell>
                 </TableRow>
-              </div>
-            ))
           
-        )}
-      </TableBody>
-      </Table>
-     
+            ))}
+          </TableBody>  
+        </Table>
+      </div>
+    </div>
   );
 }

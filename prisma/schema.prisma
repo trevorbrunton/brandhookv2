@@ -19,16 +19,16 @@ enum Plan {
 }
 
 model User {
-  id               String   @id @default(cuid()) @map("_id")
-  externalId       String?  @unique
-  quotaLimit       Int
-  plan             Plan     @default(FREE)
-  email            String   @unique
-  apiKey           String   @unique @default(cuid())
-  discordId        String?
-  projects         String[]
-  createDate       DateTime @default(now())
-  updateDate       DateTime @updatedAt
+  id         String   @id @default(cuid()) @map("_id")
+  externalId String?  @unique
+  quotaLimit Int
+  plan       Plan     @default(FREE)
+  email      String   @unique
+  apiKey     String   @unique @default(cuid())
+  discordId  String?
+  projects   String[]
+  createDate DateTime @default(now())
+  updateDate DateTime @updatedAt
 
   @@index([email, apiKey])
   @@map("users")
@@ -62,7 +62,7 @@ model Memory {
   updateDate  String
   collections String[]
   //Optional fields
-  people      String[] 
+  people      String[]
   things      String[]
   event       String?
   place       String?
@@ -70,75 +70,12 @@ model Memory {
   @@map("memories")
 }
 
-model Person {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String
-  name        String
-  createDate  String
-  updateDate  String
-  //Optional fields
-  dateOfBirth String?
-  memories    String[]
-  events      String[]
-  places      String[]
-  picUrl      String?
-
-  @@map("people")
-}
-
-model Event {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String
-  name        String
-  createDate  String
-  updateDate  String
-  //Optional fields
-  dateOfEvent String?
-  memories    String[]
-  people      String[]
-  place       String?
-  picUrl      String?
-
-  @@map("events")
-}
-
-model Place {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String
-  name        String
-  createDate  String
-  updateDate  String
-  //Optional fields
-  geolocation String?
-  memories    String[]
-  people      String[]
-  events      String[]
-  picUrl      String?
-
-  @@map("places")
-}
-
-model Thing {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId     String
-  name       String
-  createDate String
-  updateDate String
-  //Optional fields
-  memories   String[]
-  events     String[]
-  places     String[]
-  picUrl     String?
-
-  @@map("things")
-}
-
 model Project {
-  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
   projectId        String
   userId           String
   projectName      String
-  projectDetails    String
+  projectDetails   String
   projectDocuments String[]
   createDate       String
   updateDate       String

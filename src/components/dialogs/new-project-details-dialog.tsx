@@ -27,20 +27,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { createProject } from "@/app/actions/create-new-project";
 
-interface ProjectDetailsDialogProps {
-  projectId: string;
-  userEmail: string;
-  projectName: string;
-  projectDetails: string;
-}
 
-export function ProjectDetailsDialog({
-  projectId,
-  projectName,
-  projectDetails,
-  userEmail,
-}: ProjectDetailsDialogProps) {
+export function NewProjectDialog() {
   const [submitted, setSubmitted] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -48,16 +38,19 @@ export function ProjectDetailsDialog({
   const form = useForm<z.infer<typeof ProjectDetailsFormSchema>>({
     resolver: zodResolver(ProjectDetailsFormSchema),
     defaultValues: {
-      projectName: projectName || "",
-      projectDetails: projectDetails || "",
+      projectName: "",
+      projectDetails: "",
     },
   });
 
   const onSubmit = async (data: z.infer<typeof ProjectDetailsFormSchema>) => {
-    const completedProjectData = { ...data, projectId, userEmail };
+   
     setSubmitted(true);
-    console.log("completedProjectData", completedProjectData);
-    // const result = await updateProjectDetails(completedProjectData);
+    try {
+      await createProject(data.projectName, data.projectDetails);
+    } catch (error) {
+      console.error("Error creating project:", error);
+    }
     setSubmitted(false);
     setOpen(false);
     router.push("/home");
@@ -70,7 +63,7 @@ export function ProjectDetailsDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Enter Project Details</DialogTitle>
+          <DialogTitle>Create a new Project</DialogTitle>
           <DialogDescription>
             Enter details of your project here. Click save when you're done.
           </DialogDescription>

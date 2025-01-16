@@ -8,10 +8,6 @@ import { PageFrame } from "@/components/pageframe";
 
 import { ProjectTable } from "@/components/tables/project-table";
 
-
-
-
-
 export default async function Home() {
   const auth = await currentUser();
 
@@ -29,15 +25,12 @@ export default async function Home() {
     return redirect("/welcome");
   }
 
-
-    const collections = await db.collection.findMany({
-      where: {  userId: user.id },
-    });
-    if (!collections) {
-      return <p> Collections fetch failed </p>;
-    }
-
-
+  const collections = await db.collection.findMany({
+    where: { userId: user.id },
+  });
+  if (!collections) {
+    return <p> Collections fetch failed </p>;
+  }
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
@@ -49,14 +42,10 @@ export default async function Home() {
           <div className="flex flex-col flex-auto">
             <PageHeader title="Home" />
             <MainContentRow>
-
-
               <ProjectTable />
-              
             </MainContentRow>
           </div>
         </div>
-        
       </PageFrame>
     </div>
   );
