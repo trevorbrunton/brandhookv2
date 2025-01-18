@@ -28,12 +28,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { createProject } from "@/app/actions/create-new-project";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 
 export function NewProjectDialog() {
   const [submitted, setSubmitted] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof ProjectDetailsFormSchema>>({
     resolver: zodResolver(ProjectDetailsFormSchema),
@@ -43,23 +45,39 @@ export function NewProjectDialog() {
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: ({
+      projectName,
+      projectDetails,
+    }: {
+      projectName: string;
+      projectDetails: string;
+    }) => createProject(projectName, projectDetails),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all_projects"] });
+      setOpen(false);
+      setSubmitted(false);
+      router.push("/home");
+    },
+    onError: (error: unknown) => {
+      console.error("Failed to create project:", error);
+    },
+  });
+
   const onSubmit = async (data: z.infer<typeof ProjectDetailsFormSchema>) => {
-   
     setSubmitted(true);
-    try {
-      await createProject(data.projectName, data.projectDetails);
-    } catch (error) {
-      console.error("Error creating project:", error);
-    }
-    setSubmitted(false);
-    setOpen(false);
-    router.push("/home");
+
+    mutation.mutate(data);
+    form.reset();
+   
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Create a new Project</Button>
+        <Button variant="ghost"
+        className="text-zinc-700"
+        >Create a new Project</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -108,11 +126,8 @@ export function NewProjectDialog() {
               >
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
-                disabled={submitted}
-              >
-                Save changes
+              <Button type="submit" disabled={submitted}>
+                Create
               </Button>
             </DialogFooter>
           </form>
@@ -121,4 +136,3 @@ export function NewProjectDialog() {
     </Dialog>
   );
 }
-

@@ -25,9 +25,9 @@ export async function fetchAllProjectsByUserId() {
    
     return projects;
   } catch (error) {
-    console.error("Error fetching collections by userId:", error);
+    console.error("Error fetching projects by userId:", error);
     return {
-      error: `Failed to fetch collections by userId: ${(error as Error).message}`,
+      error: `Failed to fetch projects by userId: ${(error as Error).message}`,
     };
   }
 }

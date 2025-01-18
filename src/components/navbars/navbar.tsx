@@ -31,7 +31,7 @@ export const Navbar = ({ navItems }: NavbarProps) => {
   return (
     <MaxWidthWrapper>
       <nav
-        className="sticky z-[100] h-16 inset-x-0 top-0 border-b border-gray-200 bg-muted/40 backdrop-blur-lg transition-all px-4
+        className="sticky h-16 inset-x-0 top-0 border-b border-gray-200 bg-muted/40 backdrop-blur-lg transition-all px-4
     mb-2 mx-2"
       >
         <div className="flex h-16 items-center justify-between">

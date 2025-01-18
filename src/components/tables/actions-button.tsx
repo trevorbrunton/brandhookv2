@@ -1,6 +1,6 @@
+
+
 "use client";
-import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,75 +9,82 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Ellipsis } from "lucide-react";
+import { MoreHorizontal } from "lucide-react"; // Changed from Ellipsis for better clarity
 import { deleteProject } from "@/app/actions/delete-project";
-import { ConfirmationDialog } from "@/components/ConfirmationDialog";
+import { useQueryClient } from "@tanstack/react-query";
 
-interface SelectButtonProps {
+import { toast } from "@/hooks/use-toast"; // Assuming you have toast component
+
+interface ActionsButtonProps {
   projectId: string;
+  projectName: string; // Added for better UX in confirmation
 }
 
-export function ActionsButton({ projectId }: SelectButtonProps) {
-  const [open, setOpen] = useState(false);
-  const router = useRouter();
+export function ActionsButton({ projectId, projectName }: ActionsButtonProps) {
 
-  const handleDeleteConfirm = useCallback(async () => {
-    console.log("Deleting project: ", projectId);
-    const result = await deleteProject(projectId);
-    if (result.success) {
-      console.log("Project deleted: ", projectId);
-      // Optionally, you can refresh the page or navigate away
-      // router.refresh(); // If you want to refresh the current page
-      // router.push('/projects'); // If you want to navigate to a projects list page
-    } else {
-      console.error("Project not deleted: ", projectId);
-      // Optionally, you can show an error message to the user
+
+  const queryClient = useQueryClient();
+
+  const handleDeleteConfirm = async () => {
+
+    try {
+      const result = await deleteProject(projectId);
+      
+      if (!result || !result.error) {
+        await queryClient.invalidateQueries({ queryKey: ["all_projects"] });
+        toast({
+          title: "Success",
+          description: `Project "${projectName}" has been deleted.`,
+        });
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `Failed to delete project: ${(error as Error).message}`,
+        variant: "destructive",
+      });
+
     }
-  }, [projectId]);
-
-  const handleDeleteCancel = useCallback(() => {
-    console.log("Deletion cancelled for project: ", projectId);
-  }, [projectId]);
+  };
 
   return (
-    <>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="link">
-            <Ellipsis className="text-muted-foreground" />
+          <Button 
+            variant="ghost" 
+            className="h-8 w-8 p-0"
+           
+          >
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuSeparator />
+        <DropdownMenuContent align="end" className="w-[160px]">
           <DropdownMenuItem>
             <Button
               variant="ghost"
-              onClick={() =>
-                router.push(`/project-details/${encodeURIComponent(projectId)}`)
-              }
+              className="w-full justify-start"
+              onClick={() => console.log("Edit project details")}
             >
               Edit Project Details
             </Button>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <Button variant="ghost" onClick={() => setOpen(true)}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={() => handleDeleteConfirm()}
+             
+            >
               Delete Project
             </Button>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <ConfirmationDialog
-        open={open}
-        onOpenChange={setOpen}
-        onConfirm={handleDeleteConfirm}
-        onCancel={handleDeleteCancel}
-        title="Delete Project"
-        description="Are you sure you want to delete this project? This action cannot be undone."
-        confirmText="Yes, delete project"
-        cancelText="No, keep project"
-        destructive={true}
-      />
-    </>
+
   );
 }

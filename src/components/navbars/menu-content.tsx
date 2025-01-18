@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Gem, Settings, Upload, LucideIcon, Columns2 } from "lucide-react";
+import { Home, Gem, Settings, Upload, LucideIcon, Folder } from "lucide-react";
 
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { NewProjectDialog } from "../dialogs/new-project-details-dialog";
 
 interface MenuContentProps {
   onLinkClick: () => void;
@@ -29,7 +30,7 @@ const menuItems: SidebarCategory[] = [
     items: [
       { href: "/home", icon: Home, text: "Home" },
       { href: "/upload", icon: Upload, text: "Upload" },
-      { href: "/memory-sorter", icon: Columns2, text: "Memory Sorter" },
+
     ],
   },
   {
@@ -98,10 +99,10 @@ export function MenuContent({ onLinkClick, page }: MenuContentProps) {
           </div>
         </motion.div>
       ))}
-
-      
-        
-     
+      <div className="flex items-center">
+        <Folder className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+        <NewProjectDialog />
+      </div>
     </motion.nav>
   );
 }
