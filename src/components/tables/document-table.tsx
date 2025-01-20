@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import { DocActionsButton } from "@/components/tables/doc-actions-button";
 import { Project } from "@prisma/client";
@@ -13,25 +12,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 
-
 export async function DocumentTable({ project }: { project: Project }) {
   const documents = await db.projectDocument.findMany({
     where: { projectId: project.id },
-  })
+  });
   if (documents.length === 0) {
     return (
-      <div className="flex justify-center mt-12">
-        No Documents available
-      </div>
+      <div className="flex justify-center mt-12">No Documents available</div>
     );
   }
   return (
     <Table>
-      <TableHeader className="bg-gray-400">
+      <TableHeader className="bg-gray-50">
         <TableRow>
           <TableHead>Title</TableHead>
           <TableHead>Date Created</TableHead>
-          {/* Added header for updateDate */}
           <TableHead className="text-right"></TableHead>
           <TableHead className="text-right"></TableHead>
         </TableRow>
@@ -44,16 +39,14 @@ export async function DocumentTable({ project }: { project: Project }) {
             <TableCell>
               <Button>
                 <Link
-                  href={`/document-viewer/${encodeURIComponent(
-                    document.id
-                  )}/${encodeURIComponent(project.id)}`}
+                  href={`/document-viewer/${document.id}`}
                 >
                   View
                 </Link>
               </Button>
             </TableCell>
             <TableCell>
-              <DocActionsButton 
+              <DocActionsButton
                 projectId={project.id}
                 documentId={document.id}
               />
