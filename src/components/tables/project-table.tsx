@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Project } from "@prisma/client";
+import type { Project } from "@prisma/client";
 import { fetchAllProjectsByUserId } from "@/app/actions/fetch-all-projects-by-userId";
 import { ActionsButton } from "@/components/tables/actions-button";
 import { NewProjectDialog } from "@/components/dialogs/new-project-details-dialog";
@@ -43,7 +43,9 @@ export function ProjectTable() {
   }
 
   if (isError) {
-    return <span>An error occurred while fetching projects. {error.message}</span>;
+    return (
+      <span>An error occurred while fetching projects. {error.message}</span>
+    );
   }
 
   if (!projects || projects.length === 0) {
@@ -59,7 +61,7 @@ export function ProjectTable() {
   }
 
   return (
-    <div className="w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+    <div className="w-full overflow-hidden border border-gray-200 bg-white shadow-sm">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
@@ -85,14 +87,16 @@ export function ProjectTable() {
             {projects.map((project) => (
               <TableRow
                 className="border-b border-gray-200 last:border-b-0"
-                key={project.projectId}
+                key={project.id}
               >
                 <TableCell className="py-4 px-4">
                   <div className="font-medium text-gray-900">
                     <Link
-                      href={`/project-view/${encodeURIComponent(
-                        project.projectId
-                      )}`}
+                      href={{
+                        pathname: `/project-view/${project.id}`,
+                        query: { project: JSON.stringify(project) },
+                      }}
+                      as={`/project-view/${project.id}`}
                     >
                       {project.projectName}
                     </Link>
@@ -119,7 +123,10 @@ export function ProjectTable() {
                 </TableCell>
                 <TableCell className="whitespace-nowrap py-4 px-4 text-center text-sm font-medium">
                   <div className="flex items-center justify-center space-x-2">
-                    <ActionsButton projectId={project.projectId} projectName={project.projectName} />
+                    <ActionsButton
+                      projectId={project.id}
+                      projectName={project.projectName}
+                    />
                   </div>
                 </TableCell>
               </TableRow>
@@ -128,5 +135,5 @@ export function ProjectTable() {
         </Table>
       </div>
     </div>
-  )
+  );
 }

@@ -2,7 +2,6 @@
 
 import { db } from "@/db";
 import { currentUser } from "@clerk/nextjs/server";
-import { nanoid } from "@/lib/utils";
 
 export async function createProject(
   projectName: string,
@@ -26,7 +25,6 @@ export async function createProject(
 
     const newProject = await db.project.create({
       data: {
-        projectId: nanoid(),
         userId: user.id,
         projectName,
         projectDetails,

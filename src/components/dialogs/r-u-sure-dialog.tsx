@@ -10,7 +10,7 @@ import {
 
 } from "@/components/ui/dialog";
 
-interface NotImplementedDialogProps {
+interface DialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   registerReturnValue: (value: boolean) => void;
@@ -22,7 +22,7 @@ export function RUSureDialog({
   open,
   setOpen,
   registerReturnValue,
-}: NotImplementedDialogProps) {
+}: DialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-md">

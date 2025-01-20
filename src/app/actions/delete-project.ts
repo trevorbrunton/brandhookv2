@@ -10,7 +10,7 @@ export async function deleteProject(projectId: string) {
     await db.$transaction(async (tx) => {
       // Fetch the current state of the project
       const projectData: { projectDocuments: string[], userId: string } | null = await tx.project.findUnique({
-        where: { projectId: projectId },
+        where: { id: projectId },
         select: { projectDocuments: true, userId: true },
       });
 
@@ -26,7 +26,7 @@ export async function deleteProject(projectId: string) {
       });
 
       // Delete the project
-      await tx.project.delete({ where: { projectId: projectId } });
+      await tx.project.delete({ where: { id: projectId } });
 
 
       revalidatePath("/home");
