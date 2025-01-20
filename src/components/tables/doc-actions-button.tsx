@@ -1,26 +1,19 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+
+
 import { deleteDocument } from "@/app/actions/delete-document";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+
+
 import { Button } from "@/components/ui/button";
 import { Ellipsis } from "lucide-react";
-import { deleteProject } from "@/app/actions/delete-project";
-import { RUSureDialog } from "@/components/r-u-sure-dialog";
-import { set } from "date-fns";
+
 
 interface SelectButtonProps {
   projectId: string;
@@ -28,11 +21,10 @@ interface SelectButtonProps {
 }
 
 export function DocActionsButton({ projectId, documentId }: SelectButtonProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
-  const router = useRouter();
+
 
   return (
-    <TooltipProvider>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="link">
@@ -45,12 +37,12 @@ export function DocActionsButton({ projectId, documentId }: SelectButtonProps) {
             <Button
               variant="ghost"
               onClick={async () => {
-                setIsDeleting(true);
+            
                 const result = await deleteDocument(documentId!, projectId);
-                if (result.error) {
+                if (result?.error) {
                   console.error(result.error);
                 }
-                setIsDeleting(false);
+     
               }}
             >
               {" "}
@@ -70,6 +62,6 @@ export function DocActionsButton({ projectId, documentId }: SelectButtonProps) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    </TooltipProvider>
+  
   );
 }

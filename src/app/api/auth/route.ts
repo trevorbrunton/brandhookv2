@@ -23,43 +23,24 @@ export async function GET() {
    
 
     if (!user) {
-      const newUser = await db.user.create({
+       await db.user.create({
         data: {
           externalId: auth.id,
           email: auth.emailAddresses[0].emailAddress,
-          defaultCollectionId: "",
-          quotaLimit: 100, 
-          collections: []
+          quotaLimit: 100,
+          projects: []
         },
       });
 
-      const newCollection = await db.collection.create({
-        data: {
-          collectionName: "Recent Uploads",
-          collectionDetails: "A collection of your most recent uploads",
-          userId: newUser.id,
-          userEmail: newUser.email,
-          users: [],
-          memories: [],
-          createDate: new Date().toISOString(),
-          updateDate: new Date().toISOString(),
-        },
-      });
 
-      await db.user.update({
-        where: { id: newUser.id },
-        data: {
-          defaultCollectionId: newCollection.id,
-        },
-      });
+
+      return new NextResponse(
+        JSON.stringify({
+          isSynced: true,
+        }),
+        { status: 200 }
+      );
     }
-
-    return new NextResponse(
-      JSON.stringify({
-        isSynced: true,
-      }),
-      { status: 200 }
-    );
   } catch (error) {
     console.error(error);
     return new NextResponse(

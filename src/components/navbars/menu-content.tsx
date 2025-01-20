@@ -24,30 +24,7 @@ interface SidebarCategory {
   items: SidebarItem[];
 }
 
-const menuItems: SidebarCategory[] = [
-  {
-    category: "Navigation",
-    items: [
-      { href: "/home", icon: Home, text: "Home" },
-      { href: "/upload", icon: Upload, text: "Upload" },
 
-    ],
-  },
-  {
-    category: "Account",
-    items: [{ href: "/upgrade", icon: Gem, text: "Upgrade" }],
-  },
-  {
-    category: "Settings",
-    items: [
-      {
-        href: "/account-settings",
-        icon: Settings,
-        text: "Account Settings",
-      },
-    ],
-  },
-];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -68,7 +45,29 @@ const itemVariants = {
 };
 
 export function MenuContent({ onLinkClick, page }: MenuContentProps) {
-  console.log("PAGE:", page);
+  const menuItems: SidebarCategory[] = [
+    {
+      category: "Navigation",
+      items: [
+        { href: "/home", icon: Home, text: "Home" },
+        { href: `/upload/${page}`, icon: Upload, text: "Upload" },
+      ],
+    },
+    {
+      category: "Account",
+      items: [{ href: "/upgrade", icon: Gem, text: "Upgrade" }],
+    },
+    {
+      category: "Settings",
+      items: [
+        {
+          href: "/account-settings",
+          icon: Settings,
+          text: "Account Settings",
+        },
+      ],
+    },
+  ];
   return (
     <motion.nav
       className="flex flex-col items-start gap-4 px-2 py-5 w-full"

@@ -8,12 +8,12 @@ import { db } from "@/db";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { redirect } from "next/navigation";
 
-export default async function UploadPage({
-  params,
-}: {
-  params: Promise<{ collectionId: string }>;
-}) {
-  const { collectionId } = await params;
+interface PageProps {
+  params: Promise<{ projectId: string }>;
+}
+
+export default async function UploadPage({ params }: PageProps) {
+  const { projectId } = await params;
   const auth = await currentUser();
 
   const navItems = null;
@@ -35,16 +35,15 @@ export default async function UploadPage({
       <PageFrame page="upload" navItems={navItems}>
         <div className="flex flex-row flex-auto">
           <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
-            <NavSideBar page="upload" />
+            <NavSideBar page={projectId} />
           </div>
           <div className="flex flex-col flex-auto">
             <PageHeader title="Upload File" />
             <MainContentRow>
               <div className="flex justify-center w-full  pt-8 min-h-full">
                 <UploadFileForm
-                  collectionId={collectionId}
+                  projectId={projectId}
                   userId={user.id}
-                  defaultCollectionId={user.defaultCollectionId}
                 />
               </div>
             </MainContentRow>

@@ -1,32 +1,47 @@
 // Called by upload-file-format.tsx
 "use server";
 import { db } from "@/db";
-import { Memory } from "@/lib/collection-types";
+import type { ProjectDocument as PrismaProjectDocument } from "@prisma/client";
+
+interface ProjectDocument extends Omit<PrismaProjectDocument, "id"> {
+  id?: string;
+}
 import { revalidatePath } from "next/cache";
 
-export async function saveDocToDb(doc: Memory, collectionId: string) {
+export async function saveDocToDb(doc: ProjectDocument, projectId: string) {
   try {
     if (!db) {
       throw new Error("Database connection not available");
     }
-    const memory = await db.memory.create({
-      data: { ...doc },
+
+    console.log("Saving document to database:", doc);
+    console.log("Project ID:", projectId);
+
+    // Remove the id field if it's an empty string
+    const { id, ...docWithoutId } = doc;
+    const documentData = id ? doc : docWithoutId;
+
+    const projectDocument = await db.projectDocument.create({
+      data: documentData,
     });
-    const collection = await db.collection.findUnique({
-      where: { id: collectionId },
+
+    const project = await db.project.findUnique({
+      where: { id: projectId },
     });
-    if (collection && !collection.memories.includes(memory.id)) {
-      await db.collection.update({
-        where: { id: collectionId },
+
+    if (project) {
+      await db.project.update({
+        where: { id: projectId },
         data: {
-          memories: {
-            set: [...collection.memories, memory.id],
+          projectDocuments: {
+            push: projectDocument.id,
           },
-          updateDate: new Date().toISOString(),
+          updateDate: new Date().toLocaleDateString("eu-AU"),
         },
       });
     }
-    revalidatePath(`/collection/${collectionId}`);
+
+    revalidatePath(`/project-view/${projectId}`);
     return { success: "Document saved successfully" };
   } catch (error) {
     console.error("Database operation failed:", error);

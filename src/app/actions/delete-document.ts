@@ -4,35 +4,43 @@
 
 "use server";
 import { db } from "@/db";
-import { ProjectDocument, Project } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
-export async function deleteDocument(
-  documentId: string,
-  projectId: string
-) {
+export async function deleteDocument(documentId: string, projectId: string) {
   try {
-    if (!db) {
-      throw new Error("Database not available");
-    } else {
-      const projects = db.collection("projects");
-      const project = await projects.findOne({ projectId: projectId }) as unknown as Project;
-      const documents: ProjectDocument[] = project.projectDocuments || [];
-      console.log("bang")
-      // Filter out the document to be deleted  from the projectDocuments array
-      const newDocuments = documents.filter(
-        (doc: ProjectDocument) => doc.id !== documentId
+    await db.$transaction(async (tx) => {
+      // Fetch the current state of the project
+      const projectData: { projectDocuments: string[]; userId: string } | null =
+        await tx.project.findUnique({
+          where: { id: projectId },
+          select: { projectDocuments: true, userId: true },
+        });
+
+      if (!projectData) {
+        throw new Error("Project not found");
+      }
+
+      // delete projectID from projectDocuments array
+      const newProjectDocuments = projectData.projectDocuments.filter(
+        (docId) => docId !== documentId
       );
+
+      // Delete the document
+      await tx.projectDocument.delete({ where: { id: documentId } });
+
       // Update the project with the new projectDocuments array
-      await projects.updateOne(
-        { projectId: projectId },
-        { $set: { projectDocuments: newDocuments } }
-      );
-    revalidatePath(`/project-view/${projectId}`);
-      return { success: "Document Deleted" };
-    }
-  } catch (e) {
-    console.error(e);
-    return { error: "Database fetch failed" };
+      await tx.project.update({
+        where: { id: projectId },
+        data: { projectDocuments: newProjectDocuments },
+      });
+
+      revalidatePath(`/project-view/${projectId}`);
+      return { success: true };
+    });
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    return {
+      error: `Failed to delete Project: ${(error as Error).message}`,
+    };
   }
 }

@@ -1,6 +1,7 @@
+
 import Link from "next/link";
-import {DocActionsButton} from "@/components/tables/doc-actions-button";
-import type { ProjectDocument, Project } from "@prisma/client";
+import { DocActionsButton } from "@/components/tables/doc-actions-button";
+import { Project } from "@prisma/client";
 import {
   Table,
   TableBody,
@@ -10,11 +11,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { db } from "@/db";
 
 
 export async function DocumentTable({ project }: { project: Project }) {
-  const documents =
-    project.projectDocuments as unknown as ProjectDocument[];
+  const documents = await db.projectDocument.findMany({
+    where: { projectId: project.id },
+  })
   if (documents.length === 0) {
     return (
       <div className="flex justify-center mt-12">

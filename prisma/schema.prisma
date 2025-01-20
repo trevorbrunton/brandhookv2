@@ -52,23 +52,7 @@ model Collection {
   @@map("collections")
 }
 
-model Memory {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String   @unique
-  title       String
-  fileUrl     String? // Optional field
-  docType     String
-  createDate  String
-  updateDate  String
-  collections String[]
-  //Optional fields
-  people      String[]
-  things      String[]
-  event       String?
-  place       String?
 
-  @@map("memories")
-}
 
 model Project {
   id               String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -84,8 +68,8 @@ model Project {
 
 model ProjectDocument {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  projectDocumentId String
   projectId         String
+  userId            String
   title             String
   interviewee       String?
   interviewDate     String?

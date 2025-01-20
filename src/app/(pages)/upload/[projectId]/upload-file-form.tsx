@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
-import { Memory } from "@/lib/collection-types";
+import { ProjectDocument } from "@prisma/client";
 
 import {
   Popover,
@@ -25,11 +25,11 @@ import { useRouter } from "next/navigation";
 import { saveDocToDb } from "@/app/actions/save-doc-to-db";
 
 export function UploadFileForm({
-  collectionId, userId, defaultCollectionId
+  projectId, userId
 }: {
-    collectionId: string;
+    projectId: string;
     userId: string;
-    defaultCollectionId: string;
+
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [documentTitle, setDocumentTitle] = useState("");
@@ -134,21 +134,22 @@ const handleFileUpload = async (file: File) => {
           docType = "document";
         }
 
-        const newDocument: Memory = {
+        const newDocument: ProjectDocument = {
+          id: "",
+          projectId,
+          userId,
           title: documentTitle,
-          userId: userId,
+          interviewee: "",
+          interviewDate: "",
+          conversationName: "",
+          content: "",
           fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
           docType: docType,
-          collections: [defaultCollectionId],
-          people: [],
-          things: [],
-          event: "",
-          place: "",
           createDate: new Date().toLocaleDateString("eu-AU"),
           updateDate: new Date().toLocaleDateString("eu-AU"),
         };
         try {
-          await saveDocToDb(newDocument, defaultCollectionId);
+          await saveDocToDb(newDocument, projectId);
         } catch (error) {
           console.error(error);
           toast({
@@ -169,7 +170,7 @@ const handleFileUpload = async (file: File) => {
         title: "Upload Successful",
         description: "Your document has beed saved",
       });
-      router.push(`/collection/${defaultCollectionId}`);
+      router.push(`/project-view/${projectId}`);
     }
   };
   const onDrop = (acceptedFiles: File[]) => {
@@ -323,7 +324,7 @@ const handleFileUpload = async (file: File) => {
               <Button
                 type="button"
                 variant="destructive"
-                onClick={() => router.push(`/project-view/${collectionId}`)}
+                onClick={() => router.push(`/project-view/${projectId}`)}
               >
                 Cancel
               </Button>

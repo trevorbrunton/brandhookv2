@@ -17,12 +17,10 @@ export async function deleteProject(projectId: string) {
       if (!projectData) {
         throw new Error("Project not found");
       }
-    
-    console.log("Project data:", projectData);
 
       // Delete all the documents in the projectDocuments array
       await tx.projectDocument.deleteMany({
-        where: { projectDocumentId: { in: projectData.projectDocuments } },
+        where: { id: { in: projectData.projectDocuments } },
       });
 
       // Delete the project
