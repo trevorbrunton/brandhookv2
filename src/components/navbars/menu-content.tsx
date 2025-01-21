@@ -6,7 +6,8 @@ import { Home, Gem, Settings, Upload, LucideIcon, Folder } from "lucide-react";
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { NewProjectDialog } from "../dialogs/new-project-details-dialog";
+import { NewProjectDialog } from "@/components/dialogs/new-project-details-dialog";
+import { ConversationDialog } from "@/components/dialogs/add-conversation-dialog";
 
 interface MenuContentProps {
   onLinkClick: () => void;
@@ -23,8 +24,6 @@ interface SidebarCategory {
   category: string;
   items: SidebarItem[];
 }
-
-
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -101,6 +100,10 @@ export function MenuContent({ onLinkClick, page }: MenuContentProps) {
       <div className="flex items-center">
         <Folder className="size-4 text-zinc-500 group-hover:text-zinc-700" />
         <NewProjectDialog />
+      </div>
+      <div className="flex items-center">
+        <Folder className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+        <ConversationDialog projectId={page} />
       </div>
     </motion.nav>
   );
