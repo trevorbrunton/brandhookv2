@@ -19,18 +19,18 @@ enum Plan {
 }
 
 model User {
-  id         String   @id @default(cuid()) @map("_id")
-  externalId String?  @unique
-  quotaLimit Int
-  plan       Plan     @default(FREE)
-  email      String   @unique
-  apiKey     String   @unique @default(cuid())
-  discordId  String?
-  projects   String[]
-  createDate DateTime @default(now())
-  updateDate DateTime @updatedAt
+  id              String   @id @default(cuid()) @map("_id")
+  externalId      String?  @unique
+  quotaLimit      Int
+  plan            Plan     @default(FREE)
+  email           String   @unique
+  businessDetails String?
+  businessStage   String?
+  marketChannel   String?
+  projects        String[]
+  createDate      DateTime @default(now())
+  updateDate      DateTime @updatedAt
 
-  @@index([email, apiKey])
   @@map("users")
 }
 
@@ -52,8 +52,6 @@ model Collection {
   @@map("collections")
 }
 
-
-
 model Project {
   id               String   @id @default(auto()) @map("_id") @db.ObjectId
   userId           String
@@ -67,18 +65,18 @@ model Project {
 }
 
 model ProjectDocument {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  projectId         String
-  userId            String
-  title             String
-  interviewee       String?
-  interviewDate     String?
-  conversationName  String?
-  content           String?
-  fileUrl           String?
-  docType           String
-  createDate        String
-  updateDate        String
+  id               String  @id @default(auto()) @map("_id") @db.ObjectId
+  projectId        String
+  userId           String
+  title            String
+  interviewee      String?
+  interviewDate    String?
+  conversationName String?
+  content          String?
+  fileUrl          String?
+  docType          String
+  createDate       String
+  updateDate       String
 
   @@map("project_documents")
 }

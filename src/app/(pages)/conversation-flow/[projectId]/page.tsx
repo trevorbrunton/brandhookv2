@@ -6,21 +6,19 @@ import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
 import type { Project } from "@prisma/client";
-import { AddConversationForm } from "@/components/dialogs/add-conversation-dialog";
+import { ConversationDialog } from "@/components/dialogs/add-conversation-dialog";
 
 type PageProps = {
   params: Promise<{
     projectId: string;
   }>;
-  searchParams: Promise<{
-    projectData?: Project;
-  }>;
+
 };
 
-export default async function ProjectView({ params, searchParams }: PageProps) {
+export default async function ProjectView({ params}: PageProps) {
   const auth = await currentUser();
   const { projectId } = await params;
-  const { projectData } = await searchParams;
+
 
   const navItems = null;
 
@@ -36,6 +34,14 @@ export default async function ProjectView({ params, searchParams }: PageProps) {
     return redirect("/welcome");
   }
 
+  //fetch project data
+  const projectData = await db.project.findUnique({
+    where: { id: projectId },
+  });
+
+
+
+
   return (
     <div className="flex w-full flex-col">
       <PageFrame page="New Conversation" navItems={navItems}>
@@ -46,7 +52,7 @@ export default async function ProjectView({ params, searchParams }: PageProps) {
           <div className="flex flex-col flex-auto">
             <PageHeader title="New Conversation" />
             <MainContentRow>
-              {projectData && <AddConversationForm project={projectData} />}
+              {projectData && <ConversationDialog project={projectData} />}
             </MainContentRow>
           </div>
         </div>

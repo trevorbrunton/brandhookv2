@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type * as z from "zod";
@@ -28,9 +28,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Trash2Icon, Brain, Loader, Plus, RefreshCw, Save } from "lucide-react";
-import type { Project } from "@prisma/client";
 
-export const ConversationDialog = ({ projectId }: { projectId: string }) => {
+
+interface ConversationDialogProps {
+  projectId: string;
+
+}
+
+
+
+export const ConversationDialog = ({ projectId}: ConversationDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [completed, setCompleted] = useState(false);
@@ -41,7 +48,7 @@ export const ConversationDialog = ({ projectId }: { projectId: string }) => {
     typeof ConversationFormSchema
   > | null>(null);
 
-  const router = useRouter();
+
 
   const form = useForm<z.infer<typeof ConversationFormSchema>>({
     resolver: zodResolver(ConversationFormSchema),
@@ -79,14 +86,14 @@ export const ConversationDialog = ({ projectId }: { projectId: string }) => {
       if (!response.ok) throw new Error("Failed to generate conversation flow");
 
       const responseData = await response.json();
-      const formData = new FormData();
-      formData.append(
+      const formDataToSave = new FormData();
+      formDataToSave.append(
         "DOCUMENT_TITLE",
         `Conversation Guide - ${formData.conversationFlowName}`
       );
-      formData.append("PROJECTID", projectId);
-      formData.append("DOCTYPE", "conversation");
-      await saveDocToDb(formData, responseData.text, "conversation");
+      formDataToSave.append("PROJECTID", projectId);
+      formDataToSave.append("DOCTYPE", "conversation");
+      await saveDocToDb(formDataToSave, responseData.text, "conversation");
       setCompletion(responseData.text);
       setCompleted(true);
     } catch (error) {
