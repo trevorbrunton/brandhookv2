@@ -54,28 +54,41 @@ export const SettingsDialog = () => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { user } = useUser();  
+  const { user } = useUser();
   const id = user?.id;
 
-  console.log("ID: ",id);  
+  console.log("ID: ", id);
 
   const {
     data: userRecord,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["user"],
+    queryKey: ["user", id],
     queryFn: async () => {
-      const userDetails = await fetchUserFromExternalId(id || "");
-      return userDetails;
+      if (!id) {
+        throw new Error("User ID not available");
+      }
+      return fetchUserFromExternalId(id);
     },
+    enabled: !!id, // Only run the query when id is available
   });
-  console.log("User Record: ",userRecord);
-
+  console.log("User Record: ", userRecord);
 
   const updateUserMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: z.infer<typeof SettingsFormSchema> }) =>
-      updateBusinessDetails(id, data.businessDetails, data.businessStage, data.marketChannel),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: z.infer<typeof SettingsFormSchema>;
+    }) =>
+      updateBusinessDetails(
+        id,
+        data.businessDetails,
+        data.businessStage,
+        data.marketChannel
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       setOpen(false);
@@ -84,15 +97,28 @@ export const SettingsDialog = () => {
 
   const form = useForm<z.infer<typeof SettingsFormSchema>>({
     resolver: zodResolver(SettingsFormSchema),
-    defaultValues: {
-      businessDetails: userRecord?.businessDetails || "",
-      businessStage: userRecord?.businessStage || "",
-      marketChannel: userRecord?.marketChannel || "",
+    defaultValues: async () => {
+      if (!userRecord) {
+        return {
+          businessDetails: "",
+          businessStage: "",
+          marketChannel: "",
+        };
+      }
+      return {
+        businessDetails: userRecord.businessDetails || "",
+        businessStage: userRecord.businessStage || "",
+        marketChannel: userRecord.marketChannel || "",
+      };
     },
   });
 
   const onSubmit = (data: z.infer<typeof SettingsFormSchema>) => {
-    updateUserMutation.mutate({ id: userRecord?.id || "", data });
+    if (userRecord && userRecord.id) {
+      updateUserMutation.mutate({ id: userRecord.id, data });
+    } else {
+      console.error("User ID not available");
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -101,12 +127,12 @@ export const SettingsDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button variant="ghost" className="flex items-center gap-2">
           <Settings size={16} />
           Edit Settings
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px] w-11/12 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] max-w-[900px] max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
             Edit Settings
@@ -118,7 +144,7 @@ export const SettingsDialog = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 mt-4"
+            className="space-y-4 sm:space-y-6 mt-4"
           >
             <FormField
               control={form.control}
@@ -139,7 +165,7 @@ export const SettingsDialog = () => {
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <FormField
                 control={form.control}
                 name="businessStage"
@@ -196,33 +222,33 @@ export const SettingsDialog = () => {
                 )}
               />
             </div>
-            <div className="flex flex-col justify-between items-center gap-4 space-y-4">
+            <div className="flex flex-col justify-between items-center gap-4">
               <Button
                 type="submit"
                 disabled={updateUserMutation.isPending}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition duration-200"
+                className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition duration-200"
               >
                 {updateUserMutation.isPending ? "Saving..." : "Save Changes"}
               </Button>
 
-              <div className="flex justify-between sm:flex-row flex-col space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:px-32">
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4 w-full">
                 <PrivacyDialog />
                 <TOUDialog />
               </div>
             </div>
           </form>
         </Form>
-        <div className="mt-6">
+        <div className="mt-6 w-full sm:w-auto">
           <Button
             asChild
             className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-medium py-2 px-4 rounded-md transition duration-200"
           >
             <Link
               href="https://www.loom.com/share/2220733b64c54ece9da24f88118c9389?sid=6a6dc055-eae5-41f3-9b0e-8f7adae7c144"
-              className="flex items-center justify-center gap-2"
+              className="flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               Watch Brandhook Discover AI Tool Explainer
-              <ArrowRight size={16} />
+              <ArrowRight size={16} className="hidden sm:inline" />
             </Link>
           </Button>
         </div>
