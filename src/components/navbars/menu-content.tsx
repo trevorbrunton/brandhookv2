@@ -8,6 +8,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { NewProjectDialog } from "@/components/dialogs/new-project-details-dialog";
 import { ConversationDialog } from "@/components/dialogs/add-conversation-dialog";
+import { SettingsDialog } from "@/components/dialogs/settings-dialog";
 
 interface MenuContentProps {
   onLinkClick: () => void;
@@ -104,6 +105,10 @@ export function MenuContent({ onLinkClick, page }: MenuContentProps) {
       <div className="flex items-center">
         <Folder className="size-4 text-zinc-500 group-hover:text-zinc-700" />
         <ConversationDialog projectId={page} />
+      </div>
+      <div className="flex items-center">
+        <Folder className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+        <SettingsDialog />
       </div>
     </motion.nav>
   );

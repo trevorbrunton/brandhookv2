@@ -7,7 +7,7 @@ export async function fetchDocument(documentId: string) {
     if (!db) {
       throw new Error("Database not available");
     }
-    const document = db.projectDocument.findFirst(
+    const document = await db.projectDocument.findFirst(
       {where: {id: documentId}}
     );
 
