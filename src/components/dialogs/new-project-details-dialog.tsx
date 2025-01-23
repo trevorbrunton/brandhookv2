@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {FolderPlus} from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -75,9 +76,10 @@ export function NewProjectDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost"
-        className="text-zinc-700"
-        >Create a new Project</Button>
+        <Button variant="ghost" className="flex items-center text-zinc-500 group-hover:text-zinc-700 -my-2">
+          <FolderPlus size={16} />
+          New Project
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

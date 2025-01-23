@@ -30,7 +30,7 @@ export default async function Home() {
       <PageFrame page="home" navItems={navItems}>
         <div className="flex flex-row flex-auto">
           <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
-            <NavSideBar page="home" />
+            <NavSideBar page="home" userId={user.id} />
           </div>
           <div className="flex flex-col flex-auto">
             <PageHeader title="Home" />

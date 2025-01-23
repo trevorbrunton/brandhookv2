@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
-import type { Project } from "@prisma/client";
 import { ConversationDialog } from "@/components/dialogs/add-conversation-dialog";
 
 type PageProps = {
@@ -15,7 +14,7 @@ type PageProps = {
 
 };
 
-export default async function ProjectView({ params}: PageProps) {
+export default async function ConversationView({ params}: PageProps) {
   const auth = await currentUser();
   const { projectId } = await params;
 

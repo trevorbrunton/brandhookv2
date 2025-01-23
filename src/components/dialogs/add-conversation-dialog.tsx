@@ -27,7 +27,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Trash2Icon, Brain, Loader, Plus, RefreshCw, Save } from "lucide-react";
+import { Trash2Icon, Brain, Loader, Plus, MessageSquareText, Save, RefreshCw } from "lucide-react";
 
 
 interface ConversationDialogProps {
@@ -93,7 +93,7 @@ export const ConversationDialog = ({ projectId}: ConversationDialogProps) => {
       );
       formDataToSave.append("PROJECTID", projectId);
       formDataToSave.append("DOCTYPE", "conversation");
-      await saveDocToDb(formDataToSave, responseData.text, "conversation");
+      await saveDocToDb(formDataToSave, responseData.text);
       setCompletion(responseData.text);
       setCompleted(true);
     } catch (error) {
@@ -113,7 +113,10 @@ export const ConversationDialog = ({ projectId}: ConversationDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost">Add Conversation</Button>
+        <Button variant="ghost" className="flex items-center text-zinc-500 group-hover:text-zinc-700 -my-2">
+          <MessageSquareText size={16} />
+          Add Conversation
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

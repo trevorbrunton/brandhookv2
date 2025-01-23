@@ -2,15 +2,11 @@
 import { db } from "@/db";
 
 export async function fetchUserFromExternalId(id: string) {
-
   try {
     if (!db) {
       throw new Error("Database not available");
     }
-    const user = await db.user.findFirst(
-      {where: {externalId: id}}
-    );
-    console.log("User record: ",user);
+    const user = await db.user.findFirst({ where: { externalId: id } });
 
     return user;
   } catch (e) {

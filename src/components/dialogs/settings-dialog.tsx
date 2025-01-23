@@ -36,7 +36,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ArrowRight, Settings } from "lucide-react";
+import { ArrowRight, UserRoundPen } from "lucide-react";
 
 const SettingsFormSchema = z.object({
   businessDetails: z
@@ -57,8 +57,6 @@ export const SettingsDialog = () => {
   const { user } = useUser();
   const id = user?.id;
 
-  console.log("ID: ", id);
-
   const {
     data: userRecord,
     isLoading,
@@ -73,7 +71,6 @@ export const SettingsDialog = () => {
     },
     enabled: !!id, // Only run the query when id is available
   });
-  console.log("User Record: ", userRecord);
 
   const updateUserMutation = useMutation({
     mutationFn: ({
@@ -127,8 +124,8 @@ export const SettingsDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="flex items-center gap-2">
-          <Settings size={16} />
+        <Button variant="ghost" className="flex items-center text-zinc-500 group-hover:text-zinc-700 -my-2">
+          <UserRoundPen size={16} />
           Edit Settings
         </Button>
       </DialogTrigger>

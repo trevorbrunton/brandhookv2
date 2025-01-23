@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Gem, Settings, Upload, LucideIcon, Folder } from "lucide-react";
+import { Home, Gem,  LucideIcon } from "lucide-react";
 
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
@@ -9,10 +9,12 @@ import { cn } from "@/lib/utils";
 import { NewProjectDialog } from "@/components/dialogs/new-project-details-dialog";
 import { ConversationDialog } from "@/components/dialogs/add-conversation-dialog";
 import { SettingsDialog } from "@/components/dialogs/settings-dialog";
+import { UploadDialog } from "@/components/dialogs/upload-dialog";
 
 interface MenuContentProps {
   onLinkClick: () => void;
   page: string;
+  userId: string;
 }
 
 interface SidebarItem {
@@ -44,29 +46,19 @@ const itemVariants = {
   },
 };
 
-export function MenuContent({ onLinkClick, page }: MenuContentProps) {
+export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
   const menuItems: SidebarCategory[] = [
     {
       category: "Navigation",
       items: [
         { href: "/home", icon: Home, text: "Home" },
-        { href: `/upload/${page}`, icon: Upload, text: "Upload" },
       ],
     },
     {
       category: "Account",
       items: [{ href: "/upgrade", icon: Gem, text: "Upgrade" }],
     },
-    {
-      category: "Settings",
-      items: [
-        {
-          href: "/account-settings",
-          icon: Settings,
-          text: "Account Settings",
-        },
-      ],
-    },
+
   ];
   return (
     <motion.nav
@@ -87,7 +79,7 @@ export function MenuContent({ onLinkClick, page }: MenuContentProps) {
                 href={item.href}
                 className={cn(
                   buttonVariants({ variant: "ghost" }),
-                  "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-700 hover:bg-gray-50 transition"
+                  "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition"
                 )}
                 onClick={onLinkClick}
               >
@@ -98,16 +90,16 @@ export function MenuContent({ onLinkClick, page }: MenuContentProps) {
           </div>
         </motion.div>
       ))}
-      <div className="flex items-center">
-        <Folder className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+      <div className="-mx-4 flex items-center">
         <NewProjectDialog />
       </div>
-      <div className="flex items-center">
-        <Folder className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+      <div className="-mx-4 flex items-center">
         <ConversationDialog projectId={page} />
       </div>
-      <div className="flex items-center">
-        <Folder className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+      <div className="-mx-4 flex items-center">
+        <UploadDialog projectId={page} userId={userId} />
+      </div>
+      <div className="-mx-4 flex items-center">
         <SettingsDialog />
       </div>
     </motion.nav>
