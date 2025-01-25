@@ -55,7 +55,7 @@ const UpgradePage = async ({ searchParams }: PageProps) => {
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
-      <PageFrame page="Upgrade" navItems={navItems}>
+      <PageFrame page="Upgrade" userId={user.id}  navItems={navItems}>
         {success && <PaymentSuccessModal />}
         <div className="flex flex-row flex-auto">
           <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">

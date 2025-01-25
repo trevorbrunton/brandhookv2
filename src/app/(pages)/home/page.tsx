@@ -27,7 +27,7 @@ export default async function Home() {
 
   return (
     <div className="flex w-full flex-col ">
-      <PageFrame page="home" navItems={navItems}>
+      <PageFrame page="home" userId={user.id} navItems={navItems}>
         <div className="flex flex-row flex-auto">
           <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
             <NavSideBar page="home" userId={user.id} />

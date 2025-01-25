@@ -19,10 +19,11 @@ import { UserButton, SignOutButton } from "@clerk/nextjs";
 interface PageFrameProps {
   children: ReactNode;
   page: string;
+  userId: string;
   navItems: NavItem[] | null; 
 }
 
-export const PageFrame = ({ children, page,navItems }: PageFrameProps) => {
+export const PageFrame = ({ children, userId, page,navItems }: PageFrameProps) => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const router = useRouter();
   const handleLinkClick = () => {
@@ -82,7 +83,7 @@ export const PageFrame = ({ children, page,navItems }: PageFrameProps) => {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="pt-20 sm:max-w-xs">
-                  <MenuContent onLinkClick={handleLinkClick} page={page} />
+                  <MenuContent onLinkClick={handleLinkClick} page={page} userId={userId} />
                 </SheetContent>
               </Sheet>
             </div>
