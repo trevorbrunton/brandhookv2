@@ -32,12 +32,13 @@ import { Trash2Icon, Brain, Loader, Plus, MessageSquareText, Save, RefreshCw } f
 
 interface ConversationDialogProps {
   projectId: string;
+  userId: string;
 
 }
 
 
 
-export const ConversationDialog = ({ projectId}: ConversationDialogProps) => {
+export const ConversationDialog = ({ projectId, userId}: ConversationDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [completed, setCompleted] = useState(false);
@@ -77,6 +78,7 @@ export const ConversationDialog = ({ projectId}: ConversationDialogProps) => {
       .join(", ")} \n`;
 
     try {
+
       const response = await fetch("/api/create-conversation-flow", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -86,6 +88,24 @@ export const ConversationDialog = ({ projectId}: ConversationDialogProps) => {
       if (!response.ok) throw new Error("Failed to generate conversation flow");
 
       const responseData = await response.json();
+            const newDocument = {
+              id: "",
+              projectId,
+              userId,
+              title: documentTitle,
+              interviewee: "",
+              interviewDate: "",
+              conversationName: "",
+              content: "",
+              fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
+              docType: docType,
+              createDate: new Date().toLocaleDateString("eu-AU"),
+              updateDate: new Date().toLocaleDateString("eu-AU"),
+            };
+
+            await saveDocToDb(newDocument, projectId);
+
+
       const formDataToSave = new FormData();
       formDataToSave.append(
         "DOCUMENT_TITLE",

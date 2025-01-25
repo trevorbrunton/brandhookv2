@@ -94,7 +94,7 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
         <NewProjectDialog />
       </div>
       <div className="-mx-4 flex items-center">
-        <ConversationDialog projectId={page} />
+        <ConversationDialog projectId={page} userId= {userId} />
       </div>
       <div className="-mx-4 flex items-center">
         <UploadDialog projectId={page} userId={userId} />

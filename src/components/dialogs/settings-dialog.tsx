@@ -5,10 +5,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchUserFromExternalId } from "@/app/actions/fetch-user-from-externalId";
+import { fetchUserByUserId } from "@/app/actions/fetch-user-by-id";
 import { updateBusinessDetails } from "@/app/actions/update-business-details";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@clerk/nextjs";
+
 import {
   Form,
   FormControl,
@@ -38,6 +38,10 @@ import {
 } from "@/components/ui/dialog";
 import { ArrowRight, UserRoundPen } from "lucide-react";
 
+interface SettingsDialogProps {
+  userId: string;
+}
+
 const SettingsFormSchema = z.object({
   businessDetails: z
     .string()
@@ -50,26 +54,23 @@ const SettingsFormSchema = z.object({
     .min(2, { message: "Please enter the market channel of your business" }),
 });
 
-export const SettingsDialog = () => {
+export const SettingsDialog = ({userId}: SettingsDialogProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { user } = useUser();
-  const id = user?.id;
+
 
   const {
     data: userRecord,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["user", id],
+    queryKey: ["user", userId],
     queryFn: async () => {
-      if (!id) {
-        throw new Error("User ID not available");
-      }
-      return fetchUserFromExternalId(id);
+
+      return fetchUserByUserId(userId);
     },
-    enabled: !!id, // Only run the query when id is available
+ // Only run the query when id is available
   });
 
   const updateUserMutation = useMutation({

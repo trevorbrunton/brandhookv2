@@ -30,8 +30,8 @@ Each question must have some depth, give some context to the question and be mor
 
       const project = await db.project.findFirst({ where: { id: projectId } });
       const userProfile = await db.user.findFirst({ where: { id: project!.userId } });
-      businessDetails = userProfile!.businessDetails;
-      market = userProfile!.marketChannel;
+      businessDetails = userProfile?.businessDetails ?? "";
+      market = userProfile?.marketChannel ?? "";
       console.log("Market Channel: ", market);
     }
   } catch (error) {
@@ -55,7 +55,7 @@ Each question must have some depth, give some context to the question and be mor
       return new NextResponse(
         
       JSON.stringify({
-        error: "An error occurred while summarising the project",
+        error: "An error occurred while creating the conversation flow",
       }),
       { status: 500 }
     );
