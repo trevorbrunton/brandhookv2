@@ -100,7 +100,7 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
         <UploadDialog projectId={page} userId={userId} />
       </div>
       <div className="-mx-4 flex items-center">
-        <SettingsDialog />
+        <SettingsDialog userId={userId}/>
       </div>
     </motion.nav>
   );

@@ -116,7 +116,6 @@ export function UploadDialog({ projectId, userId}: UploadDialogProps) {
         title: documentTitle,
         interviewee: "",
         interviewDate: "",
-        conversationName: "",
         content: "",
         fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
         docType: docType,

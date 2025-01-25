@@ -70,7 +70,6 @@ export const SettingsDialog = ({userId}: SettingsDialogProps) => {
 
       return fetchUserByUserId(userId);
     },
- // Only run the query when id is available
   });
 
   const updateUserMutation = useMutation({

@@ -27,18 +27,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Trash2Icon, Brain, Loader, Plus, MessageSquareText, Save, RefreshCw } from "lucide-react";
-
+import {
+  Trash2Icon,
+  Brain,
+  Loader,
+  Plus,
+  MessageSquareText,
+  Save,
+  RefreshCw,
+} from "lucide-react";
 
 interface ConversationDialogProps {
   projectId: string;
   userId: string;
-
 }
 
-
-
-export const ConversationDialog = ({ projectId, userId}: ConversationDialogProps) => {
+export const ConversationDialog = ({
+  projectId,
+  userId,
+}: ConversationDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [completed, setCompleted] = useState(false);
@@ -48,8 +55,6 @@ export const ConversationDialog = ({ projectId, userId}: ConversationDialogProps
   const [data, setData] = useState<z.infer<
     typeof ConversationFormSchema
   > | null>(null);
-
-
 
   const form = useForm<z.infer<typeof ConversationFormSchema>>({
     resolver: zodResolver(ConversationFormSchema),
@@ -78,7 +83,6 @@ export const ConversationDialog = ({ projectId, userId}: ConversationDialogProps
       .join(", ")} \n`;
 
     try {
-
       const response = await fetch("/api/create-conversation-flow", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -88,32 +92,23 @@ export const ConversationDialog = ({ projectId, userId}: ConversationDialogProps
       if (!response.ok) throw new Error("Failed to generate conversation flow");
 
       const responseData = await response.json();
-            const newDocument = {
-              id: "",
-              projectId,
-              userId,
-              title: documentTitle,
-              interviewee: "",
-              interviewDate: "",
-              conversationName: "",
-              content: "",
-              fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
-              docType: docType,
-              createDate: new Date().toLocaleDateString("eu-AU"),
-              updateDate: new Date().toLocaleDateString("eu-AU"),
-            };
 
-            await saveDocToDb(newDocument, projectId);
+      const newDocument = {
+        id: "",
+        projectId,
+        userId,
+        title: `Conversation Guide - ${formData.conversationFlowName}`,
+        interviewee: "",
+        interviewDate: "",
+        content: responseData.text,
+        fileUrl: "",
+        docType: "conversation",
+        createDate: new Date().toLocaleDateString("eu-AU"),
+        updateDate: new Date().toLocaleDateString("eu-AU"),
+      };
 
+      await saveDocToDb(newDocument, projectId);
 
-      const formDataToSave = new FormData();
-      formDataToSave.append(
-        "DOCUMENT_TITLE",
-        `Conversation Guide - ${formData.conversationFlowName}`
-      );
-      formDataToSave.append("PROJECTID", projectId);
-      formDataToSave.append("DOCTYPE", "conversation");
-      await saveDocToDb(formDataToSave, responseData.text);
       setCompletion(responseData.text);
       setCompleted(true);
     } catch (error) {
@@ -123,8 +118,8 @@ export const ConversationDialog = ({ projectId, userId}: ConversationDialogProps
     setSubmitted(false);
   };
 
-  const downloadDoc = async () => {
-    await createPdfFromMarkdown(
+  const downloadDoc = () => {
+    createPdfFromMarkdown(
       completion,
       data?.conversationFlowName || "Conversation Guide"
     );
@@ -133,7 +128,10 @@ export const ConversationDialog = ({ projectId, userId}: ConversationDialogProps
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="flex items-center text-zinc-500 group-hover:text-zinc-700 -my-2">
+        <Button
+          variant="ghost"
+          className="flex items-center text-zinc-500 group-hover:text-zinc-700 -my-2"
+        >
           <MessageSquareText size={16} />
           Add Conversation
         </Button>
