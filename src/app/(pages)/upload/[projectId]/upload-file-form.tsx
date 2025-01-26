@@ -109,7 +109,19 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
 
     try {
       const result = await handleFileUpload(file);
-      console.log("File uploaded successfully");
+             console.log("File uploaded successfully");
+
+             const parsedResponse = await fetch("/api/parse-data", {
+               method: "POST",
+               body: (() => {
+                 const formData = new FormData();
+                 formData.append("theFile", file);
+                 formData.append("fileName", result);
+                 formData.append("url", `${process.env.NEXT_PUBLIC_S3_URL}${result}`);
+                 return formData;
+               })(),
+             });
+             const response = await parsedResponse.json();
 
       const newDocument = {
         id: "",
@@ -118,7 +130,7 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
         title: documentTitle,
         interviewee: interviewee,
         interviewDate: documentDate.toISOString(),
-        content: "",
+        content: response.parsedText,
         fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
         docType: activeDocClass,
         createDate: new Date().toLocaleDateString("eu-AU"),
