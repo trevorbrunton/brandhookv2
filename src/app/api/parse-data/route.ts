@@ -35,21 +35,22 @@ export async function POST(req: NextRequest) {
 
     switch (fileExtension) {
       case ".pdf":
-        const pdfParser = new (PDFParser as any)(null, 1);
+        // const pdfParser = new (PDFParser as any)(null, 1);
 
-        pdfParser.on("pdfParser_dataError", (errData: any) =>
-          console.log(errData.parserError)
-        );
+        // pdfParser.on("pdfParser_dataError", (errData: any) =>
+        //   console.log(errData.parserError)
+        // );
 
-        pdfParser.on("pdfParser_dataReady", () => {
-          parsedText = (pdfParser as any).getRawTextContent();
-        });
+        // pdfParser.on("pdfParser_dataReady", () => {
+        //   parsedText = (pdfParser as any).getRawTextContent();
+        // });
 
-        await new Promise((resolve, reject) => {
-          pdfParser.loadPDF(tempFilePath);
-          pdfParser.on("pdfParser_dataReady", resolve);
-          pdfParser.on("pdfParser_dataError", reject);
-        });
+        // await new Promise((resolve, reject) => {
+        //   pdfParser.loadPDF(tempFilePath);
+        //   pdfParser.on("pdfParser_dataReady", resolve);
+        //   pdfParser.on("pdfParser_dataError", reject);
+        // });
+        parsedText = await parsePDF(tempFilePath);
         break;
       case "docx":
       case ".doc":
