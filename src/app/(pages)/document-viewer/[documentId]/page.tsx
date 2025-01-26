@@ -14,8 +14,7 @@ interface PageProps {
   params: Promise<{ documentId: string }>;
 }
 
-export default async function DocumentViewer({ params }: PageProps
-) {
+export default async function DocumentViewer({ params }: PageProps) {
   const { documentId } = await params;
   const auth = await currentUser();
 
@@ -37,7 +36,7 @@ export default async function DocumentViewer({ params }: PageProps
   if (result.error) {
     return <p>Document fetch failed</p>;
   }
-  const document= await result.success as ProjectDocument;
+  const document = (await result.success) as ProjectDocument;
 
   console.log("document", document);
 
@@ -46,10 +45,11 @@ export default async function DocumentViewer({ params }: PageProps
       <PageFrame page="Document Viewer" navItems={navItems} userId={user.id}>
         <div className="flex flex-row flex-auto">
           <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
-            <NavSideBar page="document-viewer" userId={user.id} />  {/*/DEV note - need to pass in userId */}
+            <NavSideBar page="document-viewer" userId={user.id} />{" "}
+            {/*/DEV note - need to pass in userId */}
           </div>
           <div className="flex flex-col flex-auto">
-            <PageHeader title={`Document: ${document.title}`}/>
+            <PageHeader title={`Document: ${document.title}`} />
             <MainContentColumn>
               <div className="text-sm font-light mx-12">
                 {(document.docType === "interview summary" ||

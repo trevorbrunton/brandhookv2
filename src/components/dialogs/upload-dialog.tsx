@@ -1,43 +1,59 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import { useDropzone } from "react-dropzone"
-import { format } from "date-fns"
-import { Inbox, File, CalendarIcon } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Calendar } from "@/components/ui/calendar"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { getSignedURL } from "@/app/actions/upload-helper"
-import { saveDocToDb } from "@/app/actions/save-doc-to-db"
-import { Upload } from "lucide-react"
+import { useState } from "react";
+import Image from "next/image";
+import { useDropzone } from "react-dropzone";
+import { format } from "date-fns";
+import { Inbox, File, CalendarIcon } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { getSignedURL } from "@/app/actions/upload-helper";
+import { saveDocToDb } from "@/app/actions/save-doc-to-db";
+import { Upload } from "lucide-react";
+
+import { DocumentChooserBar } from "@/components/dialogs/document-chooser-bar";
 
 interface UploadDialogProps {
-  projectId: string
-  userId: string
-
+  projectId: string;
+  userId: string;
 }
 
-export function UploadDialog({ projectId, userId}: UploadDialogProps) {
-  const [file, setFile] = useState<File | null>(null)
-  const [documentTitle, setDocumentTitle] = useState("")
-  const [documentDate, setDocumentDate] = useState<Date>(new Date())
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
-  const { toast } = useToast()
- 
+export function UploadDialog({ projectId, userId }: UploadDialogProps) {
+  const [file, setFile] = useState<File | null>(null);
+  const [documentTitle, setDocumentTitle] = useState("");
+  const [documentDate, setDocumentDate] = useState<Date>(new Date());
+  const [interviewee, setInterviewee] = useState("");
+  const [activeDocClass, setActiveDocClass] = useState("interview");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [processing, setProcessing] = useState(false);
+  const { toast } = useToast();
 
   const computeSHA256 = async (file: File) => {
-    const hash = await crypto.subtle.digest("SHA-256", await file.slice(0, 1_048_576).arrayBuffer())
+    const hash = await crypto.subtle.digest(
+      "SHA-256",
+      await file.slice(0, 1_048_576).arrayBuffer()
+    );
     return Array.from(new Uint8Array(hash))
       .map((b) => b.toString(16).padStart(2, "0"))
-      .join("")
-  }
+      .join("");
+  };
 
   const handleFileUpload = async (file: File) => {
     try {
@@ -48,66 +64,59 @@ export function UploadDialog({ projectId, userId}: UploadDialogProps) {
         fileName: file.name,
         documentTitle,
         documentDate: documentDate.toISOString(),
-      })
+      });
 
       if (signedURLResult.failure) {
-        throw new Error(signedURLResult.failure)
+        throw new Error(signedURLResult.failure);
       }
 
       if (!signedURLResult.success) {
-        throw new Error("Failed to get signed URL")
+        throw new Error("Failed to get signed URL");
       }
 
-      const { url, uploadedFileName } = signedURLResult.success
+      const { url, uploadedFileName } = signedURLResult.success;
       const uploadResult = await fetch(url, {
         method: "PUT",
         headers: { "Content-Type": file.type },
         body: file,
-      })
+      });
 
       if (!uploadResult.ok) {
-        throw new Error("Failed to upload file to the server")
+        throw new Error("Failed to upload file to the server");
       }
 
-      return uploadedFileName
+      return uploadedFileName;
     } catch (error) {
-      console.error("File upload error:", error)
-      throw error
+      console.error("File upload error:", error);
+      throw error;
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
+    setProcessing(true);
 
     toast({
       title: "Uploading Document",
       description: "Your document is on its way to the cloud",
-    })
+    });
 
     if (!file) {
       toast({
         title: "No file selected",
         description: "Please select a file to upload.",
-      })
-      setLoading(false)
-      return
+      });
+      setLoading(false);
+      return;
     }
 
     try {
-      const result = await handleFileUpload(file)
-      console.log("File uploaded successfully")
+      const result = await handleFileUpload(file);
+      console.log("File uploaded successfully");
 
-      let docType: string
-      const fileType = file.type
 
-      if (fileType.startsWith("image/")) {
-        docType = "image"
-      } else if (fileType.startsWith("video/")) {
-        docType = "video"
-      } else {
-        docType = "document"
-      }
+
 
       const newDocument = {
         id: "",
@@ -115,52 +124,54 @@ export function UploadDialog({ projectId, userId}: UploadDialogProps) {
         userId,
         title: documentTitle,
         interviewee: "",
-        interviewDate: "",
+        interviewDate: documentDate.toISOString(),
         content: "",
         fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
-        docType: docType,
+        docType: activeDocClass,
         createDate: new Date().toLocaleDateString("eu-AU"),
         updateDate: new Date().toLocaleDateString("eu-AU"),
-      }
+      };
 
-      await saveDocToDb(newDocument, projectId)
+      await saveDocToDb(newDocument, projectId);
 
       toast({
         title: "Upload Successful",
         description: "Your document has been saved",
-      })
-      setIsOpen(false)
+      });
+      setIsOpen(false);
     } catch (error) {
-      console.error(error)
+      console.error(error);
       toast({
         title: "File Upload Error",
         description: "Something bad happened and your file didn't upload.",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
+      setProcessing(false);
     }
-  }
+  };
 
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles[0]) {
-      setFile(acceptedFiles[0])
+      setFile(acceptedFiles[0]);
       if (previewUrl) {
-        URL.revokeObjectURL(previewUrl)
+        URL.revokeObjectURL(previewUrl);
       }
-      const url = URL.createObjectURL(acceptedFiles[0])
-      setPreviewUrl(url)
+      const url = URL.createObjectURL(acceptedFiles[0]);
+      setPreviewUrl(url);
     } else {
       toast({
         title: "This file type is not supported.",
         description: "Please choose a supported file type.",
-      })
+      });
     }
-  }
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       "application/pdf": [".pdf"],
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        [".docx"],
       "application/msword": [".doc"],
       "image/jpeg": [".jpg", ".jpeg"],
       "image/png": [".png"],
@@ -168,11 +179,16 @@ export function UploadDialog({ projectId, userId}: UploadDialogProps) {
       "image/bmp": [".bmp"],
       "image/webp": [".webp"],
       "application/vnd.ms-powerpoint": [".ppt"],
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation": [".pptx"],
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+        [".pptx"],
     },
     maxFiles: 1,
     onDrop,
-  })
+  });
+
+  const chooseDocClass = (docClass: string) => {
+    setActiveDocClass(docClass);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -185,10 +201,15 @@ export function UploadDialog({ projectId, userId}: UploadDialogProps) {
           Upload a document
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px]">
+      <DialogContent className="sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px] z-50">
         <DialogHeader>
           <DialogTitle>Upload Document</DialogTitle>
         </DialogHeader>
+        <DocumentChooserBar
+          activeDocClass={activeDocClass}
+          processing={processing}
+          chooseDocClass={chooseDocClass}
+        />
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="documentTitle" className="text-sm font-medium">
@@ -202,14 +223,17 @@ export function UploadDialog({ projectId, userId}: UploadDialogProps) {
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="documentDate" className="text-sm font-medium">
-              Document Date
+            <label
+              htmlFor="interviewDate"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Interview Date
             </label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
-                  id="documentDate"
-                  variant="outline"
+                  id="interviewDate"
+                  variant={"outline"}
                   className={cn(
                     "w-full justify-start text-left font-normal",
                     !documentDate && "text-muted-foreground"
@@ -223,13 +247,11 @@ export function UploadDialog({ projectId, userId}: UploadDialogProps) {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0 z-[70]" align="start">
                 <Calendar
                   mode="single"
                   selected={documentDate}
-                  onSelect={(day: Date | undefined) =>
-                    setDocumentDate(day || new Date())
-                  }
+                  onSelect={(date) => date && setDocumentDate(date)}
                   initialFocus
                 />
               </PopoverContent>
@@ -286,4 +308,3 @@ export function UploadDialog({ projectId, userId}: UploadDialogProps) {
     </Dialog>
   );
 }
-

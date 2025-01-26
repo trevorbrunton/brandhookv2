@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Gem,  LucideIcon } from "lucide-react";
+import { Home, Gem,  LucideIcon, Upload } from "lucide-react";
 
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
@@ -94,14 +94,25 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
         <NewProjectDialog />
       </div>
       <div className="-mx-4 flex items-center">
-        <ConversationDialog projectId={page} userId= {userId} />
+        <ConversationDialog projectId={page} userId={userId} />
+      </div>
+      <div className="-mx-2 flex items-center">
+        <Link
+          href={`/upload/${page}`}
+          className={cn(
+            buttonVariants({ variant: "ghost" }),
+            "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition"
+          )}
+          onClick={onLinkClick}
+        >
+          <Upload className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+          Upload File
+        </Link>
       </div>
       <div className="-mx-4 flex items-center">
-        <UploadDialog projectId={page} userId={userId} />
+        <SettingsDialog userId={userId} />
       </div>
-      <div className="-mx-4 flex items-center">
-        <SettingsDialog userId={userId}/>
-      </div>
+
     </motion.nav>
   );
 }
