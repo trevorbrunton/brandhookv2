@@ -3,6 +3,11 @@ import { type NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import { nanoid } from "@/lib/utils";
 import { extractRawText } from "mammoth";
+import {
+  TranscribeClient,
+  StartTranscriptionJobCommand,
+  GetTranscriptionJobCommand,
+} from "@aws-sdk/client-transcribe";
 
 export const maxDuration = 30;
 
@@ -11,6 +16,7 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const uploadedFile = formData.get("theFile") as Blob | null;
     const uploadedFileName = formData.get("fileName") as string | null;
+    const url = formData.get("url") as string | null;
 
     console.log("Uploaded file:", uploadedFileName);
     if (uploadedFile) {
@@ -35,27 +41,25 @@ export async function POST(req: NextRequest) {
 
     switch (fileExtension) {
       case ".pdf":
-        // const pdfParser = new (PDFParser as any)(null, 1);
-
-        // pdfParser.on("pdfParser_dataError", (errData: any) =>
-        //   console.log(errData.parserError)
-        // );
-
-        // pdfParser.on("pdfParser_dataReady", () => {
-        //   parsedText = (pdfParser as any).getRawTextContent();
-        // });
-
-        // await new Promise((resolve, reject) => {
-        //   pdfParser.loadPDF(tempFilePath);
-        //   pdfParser.on("pdfParser_dataReady", resolve);
-        //   pdfParser.on("pdfParser_dataError", reject);
-        // });
         parsedText = await parsePDF(tempFilePath);
         break;
       case "docx":
       case ".doc":
         console.log("Parsing Word document...");
         parsedText = await parseWord(fileBuffer);
+        break;
+      case ".mp3":
+      case ".wav":
+        console.log("Audio file uploaded.");
+        if (url) {
+
+          parsedText = await extractAudioText(
+            url.toString(),
+            uploadedFileName
+          );
+        } else {
+          throw new Error("File URL or File Name is missing");
+        }
         break;
       default:
         return new NextResponse(
@@ -94,3 +98,65 @@ async function parseWord(buffer: Buffer): Promise<string> {
   const { value } = await extractRawText({ buffer });
   return value;
 }
+
+  const extractAudioText = async (
+    fileURL: string,
+    uploadedFileName: string
+  ): Promise<string> => {
+    console.log("Extracting text from audio file...");
+
+    // Initialize the AWS clients
+    const transcribeClient = new TranscribeClient({
+      region: process.env["AWS_BUCKET_REGION"], // Replace with your preferred region
+    });
+    // Start a transcription job
+    const jobName = `transcribe-job-${Date.now()}`;
+    await transcribeClient.send(
+      new StartTranscriptionJobCommand({
+        TranscriptionJobName: jobName,
+        LanguageCode: "en-US", // Specify the language of the audio
+        MediaFormat: uploadedFileName.endsWith(".mp3") ? "mp3" : "wav", // Adjust based on the file type
+        Media: {
+          MediaFileUri: `s3://cronicle-file-uploads/${uploadedFileName}`,
+        },
+      })
+    );
+
+    // Wait for the transcription job to complete
+    let transcriptionResult;
+    while (!transcriptionResult) {
+      const { TranscriptionJob } = await transcribeClient.send(
+        new GetTranscriptionJobCommand({
+          TranscriptionJobName: jobName,
+        })
+      );
+
+      if (
+        TranscriptionJob &&
+        TranscriptionJob.TranscriptionJobStatus === "COMPLETED"
+      ) {
+        if (
+          !TranscriptionJob.Transcript ||
+          !TranscriptionJob.Transcript.TranscriptFileUri
+        ) {
+          throw new Error("Transcript or TranscriptFileUri is undefined");
+        }
+        const response = await fetch(
+          TranscriptionJob.Transcript.TranscriptFileUri
+        );
+        const data = await response.json();
+        transcriptionResult = data.results.transcripts[0].transcript;
+      } else if (
+        TranscriptionJob &&
+        TranscriptionJob.TranscriptionJobStatus === "FAILED"
+      ) {
+        throw new Error("Transcription job failed");
+      } else {
+        // Wait for 5 seconds before checking again
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+      }
+    }
+    console.log("Transcription job completed successfully");
+    console.log("Transcription result:", transcriptionResult);
+    return transcriptionResult;
+  };
