@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { NewProjectDialog } from "@/components/dialogs/new-project-details-dialog";
 import { ConversationDialog } from "@/components/dialogs/add-conversation-dialog";
 import { SettingsDialog } from "@/components/dialogs/settings-dialog";
-import { UploadDialog } from "@/components/dialogs/upload-dialog";
+
 
 interface MenuContentProps {
   onLinkClick: () => void;

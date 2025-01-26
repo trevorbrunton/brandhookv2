@@ -23,7 +23,7 @@ import { getSignedURL } from "@/app/actions/upload-helper";
 import { useRouter } from "next/navigation";
 
 import { saveDocToDb } from "@/app/actions/save-doc-to-db";
-import { DocumentChooserBar } from "@/components/dialogs/document-chooser-bar";
+import { DocumentChooserBar } from "@/app/(pages)/upload/[projectId]/document-chooser-bar";
 
 interface UploadDialogProps {
   projectId: string;
