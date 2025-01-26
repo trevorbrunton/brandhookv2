@@ -184,6 +184,7 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
       //include audio files
       "audio/mpeg": [".mp3"],
       "audio/wav": [".wav"],
+      "audio/mp4a-latm": [".m4a"],
     },
     maxFiles: 1,
     onDrop,

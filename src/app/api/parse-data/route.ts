@@ -1,4 +1,4 @@
-import  PDFParser  from "pdf2json";
+import PDFParser from "pdf2json";
 import { type NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import { nanoid } from "@/lib/utils";
@@ -50,13 +50,10 @@ export async function POST(req: NextRequest) {
         break;
       case ".mp3":
       case ".wav":
+      case ".m4a":
         console.log("Audio file uploaded.");
         if (url) {
-
-          parsedText = await extractAudioText(
-            url.toString(),
-            uploadedFileName
-          );
+          parsedText = await extractAudioText(url.toString(), uploadedFileName);
         } else {
           throw new Error("File URL or File Name is missing");
         }
@@ -99,64 +96,101 @@ async function parseWord(buffer: Buffer): Promise<string> {
   return value;
 }
 
-  const extractAudioText = async (
-    fileURL: string,
-    uploadedFileName: string
-  ): Promise<string> => {
-    console.log("Extracting text from audio file...");
+const extractAudioText = async (
+  fileURL: string,
+  uploadedFileName: string
+): Promise<string> => {
+  console.log("Extracting text from audio file...");
 
-    // Initialize the AWS clients
-    const transcribeClient = new TranscribeClient({
-      region: process.env["AWS_BUCKET_REGION"], // Replace with your preferred region
-    });
-    // Start a transcription job
-    const jobName = `transcribe-job-${Date.now()}`;
-    await transcribeClient.send(
-      new StartTranscriptionJobCommand({
+  // Initialize the AWS clients
+  const transcribeClient = new TranscribeClient({
+    region: process.env["AWS_BUCKET_REGION"], // Replace with your preferred region
+  });
+  // Start a transcription job
+  const jobName = `transcribe-job-${Date.now()}`;
+  await transcribeClient.send(
+    new StartTranscriptionJobCommand({
+      TranscriptionJobName: jobName,
+      LanguageCode: "en-US", // Specify the language of the audio
+      MediaFormat: uploadedFileName.endsWith(".mp3") ? "mp3" : "wav", // Adjust based on the file type
+      Media: {
+        MediaFileUri: `s3://cronicle-file-uploads/${uploadedFileName}`,
+      },
+      Settings: {
+        ShowSpeakerLabels: true,
+        MaxSpeakerLabels: 10, // Adjust this number based on your expected number of speakers
+      },
+    })
+  );
+
+  // Wait for the transcription job to complete
+  let transcriptionResult: string | undefined;
+  while (!transcriptionResult) {
+    const { TranscriptionJob } = await transcribeClient.send(
+      new GetTranscriptionJobCommand({
         TranscriptionJobName: jobName,
-        LanguageCode: "en-US", // Specify the language of the audio
-        MediaFormat: uploadedFileName.endsWith(".mp3") ? "mp3" : "wav", // Adjust based on the file type
-        Media: {
-          MediaFileUri: `s3://cronicle-file-uploads/${uploadedFileName}`,
-        },
       })
     );
 
-    // Wait for the transcription job to complete
-    let transcriptionResult;
-    while (!transcriptionResult) {
-      const { TranscriptionJob } = await transcribeClient.send(
-        new GetTranscriptionJobCommand({
-          TranscriptionJobName: jobName,
-        })
-      );
-
+    if (
+      TranscriptionJob &&
+      TranscriptionJob.TranscriptionJobStatus === "COMPLETED"
+    ) {
       if (
-        TranscriptionJob &&
-        TranscriptionJob.TranscriptionJobStatus === "COMPLETED"
+        !TranscriptionJob.Transcript ||
+        !TranscriptionJob.Transcript.TranscriptFileUri
       ) {
-        if (
-          !TranscriptionJob.Transcript ||
-          !TranscriptionJob.Transcript.TranscriptFileUri
-        ) {
-          throw new Error("Transcript or TranscriptFileUri is undefined");
-        }
-        const response = await fetch(
-          TranscriptionJob.Transcript.TranscriptFileUri
-        );
-        const data = await response.json();
-        transcriptionResult = data.results.transcripts[0].transcript;
-      } else if (
-        TranscriptionJob &&
-        TranscriptionJob.TranscriptionJobStatus === "FAILED"
-      ) {
-        throw new Error("Transcription job failed");
-      } else {
-        // Wait for 5 seconds before checking again
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        throw new Error("Transcript or TranscriptFileUri is undefined");
       }
+      const response = await fetch(
+        TranscriptionJob.Transcript.TranscriptFileUri
+      );
+      const data = await response.json();
+
+      // Process the transcript with speaker labels
+      const speakerSegments = data.results.speaker_labels.segments;
+      const items = data.results.items;
+
+      let currentSpeaker = "";
+
+      interface SpeakerSegment {
+        start_time: number;
+        end_time: number;
+        speaker_label: string;
+      }
+
+      interface Item {
+        start_time: number;
+        end_time: number;
+        alternatives: { content: string }[];
+      }
+
+  
+
+      items.forEach((item: Item) => {
+        const segment = speakerSegments.find(
+          (seg: SpeakerSegment) =>
+            seg.start_time <= item.start_time && seg.end_time >= item.end_time
+        );
+
+        if (segment && segment.speaker_label !== currentSpeaker) {
+          currentSpeaker = segment.speaker_label;
+          transcriptionResult += `\n\n${currentSpeaker}: `;
+        }
+
+        transcriptionResult += item.alternatives[0].content + " ";
+      });
+    } else if (
+      TranscriptionJob &&
+      TranscriptionJob.TranscriptionJobStatus === "FAILED"
+    ) {
+      throw new Error("Transcription job failed");
+    } else {
+      // Wait for 5 seconds before checking again
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
-    console.log("Transcription job completed successfully");
-    console.log("Transcription result:", transcriptionResult);
-    return transcriptionResult;
-  };
+  }
+  console.log("Transcription job completed successfully");
+  console.log("Transcription result:", transcriptionResult);
+  return transcriptionResult.trim();
+};
