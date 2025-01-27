@@ -1,4 +1,4 @@
-// DEV Note - Review what format of docs should be allowed to be uploaded 
+// DEV Note - Review what format of docs should be allowed to be uploaded
 "use client";
 import Image from "next/image";
 import { useState } from "react";
@@ -10,7 +10,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
-
 
 import {
   Popover,
@@ -109,19 +108,23 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
 
     try {
       const result = await handleFileUpload(file);
-             console.log("File uploaded successfully");
+      console.log("File uploaded successfully");
 
-             const parsedResponse = await fetch("/api/parse-data", {
-               method: "POST",
-               body: (() => {
-                 const formData = new FormData();
-                 formData.append("theFile", file);
-                 formData.append("fileName", result);
-                 formData.append("url", `${process.env.NEXT_PUBLIC_S3_URL}${result}`);
-                 return formData;
-               })(),
-             });
-             const response = await parsedResponse.json();
+      const parsedResponse = await fetch("/api/parse-data", {
+        method: "POST",
+        body: (() => {
+          const formData = new FormData();
+          formData.append("theFile", file);
+          formData.append("fileName", result);
+          formData.append("url", `${process.env.NEXT_PUBLIC_S3_URL}${result}`);
+          return formData;
+        })(),
+      });
+      const response = await parsedResponse.json();
+
+      if (!parsedResponse.ok) {
+        throw new Error(response.error);
+      }
 
       const newDocument = {
         id: "",
@@ -136,12 +139,51 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
         createDate: new Date().toLocaleDateString("eu-AU"),
         updateDate: new Date().toLocaleDateString("eu-AU"),
       };
-
       await saveDocToDb(newDocument, projectId);
+      toast({
+        title: "Summarising Document",
+        description: "Your document is being summarised",
+      });
+
+      if (activeDocClass === "wow-moments") {
+        toast({
+          title: "Upload Successful",
+          description: "Your document has been saved",
+        });
+        setLoading(false);
+        setProcessing(false);
+        router.push(`/project-view/${projectId}`);
+        return;
+      }
+
+      const summaryResponse = await fetch("/api/sumarise-intervew", {
+        method: "POST",
+        body: JSON.stringify({ parsedText: response.parsedText }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const summaryText = await summaryResponse.json();
+
+      console.log("Summary response", summaryText);
+
+      const summaryDocument = {
+        id: "",
+        projectId,
+        userId,
+        title: `${documentTitle} - Summary`,
+        interviewee: interviewee,
+        interviewDate: documentDate.toISOString(),
+        content: summaryText.interviewSummary,
+        fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
+        docType: `${activeDocClass}-summary`,
+        createDate: new Date().toLocaleDateString("eu-AU"),
+        updateDate: new Date().toLocaleDateString("eu-AU"),
+      };
+      await saveDocToDb(summaryDocument, projectId);
 
       toast({
         title: "Upload Successful",
-        description: "Your document has been saved",
+        description: "Your document has been saved and summarised",
       });
     } catch (error) {
       console.error(error);
@@ -190,9 +232,9 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
     onDrop,
   });
 
-    const chooseDocClass = (docClass: string) => {
-      setActiveDocClass(docClass);
-    };
+  const chooseDocClass = (docClass: string) => {
+    setActiveDocClass(docClass);
+  };
 
   return (
     <>
@@ -218,53 +260,58 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
                 onChange={(e) => setDocumentTitle(e.target.value)}
               />
             </div>
-             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="interviewee" className="block text-sm font-medium text-gray-700">Interviewee</label>
-                  <Input
-                    id="interviewee"
-                    required
-                    value={interviewee}
-                    onChange={(e) => setInterviewee(e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-            <div className="space-y-2">
-              <label
-                htmlFor="interviewDate"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Interview Date
-              </label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    id="interviewDate"
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !documentDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {documentDate ? (
-                      format(documentDate, "PPP")
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 z-[70]" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={documentDate}
-                    onSelect={(date) => date && setDocumentDate(date)}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label
+                  htmlFor="interviewee"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Interviewee
+                </label>
+                <Input
+                  id="interviewee"
+                  required
+                  value={interviewee}
+                  onChange={(e) => setInterviewee(e.target.value)}
+                  className="mt-1"
+                />
               </div>
+              <div className="space-y-2">
+                <label
+                  htmlFor="interviewDate"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Interview Date
+                </label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="interviewDate"
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !documentDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {documentDate ? (
+                        format(documentDate, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 z-[70]" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={documentDate}
+                      onSelect={(date) => date && setDocumentDate(date)}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
+            </div>
             <div
               {...getRootProps({
                 className: cn(

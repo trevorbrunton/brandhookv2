@@ -112,7 +112,7 @@ const extractAudioText = async (
     new StartTranscriptionJobCommand({
       TranscriptionJobName: jobName,
       LanguageCode: "en-US", // Specify the language of the audio
-      MediaFormat: uploadedFileName.endsWith(".mp3") ? "mp3" : "wav", // Adjust based on the file type
+      MediaFormat: uploadedFileName.endsWith(".mp3") ? "mp3" : "wav", // Adjust based on the file type  ///include m4a***********
       Media: {
         MediaFileUri: `s3://cronicle-file-uploads/${uploadedFileName}`,
       },

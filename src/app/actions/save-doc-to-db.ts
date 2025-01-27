@@ -14,8 +14,8 @@ export async function saveDocToDb(doc: ProjectDocument, projectId: string) {
       throw new Error("Database connection not available");
     }
 
-    console.log("Saving document to database:", doc);
-    console.log("Project ID:", projectId);
+    console.log("Saving document to database");
+
 
     // Remove the id field if it's an empty string
     const { id, ...docWithoutId } = doc;

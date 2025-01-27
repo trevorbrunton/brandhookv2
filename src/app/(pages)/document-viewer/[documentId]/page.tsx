@@ -52,7 +52,7 @@ export default async function DocumentViewer({ params }: PageProps) {
             <PageHeader title={`Document: ${document.title}`} />
             <MainContentColumn>
               <div className="text-sm font-light mx-12">
-                {(document.docType === "interview summary" ||
+                {(document.docType === "interview-summary" ||
                   document.docType === "conversation" ||
                   document.docType === "project-summary" ||
                   document.docType === "wow-moments-summary") && (

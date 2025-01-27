@@ -28,10 +28,10 @@ export function DocumentChooserBar({
         <Button
           variant="ghost"
           onClick={() => {
-            chooseDocClass("wow moments");
+            chooseDocClass("wow-moments");
           }}
           className={
-            activeDocClass === "wow moments"
+            activeDocClass === "wow-moments"
               ? "underline underline-offset-4"
               : ""
           }

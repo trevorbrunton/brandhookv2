@@ -20,14 +20,15 @@ export async function fetchAllProjectsByUserId() {
 
     const projects = await db.project.findMany({
       where: { userId: user.id },
-
     });
-   
+
     return projects;
   } catch (error) {
-    console.error("Error fetching projects by userId:", error);
+    console.error("Error fetching documents by projectId:", error);
     return {
-      error: `Failed to fetch projects by userId: ${(error as Error).message}`,
+      error: `Failed to fetch documents by projectId: ${
+        (error as Error).message
+      }`,
     };
   }
 }

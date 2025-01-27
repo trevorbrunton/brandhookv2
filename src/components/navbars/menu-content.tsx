@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { NewProjectDialog } from "@/components/dialogs/new-project-details-dialog";
 import { ConversationDialog } from "@/components/dialogs/add-conversation-dialog";
 import { SettingsDialog } from "@/components/dialogs/settings-dialog";
+import { InterviewSummaryDialog } from "@/components/dialogs/interview-summary-dialog";
 
 
 interface MenuContentProps {
@@ -96,6 +97,9 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
       <div className="-mx-4 flex items-center">
         <ConversationDialog projectId={page} userId={userId} />
       </div>
+      <div className="-mx-4 flex items-center">
+        <InterviewSummaryDialog projectId={page} userId={userId} />
+      </div>
       <div className="-mx-2 flex items-center">
         <Link
           href={`/upload/${page}`}
@@ -112,7 +116,6 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
       <div className="-mx-4 flex items-center">
         <SettingsDialog userId={userId} />
       </div>
-
     </motion.nav>
   );
 }
