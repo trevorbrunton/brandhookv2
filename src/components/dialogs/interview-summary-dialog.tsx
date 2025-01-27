@@ -1,67 +1,157 @@
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { NextRequest, NextResponse } from "next/server";
+"use client";
 
-export const maxDuration = 30;
-export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const { parsedText } = body;
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Loader } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { fetchAllInterviewSummariesByProjectId } from "@/app/actions/fetch-all-interview-summaries-by-projectId";
+import { saveDocToDb } from "@/app/actions/save-doc-to-db";
+import type { ProjectDocument } from "@prisma/client";
 
-    if (!parsedText) {
-      return new NextResponse(
-        JSON.stringify({ error: "No text was provided." }),
-        { status: 400 }
-      );
-    }
-      
-    const interviewSummary = await produceSummary(parsedText);
+type InterviewSummaryDialogProps = {
+  projectId: string;
+  userId: string;
+};
 
-
-    return new NextResponse(
-      JSON.stringify({ success: "Project summarised correctly", interviewSummary: interviewSummary }),
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error(error);
-    return new NextResponse(
-      JSON.stringify({
-        error: "An error occurred while summarising the project",
-      }),
-      { status: 500 }
-    );
+async function summarizeInterviews(interviews: string) {
+  const response = await fetch("/api/summarise-interviews", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ interviews }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to summarize interviews");
   }
+  return response.json();
 }
 
-/**
- * Produces a summary of the given parsed text using an AI model.
- *
- * @param {string} parsedText - The text to be summarized.
- * @returns {Promise<string>} - A promise that resolves to the summary text.
- *
- * The function uses the OpenAI GPT-4 model to generate a summary of the provided interview text.
- * It constructs a prompt for the AI model, specifying the task of summarizing the interview.
- * The AI model is instructed to extract key points and major themes from the interview and produce the output in markdown format.
- */
-async function produceSummary(parsedText: string): Promise<string> {
-  const prompt = `Summarise the following interview: ${parsedText}.
-  Here is the conversation guide: 
-  Introduction - question about daily life, enjoyable aspects, challenges, changes
-  Issue Exploration - thoughts on business issue, positive/negative aspects, emerging trends
-  Product Category - factors for choosing product, essential attributes for success/failure
-  Competing Brands - brands associated with category, attributes that stand out
-  Competing Brand Experience - brands used/interacted with, factors for switching brands
-  Experience with Your Brand - first encounter with brand, attributes that drew you to it
-  Your Brand Attributes - strengths and weaknesses of product, standout attributes
-  Brand Improvements - suggestions for product improvement, changes to formulation/packaging
-  Hypothesis Exploration - questions about some specific hypotheses
-`;
+export function InterviewSummaryDialog({
+  projectId,
+  userId,
+}: InterviewSummaryDialogProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const hasGeneratedSummary = useRef(false);
 
-  const { text } = await generateText({
-    model: openai("gpt-4o-mini"),
-    system: `This is a transcript from a customer conversation I had using the attached Conversation Guide guide Can you please summarise the transcript using this format: 1. Summary Give me a 3 paragraph summary of the conversation overall. 2. Overall Themes (communicated as Actions) Secondly, give me the overall themes of the conversation as 5 bullet points but these must be actioned oriented so that the it gives me some ideas for the business to move forward on. Please write at least 200 words per bullet point 3. Summary of Hypotheses The third thing is a summary of the hypotheses which are usually asked at the end of the conversation. Refer to the Conversation Guide for the questions and give me the answers. Please write at least 200 words for each hypothesis 4. Summary Of Conversation Guide [in the project & following the question prompts] The last summary section is the summary of each question asked as per the Conversation Guide. Can you refer to the guide and then the transcript and give me 200 words for each for the answers relating to each section of the guide. Please produce the document under a heading: "Interview Summary". `,
-    prompt: prompt,
+  const {
+    data: dox,
+    isLoading: isLoadingProject,
+    error: projectError,
+  } = useQuery({
+    queryKey: ["project", projectId],
+    queryFn: () => fetchAllInterviewSummariesByProjectId(projectId),
   });
 
-  return text;
+  const interviews = Array.isArray(dox)
+    ? dox.map((doc) => doc.content).join("\n")
+    : "";
+
+  const {
+    data: summary,
+    isLoading: isLoadingSummary,
+    error: summaryError,
+    refetch: refetchSummary,
+  } = useQuery({
+    queryKey: ["summary", projectId, interviews],
+    queryFn: () => summarizeInterviews(interviews),
+    enabled: false, // We'll manually trigger this query
+  });
+
+  const saveSummaryMutation = useMutation({
+    mutationFn: async (content: string) => {
+      const newDocument: ProjectDocument = {
+        id: "",
+        projectId,
+        userId,
+        title: "Project Summary",
+        interviewee: "",
+        interviewDate: "",
+        content: content,
+        fileUrl: "",
+        docType: "project-summary",
+        createDate: new Date().toLocaleString("en-AU"),
+        updateDate: new Date().toLocaleString("en-AU"),
+      };
+      await saveDocToDb(newDocument, projectId);
+    },
+    onSuccess: () => {
+      console.log("Summary saved successfully");
+      setIsOpen(false);
+      hasGeneratedSummary.current = false; // Reset the flag
+    },
+    onError: (error) => {
+      console.error("Error saving summary:", error);
+      hasGeneratedSummary.current = false; // Reset the flag on error
+    },
+  });
+
+  useEffect(() => {
+    const generateAndSaveSummary = async () => {
+      if (isOpen && interviews && !summary && !hasGeneratedSummary.current) {
+        hasGeneratedSummary.current = true; // Set the flag to prevent double invocation
+        try {
+          const result = await refetchSummary();
+          if (result.data) {
+            console.log("Summary:", result.data.message);
+            saveSummaryMutation.mutate(result.data.message);
+          }
+        } catch (error) {
+          console.error("Error generating or saving summary:", error);
+          hasGeneratedSummary.current = false; // Reset the flag on error
+        }
+      }
+    };
+
+    generateAndSaveSummary();
+  }, [isOpen, interviews, summary, refetchSummary, saveSummaryMutation]);
+
+  return (
+    <Dialog
+      open={isOpen}
+      onOpenChange={(newIsOpen) => {
+        setIsOpen(newIsOpen);
+        if (!newIsOpen) {
+          hasGeneratedSummary.current = false; // Reset the flag when dialog is closed
+        }
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button>Generate Interview Summary</Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl">
+        <DialogHeader>
+          <DialogTitle>Generating Interview Summary</DialogTitle>
+        </DialogHeader>
+        <div className="mt-4">
+          {isLoadingProject ||
+          isLoadingSummary ||
+          saveSummaryMutation.status === 'pending' ? (
+            <div className="flex items-center justify-center">
+              <Loader className="animate-spin" />
+              <span className="ml-2">Generating summary...</span>
+            </div>
+          ) : projectError || summaryError || saveSummaryMutation.isError ? (
+            <p className="text-red-500">
+              Error:{" "}
+              {(
+                projectError ||
+                summaryError ||
+                (saveSummaryMutation.error as Error)
+              )?.message || "An error occurred"}
+            </p>
+          ) : summary ? (
+            <p>Summary generation complete. You can close this dialog.</p>
+          ) : (
+            <p>Preparing to generate summary...</p>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 }
