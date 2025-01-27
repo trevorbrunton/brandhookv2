@@ -15,7 +15,6 @@ const Page = () => {
   console.log("Welcome page");
   const { data } = useQuery({
     queryFn: async () => {
-      // const res = await client.auth.getDatabaseSyncStatus.$get()
       const res = await fetch("/api/auth");
       return await res.json();
     },
