@@ -38,7 +38,11 @@ export function InterviewSummaryDialog({
 }: InterviewSummaryDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data: dox, isLoading: isLoadingProject } = useQuery({
+  const {
+    data: dox,
+    isLoading: isLoadingProject,
+    error: projectError,
+  } = useQuery({
     queryKey: ["project", projectId],
     queryFn: () => fetchAllInterviewSummariesByProjectId(projectId),
   });
@@ -47,41 +51,46 @@ export function InterviewSummaryDialog({
     ? dox.map((doc) => doc.content).join("\n")
     : "";
 
-  const { data: summary, isLoading: isLoadingSummary } = useQuery({
+  const {
+    data: summary,
+    isLoading: isLoadingSummary,
+    error: summaryError,
+  } = useQuery({
     queryKey: ["summary", projectId, interviews],
     queryFn: () => summarizeInterviews(interviews),
     enabled: isOpen && !!interviews,
   });
 
-
-
   useEffect(() => {
-  const saveSummaryToProject = async (content: string) => {
-    const newDocument: ProjectDocument = {
-      id: "",
-      projectId,
-      userId,
-      title: "Project Summary",
-      interviewee: "",
-      interviewDate: "",
-      content: content,
-      fileUrl: "",
-      docType: "project-summary",
-      createDate: new Date().toLocaleDateString("eu-AU"),
-      updateDate: new Date().toLocaleDateString("eu-AU"),
+    const saveSummaryToProject = async (content: string) => {
+      try {
+        const newDocument: ProjectDocument = {
+          id: "",
+          projectId,
+          userId,
+          title: "Project Summary",
+          interviewee: "",
+          interviewDate: "",
+          content: content,
+          fileUrl: "",
+          docType: "project-summary",
+          createDate: new Date().toISOString(),
+          updateDate: new Date().toISOString(),
+        };
+        await saveDocToDb(newDocument, projectId);
+        console.log("Summary saved successfully");
+        setIsOpen(false);
+      } catch (error) {
+        console.error("Error saving summary:", error);
+        // You might want to set an error state here to display to the user
+      }
     };
-    await saveDocToDb(newDocument, projectId);
-  };
-
 
     if (summary) {
       console.log("Summary:", summary.message);
       saveSummaryToProject(summary.message);
-      setIsOpen(false);
     }
-  }, [summary, projectId,userId]);
-
-
+  }, [summary, projectId, userId]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -98,8 +107,15 @@ export function InterviewSummaryDialog({
               <Loader className="animate-spin" />
               <span className="ml-2">Generating summary...</span>
             </div>
-          ) : (
+          ) : projectError || summaryError ? (
+            <p className="text-red-500">
+              Error:{" "}
+              {(projectError || summaryError)?.message || "An error occurred"}
+            </p>
+          ) : summary ? (
             <p>Summary generation complete. You can close this dialog.</p>
+          ) : (
+            <p>Ready to generate summary. Click the button to start.</p>
           )}
         </div>
       </DialogContent>
