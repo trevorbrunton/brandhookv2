@@ -77,7 +77,7 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
               onClick={onLinkClick}
             >
               <Upload className="size-4 text-zinc-500 group-hover:text-zinc-700" />
-              Upload File
+              Upload a File
             </Link>
 
             <div className="py-1.5 flex items-center">

@@ -112,7 +112,7 @@ export const ConversationDialog = ({
           className="flex items-center text-zinc-500 group-hover:text-zinc-700 -my-2"
         >
           <MessageSquareText size={16} />
-          Add Conversation
+          Create a Conversation Flow
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

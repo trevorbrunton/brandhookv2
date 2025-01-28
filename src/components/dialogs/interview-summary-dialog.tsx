@@ -128,7 +128,7 @@ export function InterviewSummaryDialog({
           className="flex items-center text-zinc-500 group-hover:text-zinc-700 -my-2"
         >
           <MessageSquareText size={16} />
-          Interview Summary
+          Summarise Interviews
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl">

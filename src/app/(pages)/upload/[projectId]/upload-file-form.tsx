@@ -240,7 +240,7 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
     <>
       <Card className="w-full border-none">
         <CardHeader>
-          <h2 className="text-2xl font-semibold">Upload Document</h2>
+          <h2 className="text-2xl font-semibold">Upload File</h2>
         </CardHeader>
         <CardContent>
           <DocumentChooserBar
