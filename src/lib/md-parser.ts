@@ -123,12 +123,12 @@ export function createPdfFromMarkdown(
 
       let xOffset = margin;
       if (line["md-tag"] === "li" || line["md-tag"] === "ol") {
-        // doc.text("•", xOffset, yOffset);
         xOffset += 5;
       } else if (line["md-tag"] === "blockquote") {
         xOffset += 5;
       }
       textLine = textLine.replace(/\*/g, "");
+
       doc.text(textLine, xOffset, yOffset);
       yOffset += fontSize * 0.5;
     });
