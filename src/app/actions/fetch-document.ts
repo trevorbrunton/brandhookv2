@@ -2,7 +2,6 @@
 import { db } from "@/db";
 
 export async function fetchDocument(documentId: string) {
-    console.log("fetchDocument" , documentId);
   try {
     if (!db) {
       throw new Error("Database not available");

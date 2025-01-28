@@ -21,6 +21,7 @@ export default async function Home() {
     where: { externalId: auth.id },
   });
 
+
   if (!user) {
     return redirect("/welcome");
   }

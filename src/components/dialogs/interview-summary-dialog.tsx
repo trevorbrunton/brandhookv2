@@ -14,6 +14,7 @@ import {
 import { fetchAllInterviewSummariesByProjectId } from "@/app/actions/fetch-all-interview-summaries-by-projectId";
 import { saveDocToDb } from "@/app/actions/save-doc-to-db";
 import type { ProjectDocument } from "@prisma/client";
+import { MessageSquareText } from "lucide-react";
 
 type InterviewSummaryDialogProps = {
   projectId: string;
@@ -122,7 +123,13 @@ export function InterviewSummaryDialog({
       }}
     >
       <DialogTrigger asChild>
-        <Button>Generate Interview Summary</Button>
+        <Button
+          variant="ghost"
+          className="flex items-center text-zinc-500 group-hover:text-zinc-700 -my-2"
+        >
+          <MessageSquareText size={16} />
+          Interview Summary
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl">
         <DialogHeader>
@@ -131,7 +138,7 @@ export function InterviewSummaryDialog({
         <div className="mt-4">
           {isLoadingProject ||
           isLoadingSummary ||
-          saveSummaryMutation.status === 'pending' ? (
+          saveSummaryMutation.status === "pending" ? (
             <div className="flex items-center justify-center">
               <Loader className="animate-spin" />
               <span className="ml-2">Generating summary...</span>
