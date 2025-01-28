@@ -191,6 +191,5 @@ const extractAudioText = async (
     }
   }
   console.log("Transcription job completed successfully");
-  console.log("Transcription result:", transcriptionResult);
   return transcriptionResult.trim();
 };

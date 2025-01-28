@@ -75,9 +75,6 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
         headers: { "Content-Type": file.type },
         body: file,
       });
-      if (file.type.startsWith("audio")) {
-        setActiveDocClass("transcript");
-      }
 
       if (!uploadResult.ok) {
         throw new Error("Failed to upload file to the server");
@@ -128,7 +125,7 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
       if (!parsedResponse.ok) {
         throw new Error(response.error);
       }
-
+      const docClass = file.type.startsWith("audio") ? "transcript" : activeDocClass;
       const newDocument = {
         id: "",
         projectId,
@@ -138,7 +135,7 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
         interviewDate: documentDate.toISOString(),
         content: response.parsedText,
         fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${result}`,
-        docType: activeDocClass,
+        docType: docClass,
         createDate: new Date().toLocaleDateString("eu-AU"),
         updateDate: new Date().toLocaleDateString("eu-AU"),
       };

@@ -7,11 +7,13 @@ import { MainContentColumn } from "@/components/main-content-column"
 import { DocumentContent } from "@/components/document-content"
 
 interface PageProps {
-  params: { documentId: string }
+  params: Promise<{
+    documentId: string;
+  }>;
 }
 
 export default async function DocumentViewer({ params }: PageProps) {
-  const { documentId } = params
+  const { documentId } = await params
 
   const document = await fetchDocument(documentId)
 
@@ -20,7 +22,7 @@ export default async function DocumentViewer({ params }: PageProps) {
   }
 
   return (
-    <PageFrame page="Document Viewer" userId="">
+    <PageFrame page="document-viewer" userId="" navItems={null}>
       <div className="flex flex-row flex-auto">
         <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
           <NavSideBar page="document-viewer" userId="" />
