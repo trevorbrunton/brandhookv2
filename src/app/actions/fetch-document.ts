@@ -1,18 +1,21 @@
 "use server";
-import { db } from "@/db";
 
-export async function fetchDocument(documentId: string) {
+import { db } from "@/db";
+import type { ProjectDocument } from "@prisma/client";
+
+export async function fetchDocument(
+  documentId: string
+): Promise<ProjectDocument | null> {
   try {
     if (!db) {
       throw new Error("Database not available");
     }
-    const document = await db.projectDocument.findFirst(
-      {where: {id: documentId}}
-    );
 
-    return { success: document };
-  } catch (e) {
-    console.error(e);
-    return { error: "Database fetch failed" };
+    return await db.projectDocument.findUnique({
+      where: { id: documentId },
+    });
+  } catch (error) {
+    console.error("Error fetching document:", error);
+    return null;
   }
 }

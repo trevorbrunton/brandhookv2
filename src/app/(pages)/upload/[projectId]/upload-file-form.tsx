@@ -75,6 +75,9 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
         headers: { "Content-Type": file.type },
         body: file,
       });
+      if (file.type.startsWith("audio")) {
+        setActiveDocClass("transcript");
+      }
 
       if (!uploadResult.ok) {
         throw new Error("Failed to upload file to the server");
