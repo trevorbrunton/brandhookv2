@@ -1,0 +1,28 @@
+spk_0: OK, now I want to record a conversation with you to test the transcription capability. Do you think transcription is a good tool to have?
+
+spk_1: I, I guess it is.
+
+spk_0: Please continue.
+
+spk_1: Well,
+
+spk_1: I guess it depends on the complexity of the audio that you're trying to, or the conversation that you're trying to record.
+
+spk_0: I believe transcription provides an alternate means of inputting conversations into the app. What do you think?
+
+spk_1: I guess so.
+
+spk_0: You're not very
+
+spk_0: certain about
+
+spk_0: that.
+
+spk_1: Oh, well, I'm, I'm actually engaged in another activity, and you have foisted this conversation upon me, so.
+
+spk_1: I guess I'm not all in, you could say.
+
+spk_0: OK, thank you very much for uh this experimentation.
+
+spk_1: Thanks for nothing, right.
+

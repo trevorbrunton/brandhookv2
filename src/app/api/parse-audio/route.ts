@@ -46,7 +46,11 @@ const extractAudioText = async (fileURL: string, uploadedFileName: string): Prom
     new StartTranscriptionJobCommand({
       TranscriptionJobName: jobName,
       LanguageCode: "en-US", // Specify the language of the audio
-      MediaFormat: uploadedFileName.endsWith(".mp3") ? "mp3" : uploadedFileName.endsWith(".wav") ? "wav" : "mp4",
+      MediaFormat: uploadedFileName.endsWith(".mp3")
+        ? "mp3"
+        : uploadedFileName.endsWith(".wav")
+        ? "wav"
+        : "mp4",
       Media: {
         MediaFileUri: fileURL,
       },
@@ -54,8 +58,10 @@ const extractAudioText = async (fileURL: string, uploadedFileName: string): Prom
         ShowSpeakerLabels: true,
         MaxSpeakerLabels: 10, // Adjust this number based on your expected number of speakers
       },
-    }),
-  )
+      OutputBucketName: "brandhook-transcriptions", // Specify the S3 bucket for output
+      OutputKey: `${jobName}.json`, // Specify the S3 key for the output file
+    })
+  );
 
   // Wait for the transcription job to complete
   let transcriptionResult = ""

@@ -26,6 +26,39 @@ export default async function Home() {
     return redirect("/welcome");
   }
 
+  async function callLambdaFunction() {
+    const lambdaUrl =
+      "https://6ptcqrh5c4dnmx7mhb3s7u7qdu0cxhhk.lambda-url.ap-southeast-2.on.aws/";
+    const payload = {
+      fileName: "audio_file.mp3",
+      fileType: "audio/mpeg",
+      url: "https://example.com/path/to/audio_file.mp3",
+    };
+
+    try {
+      const response = await fetch(lambdaUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Lambda response:", data);
+      return data;
+    } catch (error) {
+      console.error("Error calling Lambda function:", error);
+      throw error;
+    }
+  }
+
+  callLambdaFunction();
+
   return (
     <div className="flex w-full flex-col ">
       <PageFrame page="home" userId={user.id} navItems={navItems}>
