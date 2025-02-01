@@ -2,13 +2,15 @@
 import { db } from "@/db";
 import { ProjectDocument } from "@prisma/client";
 
-export async function fetchAllDocumentsByProjectId(documentId: string) {
+export async function fetchAllDocumentsByProjectId(projectId: string) {
+
+
   try {
     if (!db) {
       throw new Error("Database not available");
     }
     const documents: ProjectDocument[] = await db.projectDocument.findMany(
-      {where: {id: documentId}}
+      {where: {projectId: projectId}}
     );
     console.log("documents", documents);
 

@@ -34,7 +34,6 @@ model User {
   @@map("users")
 }
 
-
 model Project {
   id               String   @id @default(auto()) @map("_id") @db.ObjectId
   userId           String
@@ -48,17 +47,29 @@ model Project {
 }
 
 model ProjectDocument {
-  id               String  @id @default(auto()) @map("_id") @db.ObjectId
-  projectId        String
-  userId           String
-  title            String
-  interviewee      String?
-  interviewDate    String?
-  content          String?
-  fileUrl          String?
-  docType          String
-  createDate       String
-  updateDate       String
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  projectId     String
+  userId        String
+  title         String
+  interviewee   String?
+  interviewDate String?
+  content       String?
+  fileUrl       String?
+  docType       String
+  createDate    String
+  updateDate    String
 
   @@map("project_documents")
+}
+
+model JobQueue {
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  projectId         String
+  jobType           String
+  jobStatus         String
+  completionPayload String
+  createDate        String
+  updateDate        String
+
+  @@map("job_queue")
 }

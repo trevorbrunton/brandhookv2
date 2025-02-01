@@ -1,4 +1,4 @@
-const fs = require("fs");
+import fs from "fs";
 
 // Parse the JSON data
 const transcriptionData = JSON.parse(
