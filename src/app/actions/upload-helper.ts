@@ -17,7 +17,11 @@ const s3Client = new S3Client({
 
 const maxFileSize = 1048576 * 10000; // How big should this be???
 
-const generateFileName = (name: string): string => `${nanoid()}_${name}`;
+const generateFileName = (name: string): string => {
+  //replace spaces and any special characters with underscores - for S3 compatibility
+  name = name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  return `${nanoid()}_${name}`;
+};
 
 type SignedURLResponse = Promise<
   | {
@@ -65,4 +69,3 @@ export const getSignedURL = async ({
     return { failure: `S3 error: ${(error as Error).message}` };
   }
 };
-
