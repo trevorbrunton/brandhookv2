@@ -1,15 +1,16 @@
-    "use server"
+"use server";
 
 import { nanoid } from "@/lib/utils";
 import { db } from "@/db";
+import { createJob } from "@/app/actions/create-job";
 
 export async function transcribe(userId: string) {
   const user = await db.user.findUnique({
     where: { id: userId },
-  })
+  });
 
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("User not found");
   }
 
   const jobId = nanoid();
@@ -31,25 +32,25 @@ export async function transcribe(userId: string) {
     const response = await fetch(lambdaUrl, {
       method: "POST",
       headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-    
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify(payload),
     });
 
-    console.log("Request sent to Lambda: ", payload)
+    console.log("Request sent to Lambda: ", payload);
 
     if (!response.ok) {
-      throw new Error(`HTTP error! in post status: ${response.status} ${response.statusText}`)
+      throw new Error(
+        `HTTP error! in post status: ${response.status} ${response.statusText}`
+      );
     }
-    const result = await response.json();
-    console.log("Lambda response:", result)
+    const job = await createJob("1234", jobId);
+    console.log("job start", job);
 
-    return result
+    return jobId;
   } catch (error) {
-    console.error("Error calling Lambda function:", error)
-    throw error
+    console.error("Error calling Lambda function:", error);
+    throw error;
   }
 }
-
