@@ -4,7 +4,7 @@ import { nanoid } from "@/lib/utils";
 import { db } from "@/db";
 import { createJob } from "@/app/actions/create-job";
 
-export async function transcribe(userId: string) {
+export async function transcribe(userId: string, projectId: string) {
   const user = await db.user.findUnique({
     where: { id: userId },
   });
@@ -19,7 +19,7 @@ export async function transcribe(userId: string) {
     "https://r9rxcod525.execute-api.ap-southeast-2.amazonaws.com/default/start-transcribe-job";
   const payload = {
     jobId,
-    projectId: "1234",
+    projectId: projectId,
     userId: user.id,
     title: "My Project",
     interviewee: "Jane Doe",
@@ -45,7 +45,7 @@ export async function transcribe(userId: string) {
         `HTTP error! in post status: ${response.status} ${response.statusText}`
       );
     }
-    const job = await createJob("1234", jobId);
+    const job = await createJob(projectId, jobId);
     console.log("job start", job);
 
     return jobId;

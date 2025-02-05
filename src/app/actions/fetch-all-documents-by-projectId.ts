@@ -4,6 +4,7 @@ import { ProjectDocument } from "@prisma/client";
 
 export async function fetchAllDocumentsByProjectId(projectId: string) {
 
+  console.log("called fetchAllDocumentsByProjectId", projectId);
 
   try {
     if (!db) {
@@ -12,7 +13,6 @@ export async function fetchAllDocumentsByProjectId(projectId: string) {
     const documents: ProjectDocument[] = await db.projectDocument.findMany(
       {where: {projectId: projectId}}
     );
-    console.log("documents", documents);
 
     return { documents };
   } catch (e) {

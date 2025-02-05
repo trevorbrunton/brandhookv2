@@ -24,7 +24,7 @@ export default async function Home() {
     return redirect("/welcome");
   }
 
-  const display = await transcribe(user.id);
+  const display = await transcribe(user.id, "679d63b43228386fb953d667");
   console.log(display)
 
 

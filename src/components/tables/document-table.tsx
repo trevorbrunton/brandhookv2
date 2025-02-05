@@ -16,33 +16,26 @@ import { Button } from "@/components/ui/button";
 import { fetchAllDocumentsByProjectId } from "@/app/actions/fetch-all-documents-by-projectId";
 import { LoadingSpinner } from "../loading-spinner";
 import { useEffect } from "react";
+import { getAllJobs } from "@/app/actions/get-all-jobs";
 
 async function fetchDocuments(
   projectId: string
 ): Promise<ProjectDocument[] | null> {
+  console.log("fetching documents for project", projectId);
   const response = await fetchAllDocumentsByProjectId(projectId);
   console.log("response", response);
   return response.documents ?? null;
 }
 
 async function fetchAllJobs(projectId: string): Promise<JobQueue[] | null> {
-  console.log("fetching jobs for project", projectId);
-  const res = await fetch("/api/job-control/get-all-jobs", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ projectId }),
-  });
-  if (!res.ok) {
-    throw new Error("Failed to fetch jobs");
-  }
-  return res.json();
+  const jobs = await getAllJobs(projectId);
+  console.log("jobs fetched", jobs);
+  return jobs
 }
 
 export function DocumentTable({ project }: { project: Project }) {
   const [pendingJobs, setPendingJobs] = useState(false);
-  console.log("project", project);
+  console.log("project prop", project);
   const queryClient = useQueryClient();
 
   const {
