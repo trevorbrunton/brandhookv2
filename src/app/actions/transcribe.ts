@@ -19,6 +19,8 @@ export async function transcribe(
     throw new Error("User not found");
   }
 
+  console.log("Starting transcription job");
+
   const jobId = nanoid();
 
   const lambdaUrl =
@@ -51,7 +53,7 @@ export async function transcribe(
       );
     }
     const job = await createJob(projectId, jobId);
-    console.log("job start", job);
+    console.log("Transcription job has started", job);
 
     return jobId;
   } catch (error) {
