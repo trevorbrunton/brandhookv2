@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { DocActionsButton } from "@/components/tables/doc-actions-button";
@@ -14,66 +14,82 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { fetchAllDocumentsByProjectId } from "@/app/actions/fetch-all-documents-by-projectId";
+import { deleteCompletedJobs } from "@/app/actions/delete-completed-jobs";
 import { LoadingSpinner } from "../loading-spinner";
-import { useEffect } from "react";
 import { getAllJobs } from "@/app/actions/get-all-jobs";
+
+const POLLING_INTERVAL = 60000; // 1 minute
 
 async function fetchDocuments(
   projectId: string
 ): Promise<ProjectDocument[] | null> {
-  console.log("fetching documents for project", projectId);
-  const response = await fetchAllDocumentsByProjectId(projectId);
-  console.log("response", response);
-  return response.documents ?? null;
+  try {
+    const response = await fetchAllDocumentsByProjectId(projectId);
+    return response.documents ?? null;
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    return null;
+  }
 }
 
 async function fetchAllJobs(projectId: string): Promise<JobQueue[] | null> {
-  const jobs = await getAllJobs(projectId);
-  console.log("jobs fetched", jobs);
-  return jobs
+  try {
+    return await getAllJobs(projectId);
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+    return null;
+  }
 }
 
 export function DocumentTable({ project }: { project: Project }) {
-  const [pendingJobs, setPendingJobs] = useState(false);
-  console.log("project prop", project);
+  const [hasPendingJobs, setHasPendingJobs] = useState(false);
   const queryClient = useQueryClient();
 
   const {
     data: documents,
     isLoading: isLoadingDocs,
     error: docsError,
-  } = useQuery<ProjectDocument[] | null, Error>({
+    refetch: refetchDocuments,
+  } = useQuery({
     queryKey: ["documents", project.id],
     queryFn: () => fetchDocuments(project.id),
+    // staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
-  const { data: jobs, error: jobsError } = useQuery<JobQueue[] | null, Error>({
+  const {
+    data: jobs,
+    error: jobsError,
+    refetch: refetchJobs,
+  } = useQuery({
     queryKey: ["jobs", project.id],
     queryFn: () => fetchAllJobs(project.id),
-    refetchInterval: 120000, // Refetch every 2 minutes
+    refetchInterval: POLLING_INTERVAL,
   });
 
   useEffect(() => {
-    if (jobs && Array.isArray(jobs)) {
-      const hasCompletedJobs = jobs.some(
-        (job) => job.jobStatus === "COMPLETED"
+    if (!jobs || !Array.isArray(jobs)) return;
+
+    const completedJobs = jobs.filter((job) => job.jobStatus === "COMPLETE");
+    const pendingJobs = jobs.filter((job) => job.jobStatus === "PENDING");
+
+    setHasPendingJobs(pendingJobs.length > 0);
+
+    if (completedJobs.length > 0) {
+      console.log("Completed jobs found, refreshing documents...");
+      refetchDocuments();
+
+      // Delete completed jobs in bulk
+      deleteCompletedJobs(completedJobs.map((job) => job.id))
+        .then(() => {
+          console.log("Completed jobs deleted.");
+          refetchJobs(); // Refresh job list after deletion
+        })
+        .catch((error) =>
+          console.error("Error deleting completed jobs:", error)
       );
-      const hasPendingJobs = jobs.some((job) => job.jobStatus === "PENDING");
-
-      if (hasCompletedJobs) {
-        console.log("Completed jobs found, refreshing documents");
-        queryClient.invalidateQueries({ queryKey: ["documents", project.id] });
-      }
-
-      if (!hasPendingJobs) {
-        console.log("No pending jobs remaining");
-        setPendingJobs(false);
-      } else {
-        console.log("Pending jobs still exist");
-        setPendingJobs(true);
-      }
+      queryClient.invalidateQueries({ queryKey: ["documents", project.id] });
     }
-  }, [jobs, project.id, queryClient]);
+  }, [jobs, refetchDocuments, refetchJobs, project.id, queryClient]);
 
   if (isLoadingDocs) {
     return (
@@ -85,7 +101,7 @@ export function DocumentTable({ project }: { project: Project }) {
 
   if (docsError) {
     return (
-      <div className="flex justify-center mt-12">
+      <div className="flex justify-center mt-12 text-red-600">
         Error loading documents: {docsError.message}
       </div>
     );
@@ -97,17 +113,20 @@ export function DocumentTable({ project }: { project: Project }) {
 
   if (!documents || documents.length === 0) {
     return (
-      <div className="flex justify-center mt-12">No Documents available</div>
+      <div className="flex justify-center mt-12 text-gray-500">
+        No Documents available
+      </div>
     );
   }
 
   return (
     <>
-      {pendingJobs && (
-        <div className="bg-red-100 border-l-4 border-red-500 p-4 mt-4">
-          <p className="font-bold">Pending Jobs</p>
-          <p className="text-sm">
-            There are pending jobs for this project. They will be added when complete
+      {hasPendingJobs && (
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mt-4">
+          <p className="font-bold text-xs">Pending Results</p>
+          <p className="text-xs">
+            There are documents that are still processing. They will be added when
+            complete. You can navigate away from this page and return later if you wish.
           </p>
         </div>
       )}
