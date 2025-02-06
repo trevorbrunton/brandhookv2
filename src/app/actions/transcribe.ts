@@ -4,7 +4,13 @@ import { nanoid } from "@/lib/utils";
 import { db } from "@/db";
 import { createJob } from "@/app/actions/create-job";
 
-export async function transcribe(userId: string, projectId: string) {
+export async function transcribe(
+  userId: string,
+  projectId: string,
+  title: string,
+  interviewee: string,
+  fileUrl: string
+) {
   const user = await db.user.findUnique({
     where: { id: userId },
   });
@@ -21,11 +27,10 @@ export async function transcribe(userId: string, projectId: string) {
     jobId,
     projectId: projectId,
     userId: user.id,
-    title: "My Project",
-    interviewee: "Jane Doe",
+    title: title,
+    interviewee: interviewee,
     docType: "interview",
-    fileUrl:
-      "https://bh-transcribe-jobs.s3.ap-southeast-2.amazonaws.com/Dean-St.m4a",
+    fileUrl: fileUrl,
   };
 
   try {

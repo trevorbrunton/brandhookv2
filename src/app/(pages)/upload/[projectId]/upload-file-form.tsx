@@ -18,6 +18,8 @@ import { useRouter } from "next/navigation"
 
 import { saveDocToDb } from "@/app/actions/save-doc-to-db"
 import { DocumentChooserBar } from "@/app/(pages)/upload/[projectId]/document-chooser-bar"
+import { transcribe } from "@/app/actions/transcribe"
+import {  useQueryClient } from "@tanstack/react-query";
 
 interface UploadDialogProps {
   projectId: string
@@ -35,6 +37,7 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
   const [processing, setProcessing] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
+  const queryClient = useQueryClient();
 
   const computeSHA256 = async (file: File) => {
     const hash = await crypto.subtle.digest(
@@ -110,15 +113,23 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
 
       let parsedResponse
       if ([".mp3", ".wav", ".m4a"].includes(fileExtension)) {
-        parsedResponse = await fetch("/api/parse-audio", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            fileName: uploadedFileName,
-            fileType: file.type,
-            url: fileUrl,
-          }),
-        })
+        // parsedResponse = await fetch("/api/parse-audio", {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify({
+        //     fileName: uploadedFileName,
+        //     fileType: file.type,
+        //     url: fileUrl,
+        //   }),
+        // })
+        const jobId = await transcribe(userId, projectId, documentTitle, interviewee, fileUrl)
+        console.log('transcription job commenced with jobId: ', jobId);
+              setLoading(false);
+        setProcessing(false);
+                queryClient.invalidateQueries({
+                  queryKey: ["documents", projectId],
+                });
+              router.push(`/project-view/${projectId}`);
       } else {
         parsedResponse = await fetch("/api/parse-document", {
           method: "POST",
@@ -131,9 +142,9 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
         })
       }
 
-      const response = await parsedResponse.json()
+      const response = parsedResponse ? await parsedResponse.json() : null
 
-      if (!parsedResponse.ok) {
+      if (parsedResponse && !parsedResponse.ok) {
         throw new Error(response.error)
       }
       const docClass = file.type.startsWith("audio") ? "transcript" : activeDocClass

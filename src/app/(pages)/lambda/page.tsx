@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { NavSideBar } from "@/components/navbars/nav-side-bar";
 import { db } from "@/db";
 import { PageFrame } from "@/components/pageframe";
-import { transcribe} from "@/app/actions/transcribe";
+// import { transcribe} from "@/app/actions/transcribe";
 
 export default async function Home() {
   const auth = await currentUser();
@@ -24,8 +24,8 @@ export default async function Home() {
     return redirect("/welcome");
   }
 
-  const display = await transcribe(user.id, "679d63b43228386fb953d667");
-  console.log(display)
+  // const display = await transcribe(user.id, "679d63b43228386fb953d667");
+  // console.log(display)
 
 
 
