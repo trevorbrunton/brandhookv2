@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Gem, Upload } from "lucide-react";
+import { Home, Gem, Upload, ArrowBigLeft } from "lucide-react";
 
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { NewProjectDialog } from "@/components/dialogs/new-project-details-dialo
 import { ConversationDialog } from "@/components/dialogs/add-conversation-dialog";
 import { SettingsDialog } from "@/components/dialogs/settings-dialog";
 import { InterviewSummaryDialog } from "@/components/dialogs/interview-summary-dialog";
+import { useRouter } from "next/navigation";
 
 interface MenuContentProps {
   onLinkClick: () => void;
@@ -39,6 +40,9 @@ const itemVariants = {
 };
 
 export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
+  const router = useRouter();
+
+  console.log("page", page)
 
   return (
     <motion.nav
@@ -48,7 +52,7 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
       animate="visible"
     >
       <motion.div variants={itemVariants} className="mb-4">
-        {page !== "home" ? (
+        {page !== "home" && page !== "document-viewer" && (
           <>
             <p className="text-xs font-medium leading-6 text-zinc-500">
               Navigation
@@ -87,7 +91,8 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
               <InterviewSummaryDialog projectId={page} userId={userId} />
             </div>
           </>
-        ) : (
+        )}
+        {page == "home" && (
           <>
             <p className="text-xs font-medium leading-6 text-zinc-500">
               Actions
@@ -95,29 +100,63 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
             <div className="mx-1 flex items-center">
               <NewProjectDialog />
             </div>
+
+            <p className="text-xs font-medium leading-6 text-zinc-500 mt-8">
+              Settings
+            </p>
+            <div className="flex flex-1 flex-col">
+              <div className="py-1.5 flex items-center">
+                <SettingsDialog userId={userId} />
+              </div>
+              <Link
+                href={"/upgrade"}
+                className={cn(
+                  buttonVariants({ variant: "ghost" }),
+                  "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition mx-2"
+                )}
+                onClick={onLinkClick}
+              >
+                <Gem className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+                Upgrade
+              </Link>
+            </div>
           </>
         )}
-
-        <p className="text-xs font-medium leading-6 text-zinc-500 mt-8">
-          Settings
-        </p>
-        <div className="flex flex-1 flex-col">
-          <div className="py-1.5 flex items-center">
-            <SettingsDialog userId={userId} />
-          </div>
-          <Link
-            href={"/upgrade"}
-            className={cn(
-              buttonVariants({ variant: "ghost" }),
-              "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition mx-2"
-            )}
-            onClick={onLinkClick}
-          >
-            <Gem className="size-4 text-zinc-500 group-hover:text-zinc-700" />
-            Upgrade
-          </Link>
-        </div>
-        <div className="-mx-2 flex flex-1 flex-col"></div>
+        {page.startsWith("document-viewer") && (
+          <>
+            <p className="text-xs font-medium leading-6 text-zinc-500">
+              Navigation
+            </p>
+            <div className="flex  flex-col">
+              <div className="mx-1 flex items-center">
+                <Link
+                  href={`/upload/${page}`}
+                  className={cn(
+                    buttonVariants({ variant: "ghost" }),
+                    "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition mx-2"
+                  )}
+                  onClick={() => router.back()}
+                >
+                  <ArrowBigLeft className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+                  Go Back
+                </Link>
+              </div>
+              {/* <div className="mx-1 flex items-center">
+                <Link
+                  href={"/home"}
+                  className={cn(
+                    buttonVariants({ variant: "ghost" }),
+                    "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition mx-2"
+                  )}
+                  onClick={onLinkClick}
+                >
+                  <Home className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+                  Home
+                </Link>
+              </div> */}
+            </div>
+          </>
+        )}
       </motion.div>
     </motion.nav>
   );

@@ -124,12 +124,12 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
         // })
         const jobId = await transcribe(userId, projectId, documentTitle, interviewee, fileUrl)
         console.log('transcription job commenced with jobId: ', jobId);
-              setLoading(false);
-        setProcessing(false);
-                queryClient.invalidateQueries({
-                  queryKey: ["documents", projectId],
-                });
-              router.push(`/project-view/${projectId}`);
+        // setLoading(false);
+        // setProcessing(false);
+        queryClient.invalidateQueries({
+          queryKey: ["documents", projectId],
+        });
+        // router.push(`/project-view/${projectId}`);
       } else {
         parsedResponse = await fetch("/api/parse-document", {
           method: "POST",
@@ -140,68 +140,69 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
             url: fileUrl,
           }),
         })
-      }
+      
 
-      const response = parsedResponse ? await parsedResponse.json() : null
+        const response = parsedResponse ? await parsedResponse.json() : null
 
-      if (parsedResponse && !parsedResponse.ok) {
-        throw new Error(response.error)
-      }
-      const docClass = file.type.startsWith("audio") ? "transcript" : activeDocClass
-      const newDocument = {
-        id: "",
-        projectId,
-        userId,
-        title: documentTitle,
-        interviewee: interviewee,
-        interviewDate: documentDate.toISOString(),
-        content: response.parsedText,
-        fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${uploadedFileName}`,
-        docType: docClass,
-        createDate: new Date().toLocaleDateString("eu-AU"),
-        updateDate: new Date().toLocaleDateString("eu-AU"),
-      }
-      await saveDocToDb(newDocument, projectId)
-      toast({
-        title: "Summarising Document",
-        description: "Your document is being summarised",
-      })
-
-      if (activeDocClass === "wow-moments") {
+        if (parsedResponse && !parsedResponse.ok) {
+          throw new Error(response.error)
+        }
+        const docClass = file.type.startsWith("audio") ? "transcript" : activeDocClass
+        const newDocument = {
+          id: "",
+          projectId,
+          userId,
+          title: documentTitle,
+          interviewee: interviewee,
+          interviewDate: documentDate.toISOString(),
+          content: response.parsedText,
+          fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${uploadedFileName}`,
+          docType: docClass,
+          createDate: new Date().toLocaleDateString("eu-AU"),
+          updateDate: new Date().toLocaleDateString("eu-AU"),
+        }
+        await saveDocToDb(newDocument, projectId)
         toast({
-          title: "Upload Successful",
-          description: "Your document has been saved",
+          title: "Summarising Document",
+          description: "Your document is being summarised",
         })
-        setLoading(false)
-        setProcessing(false)
-        router.push(`/project-view/${projectId}`)
-        return
+
+        if (activeDocClass === "wow-moments") {
+          toast({
+            title: "Upload Successful",
+            description: "Your document has been saved",
+          })
+          setLoading(false)
+          setProcessing(false)
+          router.push(`/project-view/${projectId}`)
+          return
+        }
+
+        const summaryResponse = await fetch("/api/sumarise-intervew", {
+          method: "POST",
+          body: JSON.stringify({ parsedText: response.parsedText }),
+          headers: { "Content-Type": "application/json" },
+        })
+
+        const summaryText = await summaryResponse.json()
+
+        console.log("Summary response", summaryText)
+
+        const summaryDocument = {
+          id: "",
+          projectId,
+          userId,
+          title: `${documentTitle} - Summary`,
+          interviewee: interviewee,
+          interviewDate: documentDate.toISOString(),
+          content: summaryText.interviewSummary,
+          fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${uploadedFileName}`,
+          docType: `${activeDocClass}-summary`,
+          createDate: new Date().toLocaleDateString("eu-AU"),
+          updateDate: new Date().toLocaleDateString("eu-AU"),
+        }
+        await saveDocToDb(summaryDocument, projectId)
       }
-
-      const summaryResponse = await fetch("/api/sumarise-intervew", {
-        method: "POST",
-        body: JSON.stringify({ parsedText: response.parsedText }),
-        headers: { "Content-Type": "application/json" },
-      })
-
-      const summaryText = await summaryResponse.json()
-
-      console.log("Summary response", summaryText)
-
-      const summaryDocument = {
-        id: "",
-        projectId,
-        userId,
-        title: `${documentTitle} - Summary`,
-        interviewee: interviewee,
-        interviewDate: documentDate.toISOString(),
-        content: summaryText.interviewSummary,
-        fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${uploadedFileName}`,
-        docType: `${activeDocClass}-summary`,
-        createDate: new Date().toLocaleDateString("eu-AU"),
-        updateDate: new Date().toLocaleDateString("eu-AU"),
-      }
-      await saveDocToDb(summaryDocument, projectId)
 
       toast({
         title: "Upload Successful",
