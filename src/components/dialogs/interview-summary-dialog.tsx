@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
+import { Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -40,6 +40,7 @@ export function InterviewSummaryDialog({
   const [isOpen, setIsOpen] = useState(false);
   const hasGeneratedSummary = useRef(false);
 
+
   const {
     data: dox,
     isLoading: isLoadingProject,
@@ -55,7 +56,7 @@ export function InterviewSummaryDialog({
 
   const {
     data: summary,
-    isLoading: isLoadingSummary,
+    // isLoading: isLoadingSummary,
     error: summaryError,
     refetch: refetchSummary,
   } = useQuery({
@@ -137,11 +138,10 @@ export function InterviewSummaryDialog({
         </DialogHeader>
         <div className="mt-4">
           {isLoadingProject ||
-          isLoadingSummary ||
           saveSummaryMutation.status === "pending" ? (
-            <div className="flex items-center justify-center">
-              <Loader className="animate-spin" />
-              <span className="ml-2">Generating summary...</span>
+            <div className="flex items-center justify-center space-x-2 p-4 min-h-56">
+              <Brain className="animate-bounce text-primary" />
+              <span className="text-gray-700">Fetching Files...</span>
             </div>
           ) : projectError || summaryError || saveSummaryMutation.isError ? (
             <p className="text-red-500">
@@ -155,7 +155,10 @@ export function InterviewSummaryDialog({
           ) : summary ? (
             <p>Summary generation complete. You can close this dialog.</p>
           ) : (
-            <p>Preparing to generate summary...</p>
+            <div className="flex items-center justify-center space-x-4 p-4 min-h-56">
+              <Brain className="animate-bounce text-primary" />
+              <span className="text-gray-700">Shhh, I'm thinking here...</span>
+            </div>
           )}
         </div>
       </DialogContent>

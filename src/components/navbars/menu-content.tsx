@@ -1,25 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Gem, Upload, ArrowBigLeft } from "lucide-react";
+import { Home,  Upload, ArrowBigLeft } from "lucide-react";
 
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { NewProjectDialog } from "@/components/dialogs/new-project-details-dialog";
 import { ConversationDialog } from "@/components/dialogs/add-conversation-dialog";
-import { SettingsDialog } from "@/components/dialogs/settings-dialog";
 import { InterviewSummaryDialog } from "@/components/dialogs/interview-summary-dialog";
 import { useRouter } from "next/navigation";
+import { HomeMenu } from "@/components/navbars/sub-menus/home-menu";
 
 interface MenuContentProps {
   onLinkClick: () => void;
   page: string;
   userId: string;
+  projectId: string
 }
-
-
-
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -39,10 +36,10 @@ const itemVariants = {
   },
 };
 
-export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
+export function MenuContent({ onLinkClick, page, userId, projectId }: MenuContentProps) {
   const router = useRouter();
 
-  console.log("page", page)
+  console.log("page", page);
 
   return (
     <motion.nav
@@ -52,7 +49,7 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
       animate="visible"
     >
       <motion.div variants={itemVariants} className="mb-4">
-        {page !== "home" && page !== "document-viewer" && (
+        {page == "project-view" && (
           <>
             <p className="text-xs font-medium leading-6 text-zinc-500">
               Navigation
@@ -73,7 +70,7 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
             </p>
 
             <Link
-              href={`/upload/${page}`}
+              href={`/upload/${projectId}`}
               className={cn(
                 buttonVariants({ variant: "ghost" }),
                 "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition mx-2"
@@ -85,42 +82,15 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
             </Link>
 
             <div className="py-1.5 flex items-center">
-              <ConversationDialog projectId={page} userId={userId} />
+              <ConversationDialog projectId={projectId} userId={userId} />
             </div>
             <div className="py-1.5 flex items-center">
-              <InterviewSummaryDialog projectId={page} userId={userId} />
+              <InterviewSummaryDialog projectId={projectId} userId={userId} />
             </div>
           </>
         )}
         {page == "home" && (
-          <>
-            <p className="text-xs font-medium leading-6 text-zinc-500">
-              Actions
-            </p>
-            <div className="mx-1 flex items-center">
-              <NewProjectDialog />
-            </div>
-
-            <p className="text-xs font-medium leading-6 text-zinc-500 mt-8">
-              Settings
-            </p>
-            <div className="flex flex-1 flex-col">
-              <div className="py-1.5 flex items-center">
-                <SettingsDialog userId={userId} />
-              </div>
-              <Link
-                href={"/upgrade"}
-                className={cn(
-                  buttonVariants({ variant: "ghost" }),
-                  "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition mx-2"
-                )}
-                onClick={onLinkClick}
-              >
-                <Gem className="size-4 text-zinc-500 group-hover:text-zinc-700" />
-                Upgrade
-              </Link>
-            </div>
-          </>
+<HomeMenu userId={userId} onLinkClick={onLinkClick} />
         )}
         {page.startsWith("document-viewer") && (
           <>
@@ -130,7 +100,7 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
             <div className="flex  flex-col">
               <div className="mx-1 flex items-center">
                 <Link
-                  href={`/upload/${page}`}
+                  href={`/upload/${projectId}`}
                   className={cn(
                     buttonVariants({ variant: "ghost" }),
                     "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition mx-2"
@@ -141,19 +111,7 @@ export function MenuContent({ onLinkClick, page, userId }: MenuContentProps) {
                   Go Back
                 </Link>
               </div>
-              {/* <div className="mx-1 flex items-center">
-                <Link
-                  href={"/home"}
-                  className={cn(
-                    buttonVariants({ variant: "ghost" }),
-                    "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition mx-2"
-                  )}
-                  onClick={onLinkClick}
-                >
-                  <Home className="size-4 text-zinc-500 group-hover:text-zinc-700" />
-                  Home
-                </Link>
-              </div> */}
+
             </div>
           </>
         )}

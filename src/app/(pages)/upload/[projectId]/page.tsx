@@ -35,7 +35,7 @@ export default async function UploadPage({
       <PageFrame page="upload" navItems={navItems} userId={user.id}>
         <div className="flex flex-row flex-auto">
           <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
-            <NavSideBar page="upload" userId={user.id} />
+            <NavSideBar page="upload" userId={user.id} projectId={projectId} />
           </div>
           <div className="flex flex-col flex-auto">
             <PageHeader title="Upload File" />

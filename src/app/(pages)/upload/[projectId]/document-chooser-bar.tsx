@@ -1,5 +1,5 @@
 "use client";
-import {  Loader } from "lucide-react";
+import {  Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface DocumentChooserBarProps {
@@ -23,7 +23,7 @@ export function DocumentChooserBar({
             activeDocClass === "interview" ? "underline underline-offset-4" : ""
           }
         >
-          Upload Interview Transcript
+          Upload Interview Transcript or audio
         </Button>
         <Button
           variant="ghost"
@@ -36,14 +36,14 @@ export function DocumentChooserBar({
               : ""
           }
         >
-          Upload Wow Moments
+          Upload Wow Moments text or audio
         </Button>
       </div>
       <div>
         {processing && (
-          <div className="flex space-x-2 text-xs items-center">
+          <div className="flex space-x-2 text-xs items-center py-2">
             <span>Processing document...</span>
-            <Loader className="size-5 animate-spin text-muted-foreground" />
+            <Brain className="size-4 animate-bounce text-primary" />
           </div>
         )}
       </div>

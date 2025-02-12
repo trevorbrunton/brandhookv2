@@ -83,7 +83,7 @@ export const PageFrame = ({ children, userId, page,navItems }: PageFrameProps) =
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="pt-20 sm:max-w-xs">
-                  <MenuContent onLinkClick={handleLinkClick} page={page} userId={userId} />
+                  <MenuContent onLinkClick={handleLinkClick} page={page} userId={userId} projectId="" />
                 </SheetContent>
               </Sheet>
             </div>

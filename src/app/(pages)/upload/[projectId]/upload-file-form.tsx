@@ -104,6 +104,8 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
       return
     }
 
+
+
     try {
       const uploadedFileName = await handleFileUpload(file)
       console.log("File uploaded successfully")
@@ -113,23 +115,11 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
 
       let parsedResponse
       if ([".mp3", ".wav", ".m4a"].includes(fileExtension)) {
-        // parsedResponse = await fetch("/api/parse-audio", {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify({
-        //     fileName: uploadedFileName,
-        //     fileType: file.type,
-        //     url: fileUrl,
-        //   }),
-        // })
         const jobId = await transcribe(userId, projectId, documentTitle, interviewee, fileUrl)
         console.log('transcription job commenced with jobId: ', jobId);
-        // setLoading(false);
-        // setProcessing(false);
         queryClient.invalidateQueries({
           queryKey: ["documents", projectId],
         });
-        // router.push(`/project-view/${projectId}`);
       } else {
         parsedResponse = await fetch("/api/parse-document", {
           method: "POST",
@@ -221,6 +211,14 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
     }
   }
   const onDrop = (acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 1) {
+      toast({
+        title: "Multiple files not supported",
+        description: "Steady on, one file at at time please!",
+      })
+      return
+    }
+
     if (acceptedFiles[0]) {
       setFile(acceptedFiles[0])
       if (previewUrl) {

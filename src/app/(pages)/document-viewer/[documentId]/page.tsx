@@ -25,7 +25,7 @@ export default async function DocumentViewer({ params }: PageProps) {
     <PageFrame page="document-viewer" userId="" navItems={null}>
       <div className="flex flex-row flex-auto">
         <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
-          <NavSideBar page="document-viewer" userId="" />
+          <NavSideBar page="document-viewer" userId=""projectId={document.projectId} />
         </div>
         <div className="flex flex-col flex-auto">
           <PageHeader title={`Document: ${document.title}`} />
