@@ -41,9 +41,9 @@ export function DocumentChooserBar({
       </div>
       <div>
         {processing && (
-          <div className="flex space-x-2 text-xs items-center py-2">
+          <div className="flex space-x-2 text-xs items-center py-2 text-orange-600">
             <span>Processing document...</span>
-            <Brain className="size-4 animate-bounce text-primary" />
+            <Brain className="size-4 animate-bounce" />
           </div>
         )}
       </div>
