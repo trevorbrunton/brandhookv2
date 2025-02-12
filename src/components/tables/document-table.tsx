@@ -122,12 +122,12 @@ export function DocumentTable({ project }: { project: Project }) {
   return (
     <>
       {hasPendingJobs && (
-        <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mt-4">
-          <p className="font-bold text-xs">Pending Results</p>
-          <p className="text-xs">
+        <div className="bg-orange-500 p-2 mt-4">
+          <span className="font-bold text-xs text-white">Pending Results: </span>
+          <span className="text-xs text-white">
             There are documents that are still processing. They will be added when
             complete. You can navigate away from this page and return later if you wish.
-          </p>
+          </span>
         </div>
       )}
       <Table>

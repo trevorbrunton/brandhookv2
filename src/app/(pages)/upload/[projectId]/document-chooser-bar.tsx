@@ -36,7 +36,7 @@ export function DocumentChooserBar({
               : ""
           }
         >
-          Upload Wow Moments text or audio
+          Upload Wow Moments
         </Button>
       </div>
       <div>
