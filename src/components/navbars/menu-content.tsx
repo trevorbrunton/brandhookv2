@@ -87,10 +87,21 @@ export function MenuContent({ onLinkClick, page, userId, projectId }: MenuConten
             <div className="py-1.5 flex items-center">
               <InterviewSummaryDialog projectId={projectId} userId={userId} />
             </div>
+
+            <Link
+              href={`/summarise-wows?projectId=${projectId}&userId=${userId}`}
+              className={cn(
+                buttonVariants({ variant: "ghost" }),
+                "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition mx-2"
+              )}
+            >
+              <Upload className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+              Summarise Wow Moments
+            </Link>
           </>
         )}
         {page == "home" && (
-<HomeMenu userId={userId} onLinkClick={onLinkClick} />
+          <HomeMenu userId={userId} onLinkClick={onLinkClick} />
         )}
         {page.startsWith("document-viewer") && (
           <>
@@ -111,7 +122,6 @@ export function MenuContent({ onLinkClick, page, userId, projectId }: MenuConten
                   Go Back
                 </Link>
               </div>
-
             </div>
           </>
         )}

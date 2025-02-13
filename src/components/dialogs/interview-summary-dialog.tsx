@@ -71,7 +71,7 @@ export function InterviewSummaryDialog({
         id: "",
         projectId,
         userId,
-        title: "Project Summary",
+        title: "All Interviews Summary",
         interviewee: "",
         interviewDate: "",
         content: content,
