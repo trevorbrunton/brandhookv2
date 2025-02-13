@@ -16,7 +16,6 @@ export async function saveDocToDb(doc: ProjectDocument, projectId: string) {
 
     console.log("Saving document to database");
 
-
     // Remove the id field if it's an empty string
     const { id, ...docWithoutId } = doc;
     const documentData = id ? doc : docWithoutId;
@@ -36,7 +35,7 @@ export async function saveDocToDb(doc: ProjectDocument, projectId: string) {
           projectDocuments: {
             push: projectDocument.id,
           },
-          updateDate: new Date().toLocaleDateString("eu-AU"),
+          updateDate: new Date().toLocaleDateString("en-AU"),
         },
       });
     }

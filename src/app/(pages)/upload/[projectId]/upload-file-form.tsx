@@ -63,13 +63,17 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
     }
 
     try {
-      const uploadedFileName = await handleFileUpload(file, documentTitle, documentDate);
+      const uploadedFileName = await handleFileUpload(
+        file,
+        documentTitle,
+        documentDate
+      );
       console.log("File uploaded successfully");
 
       const fileUrl = `${process.env.NEXT_PUBLIC_S3_URL}${uploadedFileName}`;
       const fileExtension = uploadedFileName.slice(-4).toLowerCase();
 
-      let parsedResponse ;
+      let parsedResponse;
       if ([".mp3", ".wav", ".m4a"].includes(fileExtension)) {
         const jobId = await transcribe(
           userId,
@@ -111,8 +115,8 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
           content: response.parsedText,
           fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${uploadedFileName}`,
           docType: docClass,
-          createDate: new Date().toLocaleDateString("eu-AU"),
-          updateDate: new Date().toLocaleDateString("eu-AU"),
+          createDate: new Date().toLocaleDateString("en-AU"),
+          updateDate: new Date().toLocaleDateString("en-AU"),
         };
         await saveDocToDb(newDocument, projectId);
         toast({
@@ -151,8 +155,8 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
           content: summaryText.interviewSummary,
           fileUrl: `${process.env.NEXT_PUBLIC_S3_URL}${uploadedFileName}`,
           docType: `${activeDocClass}-summary`,
-          createDate: new Date().toLocaleDateString("eu-AU"),
-          updateDate: new Date().toLocaleDateString("eu-AU"),
+          createDate: new Date().toLocaleDateString("en-AU"),
+          updateDate: new Date().toLocaleDateString("en-AU"),
         };
         await saveDocToDb(summaryDocument, projectId);
       }
@@ -333,7 +337,7 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
             <div className="flex justify-end space-x-2">
               <Button
                 type="button"
-                variant="outline"
+                className="bg-orange-500"
                 onClick={() => router.push(`/project-view/${projectId}`)}
               >
                 Cancel

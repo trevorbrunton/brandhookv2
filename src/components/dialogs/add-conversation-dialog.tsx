@@ -90,8 +90,8 @@ export const ConversationDialog = ({
         content: responseData.text,
         fileUrl: "",
         docType: "conversation",
-        createDate: new Date().toLocaleDateString("eu-AU"),
-        updateDate: new Date().toLocaleDateString("eu-AU"),
+        createDate: new Date().toLocaleDateString("en-AU"),
+        updateDate: new Date().toLocaleDateString("en-AU"),
       };
 
       await saveDocToDb(newDocument, projectId);

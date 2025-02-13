@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Home,  Upload, ArrowBigLeft } from "lucide-react";
+import { Home,  Upload, ArrowBigLeft, FileText, Flame  } from "lucide-react";
 
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ConversationDialog } from "@/components/dialogs/add-conversation-dialog";
-import { InterviewSummaryDialog } from "@/components/dialogs/interview-summary-dialog";
+
 import { useRouter } from "next/navigation";
 import { HomeMenu } from "@/components/navbars/sub-menus/home-menu";
 
@@ -84,9 +84,16 @@ export function MenuContent({ onLinkClick, page, userId, projectId }: MenuConten
             <div className="py-1.5 flex items-center">
               <ConversationDialog projectId={projectId} userId={userId} />
             </div>
-            <div className="py-1.5 flex items-center">
-              <InterviewSummaryDialog projectId={projectId} userId={userId} />
-            </div>
+            <Link
+              href={`/summarise-interviews?projectId=${projectId}&userId=${userId}`}
+              className={cn(
+                buttonVariants({ variant: "ghost" }),
+                "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition mx-2"
+              )}
+            >
+              <FileText className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+              Summarise Interviews
+            </Link>
 
             <Link
               href={`/summarise-wows?projectId=${projectId}&userId=${userId}`}
@@ -95,7 +102,7 @@ export function MenuContent({ onLinkClick, page, userId, projectId }: MenuConten
                 "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 text-sm font-medium leading-6 text-zinc-500 hover:bg-gray-50 transition mx-2"
               )}
             >
-              <Upload className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+              <Flame    className="size-4 text-zinc-500 group-hover:text-zinc-700" />
               Summarise Wow Moments
             </Link>
           </>

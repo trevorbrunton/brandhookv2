@@ -144,7 +144,7 @@ export function DocumentTable({ project }: { project: Project }) {
             <TableRow key={document.id}>
               <TableCell className="font-medium">{document.title}</TableCell>
               <TableCell>
-                {new Date(document.createDate).toLocaleDateString()}
+                {document.createDate}
               </TableCell>
               <TableCell className="text-right">
                 <Button asChild>

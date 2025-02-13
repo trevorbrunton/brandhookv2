@@ -5,15 +5,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Brain } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { fetchAllWowsByProjectId } from "@/app/actions/fetch-all-wows-by-projectId";
+import { fetchAllInterviewSummariesByProjectId } from "@/app/actions/fetch-all-interview-summaries-by-projectId";
 import { saveDocToDb } from "@/app/actions/save-doc-to-db";
 import type { ProjectDocument } from "@prisma/client";
 
-async function summarizeWowMoments(wows: string) {
-  const response = await fetch("/api/summarise-wows", {
+async function summarizeInterviews(interviews: string) {
+  const response = await fetch("/api/summarise-interviews", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ wows }),
+    body: JSON.stringify({ interviews }),
   });
   if (!response.ok) {
     throw new Error("Failed to summarize interviews");
@@ -21,7 +21,7 @@ async function summarizeWowMoments(wows: string) {
   return response.json();
 }
 
-export default function WowMomentSummary() {
+export default function InterviewSummary() {
   const searchParams = useSearchParams();
   const projectId = searchParams.get("projectId") || "";
   const userId = searchParams.get("userId") || "";
@@ -29,20 +29,20 @@ export default function WowMomentSummary() {
   const queryClient = useQueryClient();
   const { data: dox } = useQuery({
     queryKey: ["project", projectId],
-    queryFn: () => fetchAllWowsByProjectId(projectId),
+    queryFn: () => fetchAllInterviewSummariesByProjectId(projectId),
   });
 
   console.log("dox", dox);
 
-  const wows = Array.isArray(dox)
+  const interviews = Array.isArray(dox)
     ? dox.map((doc) => doc.content).join("\n")
     : "";
 
-  console.log("wows", wows);
+
 
   const { data: summary, refetch: refetchSummary } = useQuery({
-    queryKey: ["summary", projectId, wows],
-    queryFn: () => summarizeWowMoments(wows),
+    queryKey: ["summary", projectId, interviews],
+    queryFn: () => summarizeInterviews(interviews),
     enabled: false, // We'll manually trigger this query
   });
 
@@ -52,14 +52,14 @@ export default function WowMomentSummary() {
         id: "",
         projectId,
         userId,
-        title: "Wow Moments Summary",
+        title: "All Interviews Summary",
         interviewee: "",
         interviewDate: "",
         content: content,
         fileUrl: "",
-        docType: "wow-moments-summary",
-        createDate: new Date().toLocaleDateString("en-AU"),
-        updateDate: new Date().toLocaleDateString("en-AU"),
+        docType: "project-summary",
+        createDate: new Date().toLocaleString("en-AU"),
+        updateDate: new Date().toLocaleString("en-AU"),
       };
       await saveDocToDb(newDocument, projectId);
     },
@@ -75,7 +75,7 @@ export default function WowMomentSummary() {
 
   useEffect(() => {
     const generateAndSaveSummary = async () => {
-      if (wows && !summary) {
+      if (interviews && !summary) {
         try {
           const result = await refetchSummary();
           if (result.data) {
@@ -88,19 +88,19 @@ export default function WowMomentSummary() {
     };
 
     generateAndSaveSummary();
-  }, [wows, summary, refetchSummary, saveSummaryMutation]);
+  }, [interviews, summary, refetchSummary, saveSummaryMutation]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-300 bg-opacity-90">
       <div className="max-w-md w-full bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="bg-primary text-primary-foreground px-4 py-2">
-          <span>Generating Wow Moments Summary</span>
+          <span>Generating Interview Summary</span>
         </div>
         <div className="mt-4">
           <div className="flex items-center justify-center space-x-4 p-4 min-h-56">
             <Brain className="animate-bounce text-primary" />
             <span className="text-gray-700">
-              Hold on, just thinking for a bit...
+              Hold on, this will take about a minute...
             </span>
           </div>
           {/* )} */}
