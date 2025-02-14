@@ -68,6 +68,9 @@ export function MenuContent({ onLinkClick, page, userId, projectId }: MenuConten
             <p className="text-xs font-medium leading-6 text-zinc-500 mt-8 ">
               Actions
             </p>
+            <div className="py-1.5 flex items-center">
+              <ConversationDialog projectId={projectId} userId={userId} />
+            </div>
 
             <Link
               href={`/upload/${projectId}`}
@@ -81,9 +84,6 @@ export function MenuContent({ onLinkClick, page, userId, projectId }: MenuConten
               Upload a File
             </Link>
 
-            <div className="py-1.5 flex items-center">
-              <ConversationDialog projectId={projectId} userId={userId} />
-            </div>
             <Link
               href={`/summarise-interviews?projectId=${projectId}&userId=${userId}`}
               className={cn(
