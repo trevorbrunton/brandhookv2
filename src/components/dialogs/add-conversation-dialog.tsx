@@ -33,6 +33,8 @@ import {
   Plus,
   MessageSquareText,
 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+
 
 interface ConversationDialogProps {
   projectId: string;
@@ -45,6 +47,8 @@ export const ConversationDialog = ({
 }: ConversationDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof ConversationFormSchema>>({
     resolver: zodResolver(ConversationFormSchema),
@@ -95,7 +99,7 @@ export const ConversationDialog = ({
       };
 
       await saveDocToDb(newDocument, projectId);
-
+      queryClient.invalidateQueries({queryKey: [ "documents", projectId] });
       setIsOpen(false);
     } catch (error) {
       console.error(error);
