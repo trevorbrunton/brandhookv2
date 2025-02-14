@@ -80,7 +80,8 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
           projectId,
           documentTitle,
           interviewee,
-          fileUrl
+          fileUrl,
+          activeDocClass
         );
         console.log("transcription job commenced with jobId: ", jobId);
         queryClient.invalidateQueries({
@@ -109,7 +110,7 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
           id: "",
           projectId,
           userId,
-          title: documentTitle,
+          title: `Interview - ${documentTitle}`,
           interviewee: interviewee,
           interviewDate: documentDate.toISOString(),
           content: response.parsedText,
@@ -149,7 +150,7 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
           id: "",
           projectId,
           userId,
-          title: `${documentTitle} - Summary`,
+          title: `Interview Summary - ${documentTitle}`,
           interviewee: interviewee,
           interviewDate: documentDate.toISOString(),
           content: summaryText.interviewSummary,

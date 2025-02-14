@@ -60,7 +60,7 @@ export default async function ProjectView({ params, searchParams }: PageProps) {
 
   return (
     <div className="flex w-full flex-col">
-      <PageFrame page={`Project: ${project.projectName}`} userId={user.id} navItems={navItems}>
+      <PageFrame page="project-view" userId={user.id} navItems={navItems} projectId={project.id}>
         <div className="flex flex-row flex-auto">
           <div className="hidden sm:block border-r border-gray-100 h-full text-brand-900 relative z-10">
             <NavSideBar page="project-view" userId={user.id} projectId={projectId} />

@@ -20,10 +20,11 @@ interface PageFrameProps {
   children: ReactNode;
   page: string;
   userId: string;
+  projectId: string;
   navItems: NavItem[] | null; 
 }
 
-export const PageFrame = ({ children, userId, page,navItems }: PageFrameProps) => {
+export const PageFrame = ({ children, userId, page,navItems, projectId }: PageFrameProps) => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const router = useRouter();
   const handleLinkClick = () => {
@@ -83,7 +84,7 @@ export const PageFrame = ({ children, userId, page,navItems }: PageFrameProps) =
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="pt-20 sm:max-w-xs">
-                  <MenuContent onLinkClick={handleLinkClick} page={page} userId={userId} projectId="" />
+                  <MenuContent onLinkClick={handleLinkClick} page={page} userId={userId} projectId={projectId} />
                 </SheetContent>
               </Sheet>
             </div>

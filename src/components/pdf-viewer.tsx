@@ -19,7 +19,7 @@ type Props = { url: string };
  */
 export function PDFViewer({ url }: Props) {
   const fileType = url.split(".").pop();
-  console.log(fileType);
+  console.log(fileType, url);
   return (
     <MainContentRow>
       <div className="flex flex-col space-y-2 relative">

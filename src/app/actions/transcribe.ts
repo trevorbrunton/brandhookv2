@@ -9,7 +9,8 @@ export async function transcribe(
   projectId: string,
   title: string,
   interviewee: string,
-  fileUrl: string
+  fileUrl: string,
+  activeDocClass: string
 ) {
   const user = await db.user.findUnique({
     where: { id: userId },
@@ -21,6 +22,8 @@ export async function transcribe(
 
   console.log("Starting transcription job");
 
+  console.log("doctype", activeDocClass);
+
   const jobId = nanoid();
 
   const lambdaUrl =
@@ -31,7 +34,7 @@ export async function transcribe(
     userId: user.id,
     title: title,
     interviewee: interviewee,
-    docType: "interview",
+    docType: activeDocClass,
     fileUrl: fileUrl,
   };
 
