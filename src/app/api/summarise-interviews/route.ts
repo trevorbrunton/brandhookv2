@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       apiKey: process.env.OPENAI_API_KEY,
     });
     const systemMessage = `You are an AI assistant that is an expert in consolidating documents.`;
-    const userPrompt = `Please consolidate these documents: ${interviews}. You need to merge the documents by section into one document, following the structure of the original document.  Please write at least 200 words for each section. The heading for the document should be "Customer Conversations Summary".`;
+    const userPrompt = `Please consolidate these documents: ${interviews}. These documents are summaries of interview transcriptions (called "Conversations") were the interviewees were asked questions about their lifesytle, interests, work habits, then asked specific questions about hypotheses that were being tested by the interviewer.  You need to merge the documents into one document, with the following sections: a) Summary b)Overal themes c)Questions from conversations d) detailed hypothesis summary .  In each section, write paragraphs that explain the themes, trends  and insights of contained and provide analysis and an appropriate heading.  Where sections relate to a hypothesis, please createa a sub-section for each hypothesis, summarise the hypothesis, the intervievee's thoughts and provide analysis and insights.  Please write at least 200 words for each section. The overall heading for the document should be "Customer Conversations Summary". Please format the document as a markdown file that is left aligned with no indents.`;  
 
     const completion = await openai.chat.completions.create({
       messages: [

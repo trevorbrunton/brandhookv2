@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
  */
 async function produceSummary(parsedText: string): Promise<string> {
   const prompt = `Summarise the following interview: ${parsedText}.
-  Here is the conversation guide: 
+  Here is the conversation guide format: 
   Introduction - question about daily life, enjoyable aspects, challenges, changes
   Issue Exploration - thoughts on business issue, positive/negative aspects, emerging trends
   Product Category - factors for choosing product, essential attributes for success/failure
@@ -59,7 +59,7 @@ async function produceSummary(parsedText: string): Promise<string> {
 
   const { text } = await generateText({
     model: openai("gpt-4o-mini"),
-    system: `This is a transcript from a customer conversation I had using the attached Conversation Guide guide Can you please summarise the transcript using this format: 1. Summary Give me a 3 paragraph summary of the conversation overall. 2. Overall Themes (communicated as Actions) Secondly, give me the overall themes of the conversation as 5 bullet points but these must be actioned oriented so that the it gives me some ideas for the business to move forward on. Please write at least 200 words per bullet point 3. Summary of Hypotheses The third thing is a summary of the hypotheses which are usually asked at the end of the conversation. Refer to the Conversation Guide for the questions and give me the answers. Please write at least 200 words for each hypothesis 4. Summary Of Conversation Guide [in the project & following the question prompts] The last summary section is the summary of each question asked as per the Conversation Guide. Can you refer to the guide and then the transcript and give me 200 words for each for the answers relating to each section of the guide. Please produce the document under a heading: "Interview Summary". `,
+    system: `This is a transcript from a customer conversation I had using the attached Conversation Guide guide Can you please summarise the transcript using this format: 1. Summary Give me a 3 paragraph summary of the conversation overall. 2. Overall Themes (communicated as Actions) Secondly, give me the overall themes of the conversation as 5 bullet points but these must be actioned oriented so that the it gives me some ideas for the business to move forward on. Please write at least 200 words per bullet point 3. Summary of Hypotheses The third thing is a summary of the hypotheses which are usually asked at the end of the conversation. Refer to the Conversation Guide for the questions and give me the answers. Please write at least 200 words for each hypothesis 4. Summary Of Conversation Guide [in the project & following the question prompts] The last summary section is the summary of each question asked as per the Conversation Guide. Can you refer to the guide and then the transcript and give me 200 words for each for the answers relating to each section of the guide. Please produce the document under a heading: "Interview Summary". please produce the summary in markdown format with no indents.`,
     prompt: prompt,
   });
 
