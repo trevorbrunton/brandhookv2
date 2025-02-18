@@ -8,7 +8,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { fetchAllInterviewSummariesByProjectId } from "@/app/actions/fetch-all-interview-summaries-by-projectId";
 import { saveDocToDb } from "@/app/actions/save-doc-to-db";
 import type { ProjectDocument } from "@prisma/client";
-import { DocumentContent } from "@/components/document-content";
+// import { DocumentContent } from "@/components/document-content";
+import Markdown from "react-markdown";
 
 async function summarizeInterviews(interviews: string) {
   const response = await fetch("/api/summarise-interviews", {
@@ -103,23 +104,23 @@ export default function InterviewSummary() {
     generateAndSaveSummary();
   }, [interviews, saveSummaryMutation, isGenerating]); // Added isGenerating to dependencies
 
-  const dummyDocument: ProjectDocument = {
-    id: "dummy",
-    projectId,
-    userId,
-    title: "All Interviews Summary (In Progress)",
-    interviewee: "",
-    interviewDate: "",
-    content: summary,
-    fileUrl: "",
-    docType: "project-summary",
-    createDate: new Date().toLocaleString("en-AU"),
-    updateDate: new Date().toLocaleString("en-AU"),
-  };
+  // const dummyDocument: ProjectDocument = {
+  //   id: "dummy",
+  //   projectId,
+  //   userId,
+  //   title: "All Interviews Summary (In Progress)",
+  //   interviewee: "",
+  //   interviewDate: "",
+  //   content: summary,
+  //   fileUrl: "",
+  //   docType: "project-summary",
+  //   createDate: new Date().toLocaleString("en-AU"),
+  //   updateDate: new Date().toLocaleString("en-AU"),
+  // };
 
   return (
     <div className="min-h-screen bg-gray-300 bg-opacity-90 p-4">
-      <div className="w-full min-h-42 mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="w-1/3 min-h-42 mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="bg-primary text-primary-foreground px-4 py-2">
           <span>Generating Interview Summary</span>
         </div>
@@ -132,7 +133,14 @@ export default function InterviewSummary() {
               </span>
             </div>
           )}
-          <DocumentContent document={dummyDocument} />
+          {/* <DocumentContent document={dummyDocument} /> */}
+                <div className="prose-sm max-h-96 overflow-y-auto p-4" ref={(el) => {
+                  if (el) {
+                  el.scrollTop = el.scrollHeight;
+                  }
+                }}>
+                  <Markdown>{summary}</Markdown>
+                </div>
         </div>
       </div>
     </div>
