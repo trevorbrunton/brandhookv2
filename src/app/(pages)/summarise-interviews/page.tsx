@@ -119,7 +119,7 @@ export default function InterviewSummary() {
 
   return (
     <div className="min-h-screen bg-gray-300 bg-opacity-90 p-4">
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="w-full min-h-42 mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="bg-primary text-primary-foreground px-4 py-2">
           <span>Generating Interview Summary</span>
         </div>
