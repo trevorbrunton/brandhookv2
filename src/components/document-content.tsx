@@ -12,7 +12,8 @@ export function DocumentContent({ document }: DocumentContentProps) {
     "conversation",
     "project-summary",
     "wow-moments-summary",
-    "transcript",
+    "wow-moment-transcript",
+    "transcript"
   ].includes(document.docType)
 
   const isPDFType = ["interview", "wow-moments"].includes(document.docType)

@@ -110,7 +110,7 @@ export function UploadFileForm({ projectId, userId }: UploadDialogProps) {
           id: "",
           projectId,
           userId,
-          title: `Interview - ${documentTitle}`,
+          title: `${activeDocClass == "interview"? "Interview": "Wow moments"} - ${documentTitle}`,
           interviewee: interviewee,
           interviewDate: documentDate.toISOString(),
           content: response.parsedText,

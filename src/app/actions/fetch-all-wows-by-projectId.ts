@@ -12,7 +12,7 @@ export async function fetchAllWowsByProjectId(projectId: string) {
     }
 
     const documents = await db.projectDocument.findMany({
-      where: { projectId: projectId, docType: "wow-moments" },
+      where: { projectId: projectId, docType: { in: ["wow-moments", "wow-moments-summary"] } },
       select: {
         id: true,
         content: true,
