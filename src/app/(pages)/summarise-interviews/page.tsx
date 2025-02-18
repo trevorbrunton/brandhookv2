@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Brain } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { fetchAllInterviewSummariesByProjectId } from "@/app/actions/fetch-all-interview-summaries-by-projectId";
 import { saveDocToDb } from "@/app/actions/save-doc-to-db";
 import type { ProjectDocument } from "@prisma/client";
+import { DocumentContent } from "@/components/document-content";
 
 async function summarizeInterviews(interviews: string) {
   const response = await fetch("/api/summarise-interviews", {
@@ -15,10 +16,17 @@ async function summarizeInterviews(interviews: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ interviews }),
   });
+
   if (!response.ok) {
     throw new Error("Failed to summarize interviews");
   }
-  return response.json();
+
+  const reader = response.body?.getReader();
+  if (!reader) {
+    throw new Error("Failed to get response reader");
+  }
+
+  return reader;
 }
 
 export default function InterviewSummary() {
@@ -27,24 +35,17 @@ export default function InterviewSummary() {
   const userId = searchParams.get("userId") || "";
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [summary, setSummary] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+
   const { data: dox } = useQuery({
     queryKey: ["project", projectId],
     queryFn: () => fetchAllInterviewSummariesByProjectId(projectId),
   });
 
-  console.log("dox", dox);
-
   const interviews = Array.isArray(dox)
     ? dox.map((doc) => doc.content).join("\n")
     : "";
-
-
-
-  const { data: summary, refetch: refetchSummary } = useQuery({
-    queryKey: ["summary", projectId, interviews],
-    queryFn: () => summarizeInterviews(interviews),
-    enabled: false, // We'll manually trigger this query
-  });
 
   const saveSummaryMutation = useMutation({
     mutationFn: async (content: string) => {
@@ -75,35 +76,63 @@ export default function InterviewSummary() {
 
   useEffect(() => {
     const generateAndSaveSummary = async () => {
-      if (interviews && !summary) {
+      if (interviews && !isGenerating) {
+        setIsGenerating(true);
         try {
-          const result = await refetchSummary();
-          if (result.data) {
-            saveSummaryMutation.mutate(result.data.message);
+          const reader = await summarizeInterviews(interviews);
+          const decoder = new TextDecoder();
+          let accumulatedSummary = "";
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const chunk = decoder.decode(value);
+            accumulatedSummary += chunk;
+            setSummary(accumulatedSummary);
           }
+
+          saveSummaryMutation.mutate(accumulatedSummary);
         } catch (error) {
           console.error("Error generating or saving summary:", error);
+        } finally {
+          setIsGenerating(false);
         }
       }
     };
 
     generateAndSaveSummary();
-  }, [interviews, summary, refetchSummary, saveSummaryMutation]);
+  }, [interviews, saveSummaryMutation, isGenerating]); // Added isGenerating to dependencies
+
+  const dummyDocument: ProjectDocument = {
+    id: "dummy",
+    projectId,
+    userId,
+    title: "All Interviews Summary (In Progress)",
+    interviewee: "",
+    interviewDate: "",
+    content: summary,
+    fileUrl: "",
+    docType: "project-summary",
+    createDate: new Date().toLocaleString("en-AU"),
+    updateDate: new Date().toLocaleString("en-AU"),
+  };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-300 bg-opacity-90">
-      <div className="max-w-md w-full bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="min-h-screen bg-gray-300 bg-opacity-90 p-4">
+      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="bg-primary text-primary-foreground px-4 py-2">
           <span>Generating Interview Summary</span>
         </div>
         <div className="mt-4">
-          <div className="flex items-center justify-center space-x-4 p-4 min-h-56">
-            <Brain className="animate-bounce text-primary" />
-            <span className="text-gray-700">
-              Hold on, this will take about a minute...
-            </span>
-          </div>
-          {/* )} */}
+          {isGenerating && (
+            <div className="flex items-center justify-center space-x-4 p-4">
+              <Brain className="animate-bounce text-primary" />
+              <span className="text-gray-700">
+                Generating summary, please wait...
+              </span>
+            </div>
+          )}
+          <DocumentContent document={dummyDocument} />
         </div>
       </div>
     </div>
