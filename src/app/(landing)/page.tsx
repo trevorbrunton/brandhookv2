@@ -45,7 +45,7 @@ export default async function LandingPage() {
             <div className="w-full max-w-80">
               <ShinyButton
                 href="/sign-up"
-                className="relative z-10 h-14 w-full text-base shadow-lg transition-shadow duration-300 hover:shadow-xl"
+                className="relative z-10 h-14 w-full text-lg shadow-lg transition-shadow duration-300 hover:shadow-xl"
               >
                 Start For Free Today
               </ShinyButton>
@@ -54,13 +54,12 @@ export default async function LandingPage() {
             <div
               className={cn(
                 buttonVariants({ variant: "outline" }),
-                "w-30 justify-center flex items-center gap-x-2.5 rounded-md p-6 text-xl font-medium leading-6 text-white hover:bg-gray-50 transition mx-2 mt-20 bg-brown"
+                "w-30 justify-center flex items-center gap-x-2.5 rounded-md p-8 text-base font-medium leading-6 text-white hover:bg-gray-50 transition mx-2 mt-20 bg-brown"
               )}
             >
               <Link href="https://cronicle-file-uploads.s3.ap-southeast-2.amazonaws.com/BrandHook+Discover+AI+App+How+to+Use.mov">
-                <span className="">
-                  Watch the Brandhook Discover AI Tool Explainer
-                </span>
+                <p className="">Watch the Brandhook Discover AI</p>
+                <p>Tool Explainer</p>
               </Link>
             </div>
           </div>
