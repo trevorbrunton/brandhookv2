@@ -23,7 +23,7 @@ export function DocumentChooserBar({
             activeDocClass === "interview" ? "underline underline-offset-4" : ""
           }
         >
-          Upload Interview Transcript or audio
+          Upload Interview Transcript (document or audio)
         </Button>
         <Button
           variant="ghost"
@@ -36,7 +36,7 @@ export function DocumentChooserBar({
               : ""
           }
         >
-          Upload Wow Moments
+          Upload Wow Moments (document or audio)
         </Button>
       </div>
       <div>
